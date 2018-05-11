@@ -1,17 +1,29 @@
 package com.hzyi.jplab.controller;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class ControllerImpl implements Controller {
 
-  private static final Set<Class> SUPPORTED_CLASSES = 
-      ImmutableSet.of(String.class, Boolean.class, Double.class, Integer.class);
-  
-  private final Map<Class, List<Parameter>> parameters;
+  Map<String, Parameter<?>> parameters = new HashMap<>();
 
-  public <E> void addParameter(Parameter<E> parameter) {
-    List<Parameter> list = parameters.get(E.class);
-    if (list != null) {
-      list.add(parameter);
+  @Override
+  public void addParameter(Parameter<?> parameter) {
+    if (parameters.containsKey(parameter.getName())) {
+      throw new IllegalArgumentException(
+          "parameter named " + parameter.getName() + "already exists.");
     }
+  }
+
+  @Override
+  public Iterator<Parameter<?>> getParameters() {
+    return this.parameters.values().iterator();
+  }
+
+  @Override
+  public Parameter getParameter(String name) {
+    return this.parameters.get(name);
   }
 
 }

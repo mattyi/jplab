@@ -1,14 +1,17 @@
 package com.hzyi.jplab.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public ParameterImpl<E> implements Parameter<E> {
+public class ParameterImpl<E> implements Parameter<E> {
 
-  private List<Observer<E>> observers;
+  private final List<Observer<E>> observers;
   private E value;
+  private final String name;
 
-  ParameterImpl(E initValue) {
+  ParameterImpl(E initValue, String name) {
     this.value = initValue;
+    this.name = name;
     observers = new ArrayList<>();
   }
 
@@ -28,6 +31,11 @@ public ParameterImpl<E> implements Parameter<E> {
   @Override
   public E getValue() {
     return this.value;
+  }
+
+  @Override
+  public String getName() {
+    return this.name;
   }
 
 }
