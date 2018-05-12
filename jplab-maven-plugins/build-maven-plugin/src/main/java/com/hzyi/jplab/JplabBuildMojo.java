@@ -6,7 +6,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 /**
  * @goal run
@@ -16,9 +15,6 @@ public class JplabBuildMojo extends AbstractMojo {
 
   @Parameter (property = "sim", defaultValue = "DumApplication")
   private String sim;
-
-  @Parameter( defaultValue = "${project}", readonly = true )
-  protected MavenProject project;
 
   /**
    * @parameter 

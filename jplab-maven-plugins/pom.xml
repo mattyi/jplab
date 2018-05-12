@@ -11,9 +11,6 @@
   <version>1.0-SNAPSHOT</version>
   <name>jplab</name>
   <url>http://maven.apache.org</url>
-  <modules>
-    <module>build-maven-plugin</module>
-  </modules>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

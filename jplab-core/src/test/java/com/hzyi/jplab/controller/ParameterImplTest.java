@@ -18,7 +18,7 @@ public class ParameterImplTest {
   @Test
   public void testGetValue() {
     Parameter<String> parameter = Parameter.newStringParameter("initValue", "name");
-    assertEquals(parameter.getName(), "initValue");
+    assertEquals(parameter.getValue(), "initValue");
   }
 
   @Test
