@@ -1,7 +1,7 @@
 package com.hzyi.jplab.controller;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
 
 public class ControllerImpl implements Controller {
@@ -12,18 +12,23 @@ public class ControllerImpl implements Controller {
   public void addParameter(Parameter<?> parameter) {
     if (parameters.containsKey(parameter.getName())) {
       throw new IllegalArgumentException(
-          "parameter named " + parameter.getName() + "already exists.");
+          "Parameter named " + parameter.getName() + " already exists.");
     }
+    parameters.put(parameter.getName(), parameter);
   }
 
   @Override
-  public Iterator<Parameter<?>> getParameters() {
-    return this.parameters.values().iterator();
+  public Collection<Parameter<?>> getParameters() {
+    return this.parameters.values();
   }
 
   @Override
   public Parameter getParameter(String name) {
-    return this.parameters.get(name);
+    Parameter param = parameters.get(name);
+    if (param == null) {
+      throw new IllegalArgumentException("Parameter named " + name + " does not exist.");
+    }
+    return param;
   }
 
 }
