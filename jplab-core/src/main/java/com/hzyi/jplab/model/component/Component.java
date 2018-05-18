@@ -2,7 +2,7 @@ package com.hzyi.jplab.model.component;
 
 import com.hzyi.jplab.util.Buildable;
 
-public abstract class Component implements Buildable {
+public class Component implements Buildable {
 
   protected final String name;
 
@@ -14,7 +14,7 @@ public abstract class Component implements Buildable {
     return name;
   }
 
-  public abstract class Builder<T extends Builder<T>> 
+  public static abstract class Builder<T extends Builder<T>> 
       implements com.hzyi.jplab.util.Builder<T> {
     
     private String name;
