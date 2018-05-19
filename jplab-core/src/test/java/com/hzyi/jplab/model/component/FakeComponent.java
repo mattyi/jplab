@@ -3,7 +3,7 @@ package com.hzyi.jplab.model.component;
 /** A fake {@link Component} for testing */
 class FakeComponent extends Component {
 
-  FakeComponent(Component.Builder<?> builder) {
+  FakeComponent(Builder builder) {
     super(builder);
   } 
 

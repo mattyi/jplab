@@ -1,6 +1,8 @@
 package com.hzyi.jplab.model.component;
 
-abstract class StaticComponent {
+import static com.google.common.base.Preconditions.checkNotNull;
+
+class StaticComponent extends Component {
      
   private static final Field LOC_X = Field.addField("locx");
   private static final Field LOC_Y = Field.addField("locy");
@@ -23,35 +25,55 @@ abstract class StaticComponent {
     return DIR_Y;
   }
 
-} // extends Component {
+  private final ComponentState initState;
 
-//   public static class Builder<T extends Builder<T>>
-//       extends Component.Builder<T> {
+  StaticComponent(Builder<?> builder) {
+    super(builder);
+    this.initState = ComponentState
+        .newBuilder(this)
+        .set(LOC_X, builder.x)
+        .set(LOC_Y, builder.y)
+        .set(DIR_X, builder.dx)
+        .set(DIR_Y, builder.dy)
+        .build();
+  }
 
-//     T setX(double x) {
+  public static class Builder<T extends Builder<T>>
+      extends Component.Builder<T> {
 
-//     }
+    private double x, y, dx, dy;
 
-//     T setY(double y) {
+    @SuppressWarnings("Unchecked")
+    T setX(double x) {
+      this.x = x;
+      return (T)this;
+    }
 
-//     }
+    @SuppressWarnings("Unchecked")
+    T setY(double y) {
+      this.y = y;
+      return (T)this;
+    }
 
-//     T setDirX(double dx) {
+    @SuppressWarnings("Unchecked")
+    T setDirX(double dx) {
+      this.dx = dx;
+      return (T)this;
+    }
 
-//     }
+    @SuppressWarnings("Unchecked")
+    T setDirY(double dy) {
+      this.dy = dy;
+      return (T)this;
+    }
 
-//     T setDirY(double dy) {
-
-//     }
-
-//     @Override
-
-
-//     public StaticComponent build() {
-
-//     }
-
-
-//   }
-
-// }
+    @Override
+    public StaticComponent build() {
+      checkNotNull(x);
+      checkNotNull(y);
+      checkNotNull(dx);
+      checkNotNull(dy);
+      return new StaticComponent(this);
+    }
+  }
+}

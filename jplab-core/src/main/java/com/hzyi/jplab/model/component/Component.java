@@ -6,7 +6,7 @@ public class Component implements Buildable {
 
   protected final String name;
 
-  protected Component(Builder<?> builder) {
+  Component(Builder<?> builder) {
     this.name = builder.name;
   }
 
