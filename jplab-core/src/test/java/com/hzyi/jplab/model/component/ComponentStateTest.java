@@ -29,7 +29,8 @@ public class ComponentStateTest {
 
   @Test
   public void testBuilder() {
-    ComponentState componentState = ComponentState.newBuilder(component)
+    ComponentState componentState = ComponentState.newBuilder()
+        .setComponent(component)
         .set(field1, 1.0)
         .set(field2, 2.0)
         .build();
@@ -40,7 +41,8 @@ public class ComponentStateTest {
 
   @Test
   public void testBuilderSetOverrides() {
-    ComponentState componentState = ComponentState.newBuilder(component)
+    ComponentState componentState = ComponentState.newBuilder()
+        .setComponent(component)
         .set(field1, 1.0)
         .set(field2, 2.0)
         .set(field1, 3.0)
@@ -52,7 +54,8 @@ public class ComponentStateTest {
 
   @Test
   public void testSet() {
-    ComponentState componentState = ComponentState.newBuilder(component)
+    ComponentState componentState = ComponentState.newBuilder()
+        .setComponent(component)
         .set(field1, 1.0)
         .set(field2, 2.0)
         .build();
@@ -62,7 +65,8 @@ public class ComponentStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testSetWithException() {
-    ComponentState componentState = ComponentState.newBuilder(component)
+    ComponentState componentState = ComponentState.newBuilder()
+        .setComponent(component)
         .set(field1, 1.0)
         .build();
     componentState.set(field2, 3.0);

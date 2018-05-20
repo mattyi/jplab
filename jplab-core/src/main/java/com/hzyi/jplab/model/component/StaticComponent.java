@@ -1,7 +1,5 @@
 package com.hzyi.jplab.model.component;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 class StaticComponent extends Component {
      
   private static final Field LOC_X = Field.addField("locx");
@@ -9,39 +7,46 @@ class StaticComponent extends Component {
   private static final Field DIR_X = Field.addField("dirx");
   private static final Field DIR_Y = Field.addField("diry");
   
-  static Field locX() {
+  static Field LOC_X() {
     return LOC_X;
   }
 
-  static Field locY() {
+  static Field LOC_Y() {
     return LOC_Y;
   }
 
-  static Field dirX() {
+  static Field DIR_X() {
     return DIR_X;
   }
 
-  static Field dirY() {
+  static Field DIR_Y() {
     return DIR_Y;
   }
 
-  private final ComponentState initState;
+  protected ComponentState initState;
 
   StaticComponent(Builder<?> builder) {
     super(builder);
-    this.initState = ComponentState
-        .newBuilder(this)
+    this.initState = newComponentStateBuilder(builder).build();
+  }
+
+  public ComponentState getInitialComponentState() {
+    return initState;
+  }
+
+  protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
+    return ComponentState.newBuilder()
+        .setComponent(this)
         .set(LOC_X, builder.x)
         .set(LOC_Y, builder.y)
         .set(DIR_X, builder.dx)
-        .set(DIR_Y, builder.dy)
-        .build();
+        .set(DIR_Y, builder.dy);
   }
 
   public static class Builder<T extends Builder<T>>
       extends Component.Builder<T> {
 
-    private double x, y, dx, dy;
+    protected double x, y, dx, dy;
 
     @SuppressWarnings("Unchecked")
     T setX(double x) {
@@ -69,10 +74,6 @@ class StaticComponent extends Component {
 
     @Override
     public StaticComponent build() {
-      checkNotNull(x);
-      checkNotNull(y);
-      checkNotNull(dx);
-      checkNotNull(dy);
       return new StaticComponent(this);
     }
   }

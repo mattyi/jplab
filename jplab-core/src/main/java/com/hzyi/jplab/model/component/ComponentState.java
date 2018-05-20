@@ -1,5 +1,7 @@
 package com.hzyi.jplab.model.component;
 
+import com.google.common.base.Preconditions;
+
 import com.hzyi.jplab.util.Buildable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,18 +31,19 @@ public class ComponentState implements Buildable {
     this.fields = builder.fields;
   }
 
-  public static Builder newBuilder(Component component) {
-    return new Builder(component);
+  public static Builder newBuilder() {
+    return new Builder();
   }
 
   public static final class Builder implements 
       com.hzyi.jplab.util.Builder<Builder> {
 
-    private final Component component;
+    private Component component;
     private final Map<Field, Double> fields = new HashMap();
 
-    public Builder(Component component) {
+    public Builder setComponent(Component component) {
       this.component = component;
+      return this;
     }
 
     /**
@@ -60,6 +63,7 @@ public class ComponentState implements Buildable {
 
     @Override
     public ComponentState build() {
+      Preconditions.checkNotNull(component, "component can't be null.");
       return new ComponentState(this);
     }
  
