@@ -2,7 +2,7 @@ package com.hzyi.jplab.model.component;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public final class CircMassPoint extends DynamicComponent {
+public final class CircMassPoint extends MassPoint {
 
   private final double radius;
 
@@ -20,18 +20,18 @@ public final class CircMassPoint extends DynamicComponent {
   }
 
   public static final class Builder
-      extends DynamicComponent.Builder<Builder> {
+      extends MassPoint.Builder<Builder> {
     
     protected double radius;
 
     Builder setRadius(double radius) {
-      checkArgument(radius > 0, "radius has to be positive");
       this.radius = radius;
       return this;
     }
  
     @Override
     public CircMassPoint build() {
+      checkArgument(radius > 0, "radius has to be positive");
       return new CircMassPoint(this);
     }
   }

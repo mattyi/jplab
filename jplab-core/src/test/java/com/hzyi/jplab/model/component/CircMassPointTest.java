@@ -18,7 +18,9 @@ public class CircMassPointTest {
             .setDirY(0.4)
             .setVX(0.5)
             .setVY(0.6)
-            .setRadius(0.7)
+            .setMass(0.7)
+            .setMomentOfInertia(0.8)
+            .setRadius(0.9)
             .build();
     ComponentState componentState = circMassPoint.getInitialComponentState();
     assertThat(componentState.getComponent()).isSameAs(circMassPoint);
@@ -28,7 +30,9 @@ public class CircMassPointTest {
     assertThat(componentState.get(StaticComponent.DIR_Y())).isEqualTo(0.4);
     assertThat(componentState.get(DynamicComponent.V_X())).isEqualTo(0.5);
     assertThat(componentState.get(DynamicComponent.V_Y())).isEqualTo(0.6);
-    assertThat(circMassPoint.getRadius()).isEqualTo(0.7);
+    assertThat(circMassPoint.getMass()).isEqualTo(0.7);
+    assertThat(circMassPoint.getMomentOfInertia()).isEqualTo(0.8);
+    assertThat(circMassPoint.getRadius()).isEqualTo(0.9);
   }
 
 }
