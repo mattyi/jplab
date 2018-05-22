@@ -27,7 +27,7 @@ public class Component implements Buildable {
 
     @SuppressWarnings("Unchecked")
     @Override
-    public T mergeFrom(com.hzyi.jplab.util.Builder<T> builder) {
+    public T mergeFrom(T builder) {
       if (builder instanceof Builder<?>) {
         Builder<T> b = (Builder<T>)builder;
         this.name = b.name;
