@@ -23,7 +23,6 @@ class StaticComponent extends Component {
     return DIR_Y;
   }
 
-  protected ComponentState initState;
 
   StaticComponent(Builder<?> builder) {
     super(builder);
@@ -35,8 +34,7 @@ class StaticComponent extends Component {
   }
 
   protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
-    return ComponentState.newBuilder()
-        .setComponent(this)
+    return super.newComponentStateBuilder(builder)
         .set(LOC_X, builder.x)
         .set(LOC_Y, builder.y)
         .set(DIR_X, builder.dx)
@@ -49,25 +47,25 @@ class StaticComponent extends Component {
     protected double x, y, dx, dy;
 
     @SuppressWarnings("Unchecked")
-    T setX(double x) {
+    public T setX(double x) {
       this.x = x;
       return (T)this;
     }
 
     @SuppressWarnings("Unchecked")
-    T setY(double y) {
+    public T setY(double y) {
       this.y = y;
       return (T)this;
     }
 
     @SuppressWarnings("Unchecked")
-    T setDirX(double dx) {
+    public T setDirX(double dx) {
       this.dx = dx;
       return (T)this;
     }
 
     @SuppressWarnings("Unchecked")
-    T setDirY(double dy) {
+    public T setDirY(double dy) {
       this.dy = dy;
       return (T)this;
     }

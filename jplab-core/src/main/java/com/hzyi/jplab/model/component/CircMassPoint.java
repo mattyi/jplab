@@ -24,7 +24,7 @@ public final class CircMassPoint extends MassPoint {
     
     protected double radius;
 
-    Builder setRadius(double radius) {
+    public Builder setRadius(double radius) {
       this.radius = radius;
       return this;
     }

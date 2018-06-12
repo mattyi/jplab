@@ -5,13 +5,24 @@ import com.hzyi.jplab.util.Buildable;
 public class Component implements Buildable {
 
   protected final String name;
+  protected ComponentState initState;
 
   Component(Builder<?> builder) {
     this.name = builder.name;
+    this.initState = newComponentStateBuilder(builder).build();
+  }
+
+  public ComponentState getInitialComponentState() {
+    return null;
   }
 
   public String getName() {
     return name;
+  }
+
+  protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
+    return ComponentState.newBuilder()
+        .setComponent(this);
   }
 
   public static abstract class Builder<T extends Builder<T>> 

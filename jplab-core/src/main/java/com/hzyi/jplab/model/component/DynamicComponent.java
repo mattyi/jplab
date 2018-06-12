@@ -1,20 +1,20 @@
 package com.hzyi.jplab.model.component;
 
-class DynamicComponent extends StaticComponent {
+public class DynamicComponent extends StaticComponent {
      
   private static final Field V_X = Field.addField("vx");
   private static final Field V_Y = Field.addField("vy");
   private static final Field OMEGA = Field.addField("omega");
 
-  static Field V_X() {
+  public static Field V_X() {
     return V_X;
   }
 
-  static Field V_Y() {
+  public static Field V_Y() {
     return V_Y;
   }
 
-  static Field OMEGA() {
+  public static Field OMEGA() {
     return OMEGA;
   }
 
@@ -37,19 +37,19 @@ class DynamicComponent extends StaticComponent {
     protected double vx, vy, omega;
 
     @SuppressWarnings("Unchecked")
-    T setVX(double vx) {
+    public T setVX(double vx) {
       this.vx = vx;
       return (T)this;
     }
 
     @SuppressWarnings("Unchecked")
-    T setVY(double vy) {
+    public T setVY(double vy) {
       this.vy = vy;
       return (T)this;
     }
 
     @SuppressWarnings("Unchecked")
-    T setOmega(double omega) {
+    public T setOmega(double omega) {
       this.omega = omega;
       return (T)this;
     }

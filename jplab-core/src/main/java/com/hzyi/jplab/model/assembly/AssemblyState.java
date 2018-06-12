@@ -3,6 +3,7 @@ package com.hzyi.jplab.model.assembly;
 import com.hzyi.jplab.model.component.ComponentState;
 import com.hzyi.jplab.model.component.Field;
 import com.hzyi.jplab.util.Buildable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,13 @@ public class AssemblyState implements Buildable {
      */
     public Builder add(ComponentState componentState) {
       componentStates.put(componentState.getComponent().getName(), componentState);
+      return this;
+    }
+
+    public Builder addAll(Collection<ComponentState> componentStates) {
+      for (ComponentState state : componentStates) {
+        add(state);
+      }
       return this;
     }
 
