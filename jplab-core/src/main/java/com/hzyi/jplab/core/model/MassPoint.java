@@ -1,4 +1,4 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

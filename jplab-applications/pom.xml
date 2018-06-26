@@ -30,7 +30,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.hzyi.jplab.dum.DumApplication</mainClass>
+          <mainClass>com.hzyi.jplab.dum.SingleCircApplication</mainClass>
         </configuration>
       </plugin>
       <plugin>

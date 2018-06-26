@@ -1,7 +1,6 @@
-package com.hzyi.jplab.model.assembly;
+package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.model.component.Component;
-import com.hzyi.jplab.util.Buildable;
+import com.hzyi.jplab.core.util.Buildable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class Assembly implements Buildable {
         .addAll(builder.components.values().stream().map(x -> x.getInitialComponentState()).collect(Collectors.toList()));
   }
 
-  public static class Builder implements com.hzyi.jplab.util.Builder<Builder> {
+  public static class Builder implements com.hzyi.jplab.core.util.Builder<Builder> {
     
     private String name;
     private final Map<String, Component> components = new HashMap<>();

@@ -1,4 +1,4 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
 import java.util.Map;
 import java.util.HashMap;

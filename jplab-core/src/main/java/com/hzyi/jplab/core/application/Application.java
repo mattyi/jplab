@@ -17,6 +17,6 @@ public interface Application extends Buildable {
 
   Controller getController();
 
-  Visualizer getVisualizer();
+  void start();
 
 }

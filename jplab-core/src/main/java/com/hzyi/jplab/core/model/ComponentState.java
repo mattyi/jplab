@@ -1,8 +1,8 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
 import com.google.common.base.Preconditions;
 
-import com.hzyi.jplab.util.Buildable;
+import com.hzyi.jplab.core.util.Buildable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class ComponentState implements Buildable {
   }
 
   public static final class Builder implements 
-      com.hzyi.jplab.util.Builder<Builder> {
+      com.hzyi.jplab.core.util.Builder<Builder> {
 
     private Component component;
     private final Map<Field, Double> fields = new HashMap();
@@ -57,7 +57,7 @@ public class ComponentState implements Buildable {
     }
 
     @Override
-    public Builder mergeFrom(com.hzyi.jplab.util.Builder<Builder> builder) {
+    public Builder mergeFrom(Builder builder) {
       throw new UnsupportedOperationException("Not implemented: mergeFrom()");
     }
 

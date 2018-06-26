@@ -1,8 +1,8 @@
-package com.hzyi.jplab.model.assembly;
+package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.model.component.ComponentState;
-import com.hzyi.jplab.model.component.Field;
-import com.hzyi.jplab.util.Buildable;
+import com.hzyi.jplab.core.model.ComponentState;
+import com.hzyi.jplab.core.model.Field;
+import com.hzyi.jplab.core.util.Buildable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class AssemblyState implements Buildable {
     return new Builder();
   }
 
-  public static class Builder implements com.hzyi.jplab.util.Builder<Builder> {
+  public static class Builder implements com.hzyi.jplab.core.util.Builder<Builder> {
     
     private Map<String, ComponentState> componentStates = new HashMap<>();
     private Assembly assembly;

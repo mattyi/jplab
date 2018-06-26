@@ -1,6 +1,6 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.util.Buildable;
+import com.hzyi.jplab.core.util.Buildable;
 
 public class Component implements Buildable {
 
@@ -26,7 +26,7 @@ public class Component implements Buildable {
   }
 
   public static abstract class Builder<T extends Builder<T>> 
-      implements com.hzyi.jplab.util.Builder<T> {
+      implements com.hzyi.jplab.core.util.Builder<T> {
     
     private String name;
 
