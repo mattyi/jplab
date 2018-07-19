@@ -3,10 +3,10 @@ package com.hzyi.jplab.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParameterImpl<E> implements Parameter<E> {
+class ParameterImpl<E> implements Parameter<E> {
 
-  private final List<Observer<E>> observers;
-  private E value;
+  protected final List<Observer<E>> observers;
+  protected E value;
   private final String name;
 
   ParameterImpl(E initValue, String name) {
