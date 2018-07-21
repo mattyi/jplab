@@ -1,4 +1,4 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
 import static com.google.common.truth.Truth.assertThat;
 import org.junit.runner.RunWith;
@@ -24,12 +24,12 @@ public class CircMassPointTest {
             .build();
     ComponentState componentState = circMassPoint.getInitialComponentState();
     assertThat(componentState.getComponent()).isSameAs(circMassPoint);
-    assertThat(componentState.get(StaticComponent.LOC_X())).isEqualTo(0.1);
-    assertThat(componentState.get(StaticComponent.LOC_Y())).isEqualTo(0.2);
-    assertThat(componentState.get(StaticComponent.DIR_X())).isEqualTo(0.3);
-    assertThat(componentState.get(StaticComponent.DIR_Y())).isEqualTo(0.4);
-    assertThat(componentState.get(DynamicComponent.V_X())).isEqualTo(0.5);
-    assertThat(componentState.get(DynamicComponent.V_Y())).isEqualTo(0.6);
+    assertThat(componentState.get(Field.LOCX)).isEqualTo(0.1);
+    assertThat(componentState.get(Field.LOCY)).isEqualTo(0.2);
+    assertThat(componentState.get(Field.DIRX)).isEqualTo(0.3);
+    assertThat(componentState.get(Field.DIRY)).isEqualTo(0.4);
+    assertThat(componentState.get(Field.VX)).isEqualTo(0.5);
+    assertThat(componentState.get(Field.VY)).isEqualTo(0.6);
     assertThat(circMassPoint.getMass()).isEqualTo(0.7);
     assertThat(circMassPoint.getMomentOfInertia()).isEqualTo(0.8);
     assertThat(circMassPoint.getRadius()).isEqualTo(0.9);

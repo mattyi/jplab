@@ -1,10 +1,10 @@
-package com.hzyi.jplab.model.assembly;
+package com.hzyi.jplab.core.model;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.hzyi.jplab.model.component.Component;
-import com.hzyi.jplab.model.component.CircMassPoint;
-import com.hzyi.jplab.model.component.DynamicComponent;
+import com.hzyi.jplab.core.model.Component;
+import com.hzyi.jplab.core.model.CircMassPoint;
+import com.hzyi.jplab.core.model.DynamicComponent;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.After;
@@ -56,8 +56,8 @@ public class AssemblyTest {
   @Test
   public void testBuilder() {
     AssemblyState initState = assembly.getInitialAssemblyState();
-    assertThat(initState.get("circMassPoint1", DynamicComponent.V_X())).isEqualTo(0.5);
-    assertThat(initState.get("circMassPoint2", DynamicComponent.V_X())).isEqualTo(1.5);
+    assertThat(initState.get("circMassPoint1", Field.VX)).isEqualTo(0.5);
+    assertThat(initState.get("circMassPoint2", Field.VY)).isEqualTo(1.6);
     assertThat(assembly.getComponent("circMassPoint1")).isSameAs(circMassPoint1);
   }
 

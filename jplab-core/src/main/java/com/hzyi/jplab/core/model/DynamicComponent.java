@@ -1,22 +1,6 @@
 package com.hzyi.jplab.core.model;
 
 public class DynamicComponent extends StaticComponent {
-     
-  private static final Field V_X = Field.addField("vx");
-  private static final Field V_Y = Field.addField("vy");
-  private static final Field OMEGA = Field.addField("omega");
-
-  public static Field V_X() {
-    return V_X;
-  }
-
-  public static Field V_Y() {
-    return V_Y;
-  }
-
-  public static Field OMEGA() {
-    return OMEGA;
-  }
 
   DynamicComponent(Builder<?> builder) {
     super(builder);
@@ -26,9 +10,9 @@ public class DynamicComponent extends StaticComponent {
   protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
     ComponentState.Builder superBuilder = super.newComponentStateBuilder(builder);
     return superBuilder
-        .set(V_X, builder.vx)
-        .set(V_Y, builder.vy)
-        .set(OMEGA, builder.omega);
+        .set(Field.VX, builder.vx)
+        .set(Field.VY, builder.vy)
+        .set(Field.OMEGA, builder.omega);
   }
 
   public static class Builder<T extends Builder<T>>

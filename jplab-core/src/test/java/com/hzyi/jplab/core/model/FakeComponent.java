@@ -1,4 +1,4 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
 /** A fake {@link Component} for testing */
 class FakeComponent extends Component {

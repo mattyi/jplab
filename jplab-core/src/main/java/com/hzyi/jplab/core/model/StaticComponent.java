@@ -2,28 +2,6 @@ package com.hzyi.jplab.core.model;
 
 class StaticComponent extends Component {
      
-  private static final Field LOC_X = Field.addField("locx");
-  private static final Field LOC_Y = Field.addField("locy");
-  private static final Field DIR_X = Field.addField("dirx");
-  private static final Field DIR_Y = Field.addField("diry");
-  
-  static Field LOC_X() {
-    return LOC_X;
-  }
-
-  static Field LOC_Y() {
-    return LOC_Y;
-  }
-
-  static Field DIR_X() {
-    return DIR_X;
-  }
-
-  static Field DIR_Y() {
-    return DIR_Y;
-  }
-
-
   StaticComponent(Builder<?> builder) {
     super(builder);
     this.initState = newComponentStateBuilder(builder).build();
@@ -35,10 +13,10 @@ class StaticComponent extends Component {
 
   protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
     return super.newComponentStateBuilder(builder)
-        .set(LOC_X, builder.x)
-        .set(LOC_Y, builder.y)
-        .set(DIR_X, builder.dx)
-        .set(DIR_Y, builder.dy);
+        .set(Field.LOCX, builder.x)
+        .set(Field.LOCY, builder.y)
+        .set(Field.DIRX, builder.dx)
+        .set(Field.DIRY, builder.dy);
   }
 
   public static class Builder<T extends Builder<T>>

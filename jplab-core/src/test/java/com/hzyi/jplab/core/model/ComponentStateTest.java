@@ -1,4 +1,4 @@
-package com.hzyi.jplab.model.component;
+package com.hzyi.jplab.core.model;
 
 import static com.google.common.truth.Truth.assertThat;
 import org.junit.runner.RunWith;
@@ -17,8 +17,8 @@ public class ComponentStateTest {
 
   @Before
   public void setUp() {
-    field1 = Field.addField("field1");
-    field2 = Field.addField("field2");
+    field1 = Field.add("field1");
+    field2 = Field.add("field2");
     component = FakeComponent.newBuilder().setName("component").build();
   }
 
