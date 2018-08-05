@@ -30,6 +30,10 @@ public class Assembly implements Buildable {
     return component;
   }
 
+  public void updateComponent(String name, Component component) {
+    
+  }
+
   public AssemblyState getInitialAssemblyState() {
     return this.initState;
   }

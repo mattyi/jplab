@@ -1,4 +1,4 @@
-package com.hzyi.jplab.controller;
+package com.hzyi.jplab.core.controller;
 
 /** 
  * A {@code Parameter} whose value can only be between min and max and
@@ -30,6 +30,22 @@ public class IntervalDoubleParameter extends ParameterImpl<Double> {
     }
     value = round(value, min, max, numIntervals);
     super.setValue(value);
+  }
+
+  public double getMin() {
+    return min;
+  }
+
+  public double getMax() {
+    return max;
+  }
+
+  public double getInterval() {
+    return (max - min) / numIntervals;
+  }
+
+  public int getNumInterVals() {
+    return numIntervals;
   }
 
   private static double round(double value, double min, double max, double numIntervals) {

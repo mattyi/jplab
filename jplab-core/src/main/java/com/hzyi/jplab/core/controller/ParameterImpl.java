@@ -1,4 +1,4 @@
-package com.hzyi.jplab.controller;
+package com.hzyi.jplab.core.controller;
 
 import java.util.ArrayList;
 import java.util.List;

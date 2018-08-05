@@ -1,9 +1,9 @@
 package com.hzyi.jplab.dum;
 
-import com.hzyi.jplab.model.assembly.Assembly;
-import com.hzyi.jplab.solver.Solver;
-import com.hzyi.jplab.controller.Controller;
-import com.hzyi.jplab.application.BaseApplication;
+import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.controller.Controller;
+import com.hzyi.jplab.core.application.BaseApplication;
 
 public class DumApplication extends BaseApplication {
 

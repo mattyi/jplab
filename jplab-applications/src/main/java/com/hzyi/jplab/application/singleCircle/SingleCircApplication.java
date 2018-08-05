@@ -1,12 +1,13 @@
 package com.hzyi.jplab.dum;
 
-import com.hzyi.jplab.application.BaseApplication;
-import com.hzyi.jplab.controller.Controller;
-import com.hzyi.jplab.controller.Parameter;
-import com.hzyi.jplab.controller.Observer;
-import com.hzyi.jplab.model.assembly.Assembly;
-import com.hzyi.jplab.model.component.CircMassPoint;
-import com.hzyi.jplab.solver.Solver;
+import com.hzyi.jplab.core.application.BaseApplication;
+import com.hzyi.jplab.core.controller.Controller;
+import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
+import com.hzyi.jplab.core.controller.Parameter;
+import com.hzyi.jplab.core.controller.Observer;
+import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.model.CircMassPoint;
+import com.hzyi.jplab.core.solver.Solver;
 
 public class SingleCircApplication extends BaseApplication {
 
@@ -44,7 +45,7 @@ public class SingleCircApplication extends BaseApplication {
 
   protected Controller initializeController() {
     Controller controller = Controller.newController();
-    Parameter<Double> circRadiusParameter = Parameter.newDoubleParameter(0.2, "circ radius");
+    Parameter<Double> circRadiusParameter = new IntervalDoubleParameter(0.2, "circ radius", 0.1, 1, 9);
     circRadiusParameter.addObserver(new Observer<Double>(){
       @Override
       public void update(Double v) {
@@ -52,6 +53,14 @@ public class SingleCircApplication extends BaseApplication {
       }
     });
     controller.addParameter(circRadiusParameter);
+    Parameter<Double> circMassParameter = new IntervalDoubleParameter(1.0, "circ mass", 1.0, 10, 9);
+    circMassParameter.addObserver(new Observer<Double>() {
+      @Override
+      public void update(Double v) {
+        // assembly.getComponent("circ").setMass(); // add setMass
+      }
+    });
+    controller.addParameter(circMassParameter);
     return controller;
   }
 }

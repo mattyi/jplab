@@ -19,6 +19,8 @@ public final class CircMassPoint extends MassPoint {
     return this.radius;
   }
 
+  
+
   public static final class Builder
       extends MassPoint.Builder<Builder> {
     

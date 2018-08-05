@@ -1,4 +1,4 @@
-package com.hzyi.jplab.controller;
+package com.hzyi.jplab.core.controller;
 
 import static com.google.common.truth.Truth.assertThat;
 import org.junit.runner.RunWith;

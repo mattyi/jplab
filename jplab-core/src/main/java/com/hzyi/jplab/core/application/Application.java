@@ -1,6 +1,6 @@
-package com.hzyi.jplab.application;
+package com.hzyi.jplab.core.application;
 
-import com.hzyi.jplab.util.Buildable;
+import com.hzyi.jplab.core.util.Buildable;
 
 public interface Application extends Buildable {
 
