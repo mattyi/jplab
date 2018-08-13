@@ -9,4 +9,25 @@ public class Coordinate {
     this.y = y;
   }
 
+  public double x() {
+    return x;
+  }
+
+  public double y() {
+    return y;
+  }
+
+  public Coordinate x(double x) {
+    this.x = x;
+    return this;
+  }
+
+  public Coordinate y(double y) {
+    this.y = y;
+    return this;
+  }
+
+  public double dot(Coordinate c2) {
+  	return x * c2.x + y * c2.y;
+  }
 }
