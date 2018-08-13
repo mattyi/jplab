@@ -9,7 +9,4 @@ public class Coordinate {
     this.y = y;
   }
 
-  
-
-
 }

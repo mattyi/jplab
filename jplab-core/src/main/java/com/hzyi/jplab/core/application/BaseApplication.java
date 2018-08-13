@@ -106,4 +106,10 @@ public abstract class BaseApplication extends javafx.application.Application {
     controllerPane.setContent(container);
     return controllerPane;
   }
+
+  private Pane initializePlayPane() {
+    Button playButton = new Button("play");
+    Button stopButton = new Button("stop");
+    
+  }
 }
