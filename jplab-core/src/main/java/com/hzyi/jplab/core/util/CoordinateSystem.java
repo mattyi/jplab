@@ -27,11 +27,23 @@ public class CoordinateSystem {
     this.uy = new Coordinate(uyx, uyy);
   }
 
+  Coordinate ux() {
+    return ux;
+  }
+
+  Coordinate uy() {
+    return uy;
+  }
+
+  Coordinate origin() {
+    return origin;
+  }
+
   public static CoordinateSystem natural() {
     return NATURAL;
   }
 
-  public static CoordinateSystem screen(int width, int height) {
+  public static CoordinateSystem screen(double width, double height) {
     SCREEN.origin.x(-width / 2).y(height / 2);
     return SCREEN;
   }

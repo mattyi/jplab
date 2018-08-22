@@ -2,7 +2,6 @@ package com.hzyi.jplab.core.viewer;
 
 import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.ComponentState;
-import com.hzyi.jplab.core.viewer.DisplayContext;
 
 public interface Painter {
 

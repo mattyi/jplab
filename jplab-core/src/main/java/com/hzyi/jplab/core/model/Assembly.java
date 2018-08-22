@@ -2,6 +2,7 @@ package com.hzyi.jplab.core.model;
 
 import com.hzyi.jplab.core.util.Buildable;
 import java.util.Collection;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,6 +29,11 @@ public class Assembly implements Buildable {
       throw new IllegalArgumentException("Component with name " + name + " does not exist.");
     }
     return component;
+  }
+
+  public List<Component> getComponents() {
+    // return components.
+    return null;
   }
 
   public void updateComponent(String name, Component component) {

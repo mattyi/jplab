@@ -24,7 +24,7 @@ public class AssemblyState implements Buildable {
   }
 
   public ComponentState get(String componentName) {
-    return Preconditions.checkArgument(
+    return Preconditions.checkNotNull(
         componentStates.get(componentName),
         "Component with name %s does not exist.",
         componentName);

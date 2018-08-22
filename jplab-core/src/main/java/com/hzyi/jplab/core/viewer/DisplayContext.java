@@ -1,26 +1,29 @@
 package com.hzyi.jplab.core.viewer;
 
+import com.google.auto.value.AutoValue;
+
+
 @AutoValue
-public abstract class DisplayContext implements Buildable {
+public abstract class DisplayContext {
 
   public static enum Color {
-    red, blue, yellow, green, black, white
+    red, blue, yellow, green, black, white, gray
   }
 
   public static enum Style {
     fill, stroke
   }
 
-  public abstract Color getColor();
+  public abstract Color color();
   
-  public abstract Style getStyle();
+  public abstract Style style();
 
-  public newBuilder() {
-
+  public Builder newBuilder() {
+    return new AutoValue_DisplayContext.Builder();
   }
 
   @AutoValue.Builder
-  public static class Builder {
+  public abstract static class Builder {
 
     public abstract Builder setColor(Color color);
 

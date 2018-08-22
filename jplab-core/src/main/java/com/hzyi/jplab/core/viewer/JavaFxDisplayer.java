@@ -1,7 +1,6 @@
 package com.hzyi.jplab.core.viewer;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.hzyi.jplab.core.util.Coordinates.transformInPlace;
 import static com.hzyi.jplab.core.util.CoordinateSystem.natural;
 
 import com.hzyi.jplab.core.model.Assembly;
@@ -10,6 +9,7 @@ import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.CoordinateSystem;
+import java.util.function.BiFunction;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -25,10 +25,6 @@ public class JavaFxDisplayer implements Displayer {
     return INSTANCE;
   }
 
-  public JavaFxpainter newPainter(BiFunction<Component, ComponentState, double[]> infoExtractor) {
-    return new JavaFxPainter(this, infoExtractor);
-  }
-
   public Canvas getCanvas() {
     return CANVAS;
   }
@@ -38,12 +34,12 @@ public class JavaFxDisplayer implements Displayer {
   }
 
   public CoordinateSystem getCanvasCoordinateSystem() {
-    return CoordinateSystem.screen(canvas.getWidth(), canvas.getHeight());
+    return CoordinateSystem.screen(CANVAS.getWidth(), CANVAS.getHeight());
   }
 
   @Override
   public void display(Assembly assembly, AssemblyState state, DisplayContext context) {
-    for (Component component : assembly.getComponent()) {
+    for (Component component : assembly.getComponents()) {
       String componentName = component.getName();
       ComponentState componentState = state.get(componentName);
       component.getPainter().paint(component, componentState, component.getDisplayContext());

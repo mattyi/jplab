@@ -6,16 +6,16 @@ import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.solver.Solver;
-import com.hzyi.jplab.core.view.Displayer;
-import com.hzyi.jplab.core.view.JavaFxDisplayer;
-
+import com.hzyi.jplab.core.viewer.Displayer;
+import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import javafx.scene.Canvas;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.FlowPane;
@@ -104,6 +104,6 @@ public abstract class BaseApplication extends javafx.application.Application {
   private Pane initializePlayPane() {
     Button playButton = new Button("play");
     Button stopButton = new Button("stop");
-    
+    return null;
   }
 }

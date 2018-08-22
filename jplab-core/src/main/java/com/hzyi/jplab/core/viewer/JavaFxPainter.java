@@ -3,8 +3,9 @@ package com.hzyi.jplab.core.viewer;
 import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.viewer.DisplayContext;
-
-import java.util.function;
+import java.util.function.BiFunction;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 public abstract class JavaFxPainter implements Painter {
 
@@ -24,14 +25,14 @@ public abstract class JavaFxPainter implements Painter {
     return this.displayer;
   }
   
-  private void paint(double... info, DisplayContext context) {
-    paint(getCanvas().getGraphicsContext2D(), info, context);
+  private void paint(DisplayContext context, double... info) {
+    paint(getCanvas().getGraphicsContext2D(), context, info);
   }
 
-  protected abstract void paint(GraphicsContext2D graphicsContext, double... info, DisplayContext context);
+  protected abstract void paint(GraphicsContext graphicsContext, DisplayContext context, double... info);
 
   public void paint(Component component, ComponentState state, DisplayContext context) {
-    paint(infoExtractor.apply(component, state), context);
+    paint(context, infoExtractor.apply(component, state));
   }
   
 }
