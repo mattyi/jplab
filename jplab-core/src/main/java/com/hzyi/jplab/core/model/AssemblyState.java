@@ -1,5 +1,7 @@
 package com.hzyi.jplab.core.model;
 
+import com.google.common.base.Preconditions;
+
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.model.Field;
 import com.hzyi.jplab.core.util.Buildable;
@@ -19,6 +21,13 @@ public class AssemblyState implements Buildable {
 
   public Assembly getAssembly() {
     return this.assembly;
+  }
+
+  public ComponentState get(String componentName) {
+    return Preconditions.checkArgument(
+        componentStates.get(componentName),
+        "Component with name %s does not exist.",
+        componentName);
   }
 
   public double get(String componentName, Field field) {

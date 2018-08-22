@@ -32,6 +32,15 @@ public class Coordinates {
     return new Coordinate(ctx, cty);
   }
 
+  public void transformInPlace(Coordinate coordinate, CoordinateSystem from, CoordinateSystem to) {
+    double cnx = coordinate.x() * from.ux().x() + from.origin().x();
+    double cny = coordinate.y() * from.uy().y() + from.origin().y();
+    double ctx = (cnx * to.uy().y() - cny * to.uy().x()) / (to.ux().x() * to.uy().y() - to.ux().y() * to.uy().x()) - to.origin().x();
+    double cty = (cnx * to.ux().y() - cny * to.ux().x()) / (to.uy().x() * to.ux().y() - to.uy().y() * to.ux().x()) - to.origin().y();
+    coordinate.x(ctx);
+    coordinate.y(cty);
+  }
+
   private static final boolean areEqual(double v1, double v2, double epsilon) {
     return v1 > v2 ? v1 - v2 <= epsilon : v2 - v1 <= epsilon;
   }

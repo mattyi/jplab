@@ -8,6 +8,8 @@ import com.hzyi.jplab.core.controller.Observer;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.CircMassPoint;
 import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.view.Displayer;
+import com.hzyi.jplab.core.view.JavaFxDisplayer;
 
 public class SingleCircApplication extends BaseApplication {
 
@@ -62,5 +64,9 @@ public class SingleCircApplication extends BaseApplication {
     });
     controller.addParameter(circMassParameter);
     return controller;
+  }
+
+  protected Displayer initializeDisplayer() {
+    return JavaFxDisplayer.getInstance();
   }
 }

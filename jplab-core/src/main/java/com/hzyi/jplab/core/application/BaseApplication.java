@@ -6,6 +6,8 @@ import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.view.Displayer;
+import com.hzyi.jplab.core.view.JavaFxDisplayer;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -13,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.Canvas;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.FlowPane;
@@ -28,6 +31,7 @@ public abstract class BaseApplication extends javafx.application.Application {
   private Assembly assembly;
   private Solver solver;
   private Controller controller;
+  private JavaFxDisplayer displayer;
 
   public static void main(String[] args) {
   	launch(args);
@@ -40,7 +44,8 @@ public abstract class BaseApplication extends javafx.application.Application {
     this.assembly = initializeAssembly();
     this.solver = initializeSolver();
     this.controller = initializeController();
-  	initializePrimaryStage();
+  	this.displayer = (JavaFxDisplayer)initializeDisplayer();
+    initializePrimaryStage();
     primaryStage.show();
   }
 
@@ -49,6 +54,8 @@ public abstract class BaseApplication extends javafx.application.Application {
   protected abstract Assembly initializeAssembly();
 
   protected abstract Solver initializeSolver();
+
+  protected abstract Displayer initializeDisplayer();
 
   protected abstract Controller initializeController();
 
@@ -70,11 +77,9 @@ public abstract class BaseApplication extends javafx.application.Application {
     grid.getRowConstraints().add(row2);
     grid.getRowConstraints().add(row3);
     Text applicationNameText = new Text(applicationName);
-    Pane canvas = new Pane();
-    canvas.setStyle("-fx-background-color: black;");
     ScrollPane controllerPane = initializeControllerPane();
     grid.add(applicationNameText, 0, 0);
-    grid.add(canvas, 0, 1, 1, 2);
+    grid.add(displayer.getCanvas(), 0, 1, 1, 2);
     grid.add(controllerPane, 1, 0, 1, 2);
     grid.add(new Text("text"), 1, 2, 1, 1);
     Scene scene = new Scene(grid, 800, 800);
@@ -85,16 +90,6 @@ public abstract class BaseApplication extends javafx.application.Application {
     ScrollPane controllerPane = new ScrollPane();
     ParameterPaneProvider provider = new ParameterPaneProvider();
     FlowPane container = new FlowPane();
-    // Slider slider = new Slider();
-    // slider.setMin(0);
-    // slider.setMax(100);
-    // slider.setValue(40);
-    // slider.setShowTickLabels(true);
-    // slider.setShowTickMarks(true);
-    // slider.setMajorTickUnit(50);
-    // slider.setMinorTickCount(5);
-    // slider.setBlockIncrement(10);
-    // container.getChildren().add(provider.createParameterPane());
     for (Parameter parameter : this.controller.getParameters()) {
       if (parameter instanceof IntervalDoubleParameter) {
         IntervalDoubleParameter p = (IntervalDoubleParameter)parameter;
@@ -102,7 +97,6 @@ public abstract class BaseApplication extends javafx.application.Application {
         container.getChildren().add(provider.createParameterPane());
       }
     }
-    System.out.println(container.getChildren().size());
     controllerPane.setContent(container);
     return controllerPane;
   }

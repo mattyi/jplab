@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class CoordinateSystem {
 
   private static final CoordinateSystem NATURAL = new CoordinateSystem(0, 0, 1, 0, 0, 1);
+  private static final CoordinateSystem SCREEN = new CoordinateSystem(0, 0, 1, 0, 0, -1);
 
   // the unit vector of x and y axes if in natural coordinate system
   private Coordinate ux;
@@ -24,5 +25,14 @@ public class CoordinateSystem {
     this.origin = new Coordinate(ox, oy);
     this.ux = new Coordinate(uxx, uxy);
     this.uy = new Coordinate(uyx, uyy);
+  }
+
+  public static CoordinateSystem natural() {
+    return NATURAL;
+  }
+
+  public static CoordinateSystem screen(int width, int height) {
+    SCREEN.origin.x(-width / 2).y(height / 2);
+    return SCREEN;
   }
 }
