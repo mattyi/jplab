@@ -12,7 +12,7 @@ public abstract class JavaFxPainter implements Painter {
   private final BiFunction<Component, ComponentState, double[]> infoExtractor;
   private final JavaFxDisplayer displayer;
 
-  public JavaFxPainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> infoExtractor) {
+  JavaFxPainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> infoExtractor) {
     this.displayer = displayer;
     this.infoExtractor = infoExtractor;
   }

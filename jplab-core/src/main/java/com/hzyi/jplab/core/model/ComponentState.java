@@ -6,6 +6,7 @@ import com.hzyi.jplab.core.util.Buildable;
 import java.util.HashMap;
 import java.util.Map;
 
+/** The dynamic state of a {@code Component} */
 public class ComponentState implements Buildable {
 
   private final Component component;
@@ -54,11 +55,6 @@ public class ComponentState implements Buildable {
     public Builder set(Field field, double value) {
       fields.put(field, value);
       return this;
-    }
-
-    @Override
-    public Builder mergeFrom(Builder builder) {
-      throw new UnsupportedOperationException("Not implemented: mergeFrom()");
     }
 
     @Override

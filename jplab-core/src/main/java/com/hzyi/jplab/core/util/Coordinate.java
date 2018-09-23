@@ -1,5 +1,6 @@
 package com.hzyi.jplab.core.util;
 
+/** A two dimensional coordinate. */
 public class Coordinate {
 
   private double x, y;
@@ -29,5 +30,10 @@ public class Coordinate {
 
   public double dot(Coordinate c2) {
   	return x * c2.x + y * c2.y;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("[%f, %f]", x, y);
   }
 }

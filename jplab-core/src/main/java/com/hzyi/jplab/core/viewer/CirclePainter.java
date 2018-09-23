@@ -3,6 +3,9 @@ package com.hzyi.jplab.core.viewer;
 import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.viewer.DisplayContext;
+import com.hzyi.jplab.core.util.Coordinate;
+import com.hzyi.jplab.core.util.Coordinates;
+import com.hzyi.jplab.core.util.CoordinateSystem;
 import javafx.scene.canvas.GraphicsContext;
 import java.util.function.BiFunction;
 
@@ -21,10 +24,19 @@ public class CirclePainter extends JavaFxPainter {
    * [2]: radius
    */
   @Override
-  public void paint(GraphicsContext graphicsContext, DisplayContext context, double... info) {
+  protected void paint(GraphicsContext graphicsContext, DisplayContext context, double... info) {
     DisplayUtil.graphicsContextColorAndStyle(graphicsContext, context);
-    double upperLeftX = info[0] - info[2];
-    double upperLeftY = info[1] - info[2];
+    Coordinate origin = new Coordinate(info[0], info[1]);
+    Coordinate to = origin;
+    Coordinates.transform(
+        origin,
+        to,
+        CoordinateSystem.natural(1),
+        CoordinateSystem.screen(
+            getDisplayer().getCanvas().getWidth(), 
+            getDisplayer().getCanvas().getHeight())); 
+    double upperLeftX = origin.x() - info[2];
+    double upperLeftY = origin.y() - info[2];
     double w = 2 * info[2];
     double h = 2 * info[2];
     switch (context.style()) {

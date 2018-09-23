@@ -3,16 +3,38 @@ package com.hzyi.jplab.core.util;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class CoordinateSystem {
+  /**
+   * implicitly the absolute coordinate system.
+   * x positive direction: right
+   * y positive direction: up
+   * unit length: 1 pixel on screen
+   * origin: center of the canvas
+   *
+   */
 
+  /**
+   * The natural coordinate system. 
+   * x: (ratio, 0)
+   * y: (0, ratio)
+   * origin: Fixed at (0, 0)
+   * 
+   */
   private static final CoordinateSystem NATURAL = new CoordinateSystem(0, 0, 1, 0, 0, 1);
+
+  /*
+   * The screen coordinate system.
+   * x: (1, 0) fixed
+   * y: (0, 1) fixed
+   * origin: the top-left corner of the canvas
+   *
+   */
   private static final CoordinateSystem SCREEN = new CoordinateSystem(0, 0, 1, 0, 0, -1);
 
-  // the unit vector of x and y axes if in natural coordinate system
   private Coordinate ux;
   private Coordinate uy;
   private Coordinate origin;
 
-  private CoordinateSystem(Coordinate origin, Coordinate ux, Coordinate uy) {
+  public CoordinateSystem(Coordinate origin, Coordinate ux, Coordinate uy) {
     this.origin = origin;
     this.ux = ux;
     this.uy = uy;
@@ -21,25 +43,40 @@ public class CoordinateSystem {
         "Non-orthogonal coordinate systems are currently not supported");
   }
 
-  private CoordinateSystem(double ox, double oy, double uxx, double uxy, double uyx, double uyy) {
+  public CoordinateSystem(double ox, double oy, double uxx, double uxy, double uyx, double uyy) {
     this.origin = new Coordinate(ox, oy);
     this.ux = new Coordinate(uxx, uxy);
     this.uy = new Coordinate(uyx, uyy);
+    checkArgument(
+        Coordinates.areOrthogonal(ux, uy),
+        "Non-orthogonal coordinate systems are currently not supported");
   }
 
-  Coordinate ux() {
+  public Coordinate ux() {
     return ux;
   }
 
-  Coordinate uy() {
+  public Coordinate uy() {
     return uy;
   }
 
-  Coordinate origin() {
+  public CoordinateSystem ux(double x, double y) {
+    ux().x(x).y(y);
+    return this;
+  }
+
+  public CoordinateSystem uy(double x, double y) {
+    uy().x(x).y(y);
+    return this;
+  }
+
+  public Coordinate origin() {
     return origin;
   }
 
-  public static CoordinateSystem natural() {
+  public static CoordinateSystem natural(double ratio) {
+    NATURAL.ux().x(ratio);
+    NATURAL.uy().y(ratio);
     return NATURAL;
   }
 

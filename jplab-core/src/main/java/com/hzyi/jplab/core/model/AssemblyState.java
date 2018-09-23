@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/** The dynamic state of an {@code Assembly}. */
 public class AssemblyState implements Buildable {
 
   private final Map<String, ComponentState> componentStates;
@@ -19,10 +20,19 @@ public class AssemblyState implements Buildable {
     this.assembly = builder.assembly;
   }
 
+  /**
+   * @returns the {@code Assembly} this {@code AssemblyState} is describing.
+   *
+   */
   public Assembly getAssembly() {
     return this.assembly;
   }
 
+  /**
+   * @returns the {@code ComponentState} based on the name of a {@code component}.
+   * @throws NullPointerException if the {@code Component} does not exist.
+   *
+   */
   public ComponentState get(String componentName) {
     return Preconditions.checkNotNull(
         componentStates.get(componentName),
@@ -30,6 +40,11 @@ public class AssemblyState implements Buildable {
         componentName);
   }
 
+  /**
+   * @returns the state value based on the name of a {@code Component} and the {@code Field}.
+   * @throws NullPointerException if the {@code Component} or the {@code Field} does not exist.
+   *
+   */
   public double get(String componentName, Field field) {
     ComponentState componentState = componentStates.get(componentName);
     if (componentState == null) {
@@ -38,12 +53,24 @@ public class AssemblyState implements Buildable {
     return componentState.get(field);
   }
 
+  /**
+   * Updates the value of a {@code Field} of a {@code Component}.
+   *
+   */
   public void set(String componentName, Field field, double value) {
     ComponentState componentState = componentStates.get(componentName);
     if (componentState == null) {
       throw new IllegalArgumentException("Component with name " + componentName + " does not exist.");
     }
     componentState.set(field, value);
+  }
+
+  /**
+   * @returns a collection of {@code ComponentState}.
+   *
+   */
+  public Iterable<ComponentState> getComponentStates() {
+    return componentStates.values();
   }
 
   public static Builder newBuilder() {
@@ -73,11 +100,6 @@ public class AssemblyState implements Buildable {
     public Builder setAssembly(Assembly assembly) {
       this.assembly = assembly;
       return this;
-    }
-
-    @Override
-    public Builder mergeFrom(Builder builder) {
-      throw new UnsupportedOperationException("Not implemented: mergeFrom()");
     }
 
     @Override

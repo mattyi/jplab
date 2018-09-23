@@ -64,20 +64,9 @@ public class Component implements Buildable {
       return (T)this;
     }
 
-    @SuppressWarnings("Unchecked")
-    @Override
-    public T mergeFrom(T builder) {
-      if (builder instanceof Builder<?>) {
-        Builder<T> b = (Builder<T>)builder;
-        this.name = b.name;
-        return (T)this;
-      }
-      throw new IllegalArgumentException("builder must be instance of Component.Builder");
-    }
-
     @Override
     public Component build() {
-      throw new UnsupportedOperationException("build() is not supported Component");
+      throw new UnsupportedOperationException("build() is not supported for Component");
     }
   }
   
