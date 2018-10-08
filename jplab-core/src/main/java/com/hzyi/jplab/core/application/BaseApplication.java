@@ -1,6 +1,7 @@
 package com.hzyi.jplab.core.application;
 
-import com.hzyi.jplab.core.application.ui.ParameterPaneProvider;
+import com.hzyi.jplab.core.application.ui.ParameterPaneFactory;
+import com.hzyi.jplab.core.application.ui.ControllerPaneFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Parameter;
@@ -87,18 +88,7 @@ public abstract class BaseApplication extends javafx.application.Application {
   }
 
   private ScrollPane initializeControllerPane() {
-    ScrollPane controllerPane = new ScrollPane();
-    ParameterPaneProvider provider = new ParameterPaneProvider();
-    FlowPane container = new FlowPane();
-    for (Parameter parameter : this.controller.getParameters()) {
-      if (parameter instanceof IntervalDoubleParameter) {
-        IntervalDoubleParameter p = (IntervalDoubleParameter)parameter;
-        provider.setParameter(p);
-        container.getChildren().add(provider.createParameterPane());
-      }
-    }
-    controllerPane.setContent(container);
-    return controllerPane;
+    return ControllerPaneFactory.newControllerPane(controller);
   }
 
   private Pane initializePlayPane() {

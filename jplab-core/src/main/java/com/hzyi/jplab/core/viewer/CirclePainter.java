@@ -31,10 +31,8 @@ public class CirclePainter extends JavaFxPainter {
     Coordinates.transform(
         origin,
         to,
-        CoordinateSystem.natural(1),
-        CoordinateSystem.screen(
-            getDisplayer().getCanvas().getWidth(), 
-            getDisplayer().getCanvas().getHeight())); 
+        getDisplayer().getCoordinateTransformer().natural(),
+        getDisplayer().getCoordinateTransformer().screen());
     double upperLeftX = origin.x() - info[2];
     double upperLeftY = origin.y() - info[2];
     double w = 2 * info[2];

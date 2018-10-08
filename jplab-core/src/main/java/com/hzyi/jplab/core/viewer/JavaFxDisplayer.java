@@ -14,27 +14,26 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 
-public class JavaFxDisplayer implements Displayer {
+public class JavaFxDisplayer implements Displayer, com.hzyi.jplab.core.util.Buildable {
 
-  private static final Canvas CANVAS = new Canvas();
-  private static final JavaFxDisplayer INSTANCE = new JavaFxDisplayer();
+  private final Canvas canvas;
+  private final CoordinateTransformer transformer;
 
-  private JavaFxDisplayer() {}
-
-  public static JavaFxDisplayer getInstance() {
-    return INSTANCE;
+  private JavaFxDisplayer(Builder builder) {
+    this.canvas = builder.canvas;
+    this.transformer = builder.transformer;
   }
 
   public Canvas getCanvas() {
-    return CANVAS;
+    return canvas;
   }
 
   public GraphicsContext getGraphicsContext() {
     return getCanvas().getGraphicsContext2D();
   }
 
-  public CoordinateSystem getCanvasCoordinateSystem() {
-    return CoordinateSystem.screen(CANVAS.getWidth(), CANVAS.getHeight());
+  public CoordinateTransformer getCoordinateTransformer() {
+    return transformer;
   }
 
   @Override
@@ -43,6 +42,27 @@ public class JavaFxDisplayer implements Displayer {
       String componentName = component.getName();
       ComponentState componentState = state.get(componentName);
       component.getPainter().paint(component, componentState, component.getDisplayContext());
+    }
+  }
+
+  public static class Builder implements com.hzyi.jplab.core.util.Builder<Builder> {
+    
+    private Canvas canvas;
+    private CoordinateTransformer transformer;
+
+    public Builder setCanvas(Canvas canvas) {
+      this.canvas = canvas;
+      return this;
+    }
+
+    public Builder setCoordinateTransformer(CoordinateTransformer transformer) {
+      this.transformer = transformer;
+      return this;
+    }
+
+    @Override
+    public JavaFxDisplayer build() {
+      return new JavaFxDisplayer(this);
     }
   }
 }
