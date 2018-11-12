@@ -1,22 +1,54 @@
 package com.hzyi.jplab.core.application;
 
-import com.hzyi.jplab.core.util.Buildable;
+import com.google.auto.value.AutoValue;
+import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
+import com.hzyi.jplab.core.controller.Controller;
+import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.viewer.Displayer;
 
-public interface Application extends Buildable {
+@AutoValue
+public abstract class Application {
 
-  static class Assembly{}
-  static class Solver{}
-  static class Controller{}
-  static class Visualizer{}
+  public abstract String name();
 
-  String getApplicationName();
+  public abstract Assembly assembly();
 
-  Assembly getAssembly();
+  public abstract Solver solver();
 
-  Solver getSolver();
+  public abstract Controller controller();
 
-  Controller getController();
+  public abstract Displayer displayer();
 
-  void start();
+  public void start() {
+    new UIWrapper(
+        stage -> 
+            PrimaryStageFactory
+                .initPrimaryStage(
+                    stage,
+                    name(),
+                    controller(),
+                    displayer()));
+    UIWrapper.launch();
+  }
 
+  public static Builder newBuilder() {
+    return new AutoValue_Application.Builder();
+  }
+
+  @AutoValue.Builder
+  public static abstract class Builder {
+
+    public abstract Builder name(String val);
+
+    public abstract Builder assembly(Assembly val);
+
+    public abstract Builder solver(Solver val);
+
+    public abstract Builder displayer(Displayer val);
+
+    public abstract Builder controller(Controller val);
+
+    public abstract Application build();
+  }
 }

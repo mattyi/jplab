@@ -45,6 +45,10 @@ public class JavaFxDisplayer implements Displayer, com.hzyi.jplab.core.util.Buil
     }
   }
 
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
   public static class Builder implements com.hzyi.jplab.core.util.Builder<Builder> {
     
     private Canvas canvas;
