@@ -2,18 +2,29 @@ package com.hzyi.jplab.core.application;
 
 import java.util.function.Function;
 import javafx.stage.Stage;
+import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 
-class UIWrapper extends javafx.application.Application {
+public class UIWrapper extends javafx.application.Application {
 
-  private final Function<Stage, Stage> initializer;
+  private static Application application;
 
-  UIWrapper(Function<Stage, Stage> initializer) {
-    this.initializer = initializer;
+
+  public static void setApplication(Application app) {
+    application = app;
   }
 
   @Override
   public void start(Stage primaryStage) {
-    primaryStage = initializer.apply(primaryStage);
+    primaryStage = PrimaryStageFactory
+                .initPrimaryStage(
+                    primaryStage,
+                    application.name(),
+                    application.controller(),
+                    application.displayer());
     primaryStage.show();
+  }
+
+  public static void startSimulation() {
+    launch();
   }
 }

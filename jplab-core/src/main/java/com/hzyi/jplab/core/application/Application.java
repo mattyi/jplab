@@ -20,18 +20,6 @@ public abstract class Application {
 
   public abstract Displayer displayer();
 
-  public void start() {
-    new UIWrapper(
-        stage -> 
-            PrimaryStageFactory
-                .initPrimaryStage(
-                    stage,
-                    name(),
-                    controller(),
-                    displayer()));
-    UIWrapper.launch();
-  }
-
   public static Builder newBuilder() {
     return new AutoValue_Application.Builder();
   }

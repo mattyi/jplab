@@ -1,6 +1,7 @@
 package com.hzyi.jplab.dum;
 
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.UIWrapper;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Observer;
@@ -30,7 +31,8 @@ public class SingleCircApplication {
             .controller(controller)
             .displayer(displayer)
             .build();
-    application.start();
+    UIWrapper.setApplication(application);
+    UIWrapper.startSimulation();
   }
 
   protected String initializeApplicationName() {
