@@ -1,7 +1,10 @@
 package com.hzyi.jplab.core.viewer;
 
+import com.google.common.base.Preconditions;
+import com.hzyi.jplab.core.model.CircMassPoint;
 import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.ComponentState;
+import com.hzyi.jplab.core.model.Field;
 import com.hzyi.jplab.core.viewer.DisplayContext;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
@@ -11,32 +14,33 @@ import java.util.function.BiFunction;
 
 public class CirclePainter extends JavaFxPainter {
 
-  BiFunction<Component, ComponentState, double[]> infoExtractor;
-
-  CirclePainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> infoExtractor) {
-    super(displayer, infoExtractor);
+  public CirclePainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> toPaintingParams) {
+    super(displayer, toPaintingParams);
   }
-  
-  /*
-   * @param info:
-   * [0]: origin x
-   * [1]: origin y
-   * [2]: radius
-   */
+
   @Override
-  protected void paint(GraphicsContext graphicsContext, DisplayContext context, double... info) {
+  public void paint(
+      Component component,
+      ComponentState state,
+      DisplayContext displayContext) {
+    double[] params = getPaintingParams(component, state);
+    paint(displayContext, params[0], params[1], params[2]);
+  }
+
+  private void paint(DisplayContext context, double x, double y, double r) {
+    GraphicsContext graphicsContext = getGraphicsContext();
     DisplayUtil.graphicsContextColorAndStyle(graphicsContext, context);
-    Coordinate origin = new Coordinate(info[0], info[1]);
+    Coordinate origin = new Coordinate(x, y);
     Coordinate to = origin;
     Coordinates.transform(
         origin,
         to,
         getDisplayer().getCoordinateTransformer().natural(),
         getDisplayer().getCoordinateTransformer().screen());
-    double upperLeftX = origin.x() - info[2];
-    double upperLeftY = origin.y() - info[2];
-    double w = 2 * info[2];
-    double h = 2 * info[2];
+    double upperLeftX = origin.x() - r;
+    double upperLeftY = origin.y() - r;
+    double w = 2 * r;
+    double h = 2 * r;
     switch (context.style()) {
       case stroke:
           graphicsContext.strokeOval(upperLeftX, upperLeftY, w, h);

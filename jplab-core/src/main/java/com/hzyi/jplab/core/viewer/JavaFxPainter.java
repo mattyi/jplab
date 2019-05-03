@@ -9,30 +9,29 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class JavaFxPainter implements Painter {
 
-  private final BiFunction<Component, ComponentState, double[]> infoExtractor;
+  private final BiFunction<Component, ComponentState, double[]> toPaintingParams;
   private final JavaFxDisplayer displayer;
 
-  JavaFxPainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> infoExtractor) {
+  public JavaFxPainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> toPaintingParams) {
     this.displayer = displayer;
-    this.infoExtractor = infoExtractor;
+    this.toPaintingParams = toPaintingParams;
   }
 
   protected Canvas getCanvas() {
     return this.displayer.getCanvas();
   }
 
+  protected GraphicsContext getGraphicsContext() {
+    return this.displayer.getCanvas().getGraphicsContext2D();
+  }
+
   protected JavaFxDisplayer getDisplayer() {
     return this.displayer;
   }
-  
-  private void paint(DisplayContext context, double... info) {
-    paint(getCanvas().getGraphicsContext2D(), context, info);
+
+  protected double[] getPaintingParams(Component component, ComponentState state) {
+    return toPaintingParams.apply(component, state);
   }
 
-  protected abstract void paint(GraphicsContext graphicsContext, DisplayContext context, double... info);
-
-  public void paint(Component component, ComponentState state, DisplayContext context) {
-    paint(context, infoExtractor.apply(component, state));
-  }
-  
+  public abstract void paint(Component component, ComponentState state, DisplayContext context);
 }

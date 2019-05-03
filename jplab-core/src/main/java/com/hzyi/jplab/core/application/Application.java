@@ -20,6 +20,10 @@ public abstract class Application {
 
   public abstract Displayer displayer();
 
+  public void start() {
+    displayer().display(assembly(), assembly().getInitialAssemblyState(), null);
+  }
+
   public static Builder newBuilder() {
     return new AutoValue_Application.Builder();
   }

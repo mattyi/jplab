@@ -37,6 +37,11 @@ public class JavaFxDisplayer implements Displayer, com.hzyi.jplab.core.util.Buil
   }
 
   @Override
+  public void start(int intervalMillis) {
+    
+  }
+
+  @Override
   public void display(Assembly assembly, AssemblyState state, DisplayContext context) {
     for (Component component : assembly.getComponents()) {
       String componentName = component.getName();

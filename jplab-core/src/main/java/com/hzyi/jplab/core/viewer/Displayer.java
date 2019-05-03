@@ -7,4 +7,6 @@ public interface Displayer {
 
   void display(Assembly assembly, AssemblyState state, DisplayContext context);
 
+  void start(int intervalMillis);
+
 }

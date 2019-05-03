@@ -8,7 +8,6 @@ public class UIWrapper extends javafx.application.Application {
 
   private static Application application;
 
-
   public static void setApplication(Application app) {
     application = app;
   }
@@ -21,6 +20,7 @@ public class UIWrapper extends javafx.application.Application {
                     application.name(),
                     application.controller(),
                     application.displayer());
+    application.start();
     primaryStage.show();
   }
 

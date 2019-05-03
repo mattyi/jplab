@@ -13,16 +13,17 @@ import com.hzyi.jplab.core.solver.Solver;
 import com.hzyi.jplab.core.viewer.CoordinateTransformer;
 import com.hzyi.jplab.core.viewer.Displayer;
 import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
+import com.hzyi.jplab.core.viewer.CirclePainter;
 import javafx.scene.canvas.Canvas;
 
 public class SingleCircApplication {
 
   public static void main(String[] args) {
     String name = "Single Circle Application";
-    Assembly assembly = initializeAssembly();
     Solver solver = initializeSolver();
     Controller controller = initializeController();
-    Displayer displayer = initializeDisplayer(assembly.getInitialAssemblyState());
+    JavaFxDisplayer displayer = initializeDisplayer();
+    Assembly assembly = initializeAssembly(displayer);
     Application application =
         Application.newBuilder()
             .name(name)
@@ -39,7 +40,7 @@ public class SingleCircApplication {
     return "Single Circle Application";
   }
 
-  private static Assembly initializeAssembly() {
+  private static Assembly initializeAssembly(JavaFxDisplayer displayer) {
     CircMassPoint circ =
         CircMassPoint.newBuilder()
             .setName("circ")
@@ -52,6 +53,7 @@ public class SingleCircApplication {
             .setMass(1.0)
             .setMomentOfInertia(1.0)
             .setRadius(0.2)
+            .setPainter(new CirclePainter(displayer, CircMassPoint.TO_CIRCLE_PAINTER_PARAMS))
             .build();
     Assembly assembly = Assembly.newBuilder().setName("assembly").add(circ).build();
     return assembly;
@@ -85,11 +87,11 @@ public class SingleCircApplication {
     return controller;
   }
 
-  private static Displayer initializeDisplayer(AssemblyState state) {
+  private static JavaFxDisplayer initializeDisplayer() {
     Canvas canvas = new Canvas();
     return JavaFxDisplayer.newBuilder()
         .setCanvas(canvas)
-        .setCoordinateTransformer(new CoordinateTransformer(canvas, state))
+        .setCoordinateTransformer(new CoordinateTransformer(canvas, 1.0))
         .build();
   }
 }

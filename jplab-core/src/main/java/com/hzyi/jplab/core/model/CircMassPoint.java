@@ -1,8 +1,16 @@
 package com.hzyi.jplab.core.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import java.util.function.BiFunction;
 
 public final class CircMassPoint extends MassPoint {
+
+  public static final BiFunction<Component, ComponentState, double[]> TO_CIRCLE_PAINTER_PARAMS =
+      (c, s) -> {
+        checkArgument(c instanceof CircMassPoint);
+        CircMassPoint p = (CircMassPoint)c;
+        return new double[]{s.get(Field.LOCX), s.get(Field.LOCY), p.getRadius()};
+      };
 
   private final double radius;
 
@@ -19,7 +27,6 @@ public final class CircMassPoint extends MassPoint {
     return this.radius;
   }
 
-  
 
   public static final class Builder
       extends MassPoint.Builder<Builder> {
