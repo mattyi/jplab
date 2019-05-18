@@ -74,6 +74,10 @@ public class CoordinateSystem {
     return origin;
   }
 
+  public String toString() {
+    return String.format("{o: %s, ux: %s, uy: %s}", origin(), ux(), uy());
+  }
+
   public static CoordinateSystem natural(double ratio) {
     NATURAL.ux().x(ratio);
     NATURAL.uy().y(ratio);

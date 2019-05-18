@@ -5,6 +5,8 @@ import com.hzyi.jplab.core.model.AssemblyState;
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.model.Field;
 import com.hzyi.jplab.core.util.CoordinateSystem;
+import com.hzyi.jplab.core.util.Coordinates;
+import com.hzyi.jplab.core.util.Coordinate;
 import javafx.scene.canvas.Canvas;
 
 public class CoordinateTransformer {
@@ -25,6 +27,7 @@ public class CoordinateTransformer {
           screen.origin().y(((double) newVal) / 2.0);
         });
     naturalRescaleRatio = ratio;
+    System.out.println("ratio: " + ratio);
   }
 
   public CoordinateSystem natural() {
@@ -33,5 +36,13 @@ public class CoordinateTransformer {
 
   public CoordinateSystem screen() {
     return screen;
+  }
+
+  public Coordinate toScreen(Coordinate natural) {
+    return Coordinates.transform(natural, natural(), screen());
+  }
+
+  public Coordinate toNatural(Coordinate screen) {
+    return Coordinates.transform(screen, screen(), natural());
   }
 }

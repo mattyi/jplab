@@ -1,4 +1,4 @@
-package com.hzyi.jplab.dum;
+package com.hzyi.jplab.application.singlecircle;
 
 import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.application.UIWrapper;
@@ -15,6 +15,7 @@ import com.hzyi.jplab.core.viewer.Displayer;
 import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
 import com.hzyi.jplab.core.viewer.CirclePainter;
 import javafx.scene.canvas.Canvas;
+import com.hzyi.jplab.core.viewer.DisplayContext;
 
 public class SingleCircApplication {
 
@@ -54,6 +55,7 @@ public class SingleCircApplication {
             .setMomentOfInertia(1.0)
             .setRadius(0.2)
             .setPainter(new CirclePainter(displayer, CircMassPoint.TO_CIRCLE_PAINTER_PARAMS))
+            .setDisplayContext(DisplayContext.of())
             .build();
     Assembly assembly = Assembly.newBuilder().setName("assembly").add(circ).build();
     return assembly;
@@ -88,10 +90,12 @@ public class SingleCircApplication {
   }
 
   private static JavaFxDisplayer initializeDisplayer() {
-    Canvas canvas = new Canvas();
+    Canvas canvas = new Canvas(400, 400);
+    double ratio = 100;
+    System.out.println("Setting up ratio: " + ratio);
     return JavaFxDisplayer.newBuilder()
         .setCanvas(canvas)
-        .setCoordinateTransformer(new CoordinateTransformer(canvas, 1.0))
+        .setCoordinateTransformer(new CoordinateTransformer(canvas, ratio))
         .build();
   }
 }

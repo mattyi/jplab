@@ -5,7 +5,9 @@ import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
 import com.hzyi.jplab.core.viewer.Displayer;
+import javafx.scene.paint.Color;
 
 @AutoValue
 public abstract class Application {
@@ -21,6 +23,8 @@ public abstract class Application {
   public abstract Displayer displayer();
 
   public void start() {
+    ((JavaFxDisplayer) displayer()).getGraphicsContext().setFill(Color.GREEN);
+    ((JavaFxDisplayer) displayer()).getGraphicsContext().fillOval(25, 25, 25, 25);
     displayer().display(assembly(), assembly().getInitialAssemblyState(), null);
   }
 

@@ -35,7 +35,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.hzyi.jplab.dum.SingleCircApplication</mainClass>
+          <mainClass>com.hzyi.jplab.application.singlecircle.SingleCircApplication</mainClass>
         </configuration>
       </plugin>
       <plugin>

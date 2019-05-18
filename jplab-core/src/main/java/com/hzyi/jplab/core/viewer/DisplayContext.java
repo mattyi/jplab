@@ -18,16 +18,20 @@ public abstract class DisplayContext {
   
   public abstract Style style();
 
-  public Builder newBuilder() {
+  public static DisplayContext of() {
+    return newBuilder().color(Color.red).style(Style.fill).build();
+  }
+
+  public static Builder newBuilder() {
     return new AutoValue_DisplayContext.Builder();
   }
 
   @AutoValue.Builder
   public abstract static class Builder {
 
-    public abstract Builder setColor(Color color);
+    public abstract Builder color(Color color);
 
-    public abstract Builder setStyle(Style style);
+    public abstract Builder style(Style style);
 
     public abstract DisplayContext build();
   }

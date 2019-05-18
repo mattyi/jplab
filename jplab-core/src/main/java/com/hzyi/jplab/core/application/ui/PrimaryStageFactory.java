@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 
 public final class PrimaryStageFactory {
 
@@ -47,6 +48,8 @@ public final class PrimaryStageFactory {
 
     grid.add(applicationNameText, 0, 0);
     grid.add(javaFxDisplayer.getCanvas(), 0, 1, 1, 2);
+    javaFxDisplayer.getCanvas().getGraphicsContext2D().setFill(Color.GREEN);
+    javaFxDisplayer.getCanvas().getGraphicsContext2D().fillOval(30, 30, 30, 30);
     grid.add(controllerPane, 1, 0, 1, 2);
     grid.add(new Text("text"), 1, 2, 1, 1);
 

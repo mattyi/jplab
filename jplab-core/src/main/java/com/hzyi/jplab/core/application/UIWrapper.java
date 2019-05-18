@@ -14,6 +14,7 @@ public class UIWrapper extends javafx.application.Application {
 
   @Override
   public void start(Stage primaryStage) {
+    System.out.println(application);
     primaryStage = PrimaryStageFactory
                 .initPrimaryStage(
                     primaryStage,
@@ -21,6 +22,7 @@ public class UIWrapper extends javafx.application.Application {
                     application.controller(),
                     application.displayer());
     application.start();
+
     primaryStage.show();
   }
 

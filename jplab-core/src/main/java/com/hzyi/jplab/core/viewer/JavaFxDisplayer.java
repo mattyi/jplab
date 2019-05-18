@@ -37,8 +37,8 @@ public class JavaFxDisplayer implements Displayer, com.hzyi.jplab.core.util.Buil
   }
 
   @Override
-  public void start(int intervalMillis) {
-    
+  public void start(Assembly assembly, int intervalMillis) {
+    display(assembly, assembly.getInitialAssemblyState(), DisplayContext.newBuilder().color(DisplayContext.Color.red).style(DisplayContext.Style.fill).build());
   }
 
   @Override
