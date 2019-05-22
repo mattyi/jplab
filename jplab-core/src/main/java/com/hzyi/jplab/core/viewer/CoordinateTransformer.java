@@ -27,7 +27,6 @@ public class CoordinateTransformer {
           screen.origin().y(((double) newVal) / 2.0);
         });
     naturalRescaleRatio = ratio;
-    System.out.println("ratio: " + ratio);
   }
 
   public CoordinateSystem natural() {
@@ -35,6 +34,7 @@ public class CoordinateTransformer {
   }
 
   public CoordinateSystem screen() {
+    screen.origin(-canvas.getWidth()/2, canvas.getHeight()/2);
     return screen;
   }
 

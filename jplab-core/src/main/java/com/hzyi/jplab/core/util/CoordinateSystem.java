@@ -74,6 +74,11 @@ public class CoordinateSystem {
     return origin;
   }
 
+  public CoordinateSystem origin(double x, double y) {
+    origin().x(x).y(y);
+    return this;
+  }
+
   public String toString() {
     return String.format("{o: %s, ux: %s, uy: %s}", origin(), ux(), uy());
   }

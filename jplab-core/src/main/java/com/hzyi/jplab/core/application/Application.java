@@ -23,8 +23,6 @@ public abstract class Application {
   public abstract Displayer displayer();
 
   public void start() {
-    ((JavaFxDisplayer) displayer()).getGraphicsContext().setFill(Color.GREEN);
-    ((JavaFxDisplayer) displayer()).getGraphicsContext().fillOval(25, 25, 25, 25);
     displayer().display(assembly(), assembly().getInitialAssemblyState(), null);
   }
 

@@ -45,7 +45,7 @@ public class SingleCircApplication {
     CircMassPoint circ =
         CircMassPoint.newBuilder()
             .setName("circ")
-            .setX(0.0)
+            .setX(20.0)
             .setY(0.0)
             .setDirX(1.0)
             .setDirY(0.0)
@@ -53,7 +53,7 @@ public class SingleCircApplication {
             .setVY(0.0)
             .setMass(1.0)
             .setMomentOfInertia(1.0)
-            .setRadius(0.2)
+            .setRadius(20)
             .setPainter(new CirclePainter(displayer, CircMassPoint.TO_CIRCLE_PAINTER_PARAMS))
             .setDisplayContext(DisplayContext.of())
             .build();
@@ -91,7 +91,7 @@ public class SingleCircApplication {
 
   private static JavaFxDisplayer initializeDisplayer() {
     Canvas canvas = new Canvas(400, 400);
-    double ratio = 100;
+    double ratio = 1;
     System.out.println("Setting up ratio: " + ratio);
     return JavaFxDisplayer.newBuilder()
         .setCanvas(canvas)

@@ -47,10 +47,21 @@ public final class PrimaryStageFactory {
     ScrollPane controllerPane = ControllerPaneFactory.newControllerPane(controller);
 
     grid.add(applicationNameText, 0, 0);
-    grid.add(javaFxDisplayer.getCanvas(), 0, 1, 1, 2);
-    javaFxDisplayer.getCanvas().getGraphicsContext2D().setFill(Color.GREEN);
-    javaFxDisplayer.getCanvas().getGraphicsContext2D().fillOval(30, 30, 30, 30);
+    Pane canvasPane = new Pane();
+    canvasPane.getChildren().add(javaFxDisplayer.getCanvas());
+    grid.add(canvasPane, 0, 1, 1, 2);
     grid.add(controllerPane, 1, 0, 1, 2);
+    javaFxDisplayer.getCanvas().widthProperty().bind(canvasPane.widthProperty());
+    javaFxDisplayer.getCanvas().heightProperty().bind(canvasPane.heightProperty());
+    javaFxDisplayer.getCanvas().getGraphicsContext2D().setFill(Color.GREEN);
+    javaFxDisplayer
+        .getCanvas()
+        .getGraphicsContext2D()
+        .fillRect(
+            0,
+            0, 
+            javaFxDisplayer.getCanvas().getWidth(),
+            javaFxDisplayer.getCanvas().getHeight());
     grid.add(new Text("text"), 1, 2, 1, 1);
 
     Scene scene = new Scene(grid, 800, 800);
