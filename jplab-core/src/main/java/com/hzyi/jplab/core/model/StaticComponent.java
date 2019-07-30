@@ -1,56 +1,22 @@
 package com.hzyi.jplab.core.model;
 
-class StaticComponent extends Component {
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Builder
+abstract class StaticComponent implements Component {
      
-  StaticComponent(Builder<?> builder) {
-    super(builder);
-    this.initState = newComponentStateBuilder(builder).build();
-  }
+  private double initX;
+  private double initY;
+  private double initDirX;
+  private double initDirY;
+  @Getter private String name;
+  @Getter private Painter painter;
+  @Getter private DisplayContext displayContext;
 
-  public ComponentState getInitialComponentState() {
-    return initState;
-  }
-
-  protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
-    return super.newComponentStateBuilder(builder)
-        .set(Field.LOCX, builder.x)
-        .set(Field.LOCY, builder.y)
-        .set(Field.DIRX, builder.dx)
-        .set(Field.DIRY, builder.dy);
-  }
-
-  public static class Builder<T extends Builder<T>>
-      extends Component.Builder<T> {
-
-    protected double x, y, dx, dy;
-
-    @SuppressWarnings("Unchecked")
-    public T setX(double x) {
-      this.x = x;
-      return (T)this;
-    }
-
-    @SuppressWarnings("Unchecked")
-    public T setY(double y) {
-      this.y = y;
-      return (T)this;
-    }
-
-    @SuppressWarnings("Unchecked")
-    public T setDirX(double dx) {
-      this.dx = dx;
-      return (T)this;
-    }
-
-    @SuppressWarnings("Unchecked")
-    public T setDirY(double dy) {
-      this.dy = dy;
-      return (T)this;
-    }
-
-    @Override
-    public StaticComponent build() {
-      return new StaticComponent(this);
-    }
+  @Override 
+  public ComponentState getInitComponentState() {
+    return new ComponentState(this).put(Field.X, initX, Field.Y, initY, Field.DIRX, initDirX, Field.DIRY, initDirY);
   }
 }

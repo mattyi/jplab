@@ -2,7 +2,6 @@ package com.hzyi.jplab.core.model;
 
 import com.google.common.base.Preconditions;
 
-import com.hzyi.jplab.core.util.Buildable;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -25,7 +24,8 @@ public class ComponentState {
     return fieldMap.get(field);
   }
 
-  public Double put(Field field, double value) {
-    return fieldMap.put(field, value);
+  public ComponentState put(Field field, double value) {
+    fieldMap.put(field, value);
+    return this;
   }
 }
