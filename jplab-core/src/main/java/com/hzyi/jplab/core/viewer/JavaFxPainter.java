@@ -1,37 +1,24 @@
 package com.hzyi.jplab.core.viewer;
 
-import com.hzyi.jplab.core.model.Component;
+import com.hzyi.jplab.core.viewer.shape.Shape;
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.viewer.DisplayContext;
 import java.util.function.BiFunction;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.AccessLevel;
 
-public abstract class JavaFxPainter implements Painter {
+@AllArgsConstructor
+public abstract class JavaFxPainter<T extends Shape> implements Painter<T> {
 
-  private final BiFunction<Component, ComponentState, double[]> toPaintingParams;
-  private final JavaFxDisplayer displayer;
-
-  public JavaFxPainter(JavaFxDisplayer displayer, BiFunction<Component, ComponentState, double[]> toPaintingParams) {
-    this.displayer = displayer;
-    this.toPaintingParams = toPaintingParams;
-  }
-
-  protected Canvas getCanvas() {
-    return this.displayer.getCanvas();
-  }
+  private Canvas canvas;
+  @Getter(AccessLevel.PROTECTED) private CoordinateTransformer coordinateTransformer;
 
   protected GraphicsContext getGraphicsContext() {
-    return this.displayer.getCanvas().getGraphicsContext2D();
+    return getCanvas().getGraphicsContext2D();
   }
 
-  protected JavaFxDisplayer getDisplayer() {
-    return this.displayer;
-  }
-
-  protected double[] getPaintingParams(Component component, ComponentState state) {
-    return toPaintingParams.apply(component, state);
-  }
-
-  public abstract void paint(Component component, ComponentState state, DisplayContext context);
+  public abstract void paint(T shape, double x, double y, double dirx, double diry);
 }

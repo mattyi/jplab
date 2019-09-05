@@ -1,16 +1,30 @@
 package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.core.viewer.Painter;
-import com.hzyi.jplab.core.viewer.DisplayContext;
 
 public interface Component {
 
-  public ComponentState getInitialComponentState();
+  String getName();
 
-  public String getName();
+  double x();
 
-  public Painter getPainter();
+  double y();
 
-  public DisplayContext getDisplayContext();
+  double theta();
+
+  double vx();
+
+  double vy();
+
+  double omega();
+
+  double ax();
+
+  double ay();
+
+  double alpha();
+
+  Component update(ComponentState componentState);
+
+  ComponentState getInitialComponentState();
 
 }

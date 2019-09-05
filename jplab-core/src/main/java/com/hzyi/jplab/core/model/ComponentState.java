@@ -1,7 +1,5 @@
 package com.hzyi.jplab.core.model;
 
-import com.google.common.base.Preconditions;
-
 import java.util.EnumMap;
 import java.util.Map;
 

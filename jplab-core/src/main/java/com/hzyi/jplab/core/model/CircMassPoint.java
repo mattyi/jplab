@@ -1,47 +1,34 @@
 package com.hzyi.jplab.core.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import java.util.function.BiFunction;
+import lombok.Getter;
+import com.hzyi.jplab.core.viewer.Appearance;
+import com.hzyi.jplab.core.viewer.Painter;
+import com.hzyi.jplab.core.viewer.CirclePainter;
 
-public final class CircMassPoint extends MassPoint {
+@Builder(builderMethodName = "newBuilder")
+public final class CircMassPoint implements MassPoint, Circle {
 
-  public static final BiFunction<Component, ComponentState, double[]> TO_CIRCLE_PAINTER_PARAMS =
-      (c, s) -> {
-        checkArgument(c instanceof CircMassPoint);
-        CircMassPoint p = (CircMassPoint)c;
-        return new double[]{s.get(Field.LOCX), s.get(Field.LOCY), p.getRadius()};
-      };
+  @Getter private double x;
+  @Getter private double y;
+  @Getter private double vx;
+  @Getter private double vy;
+  @Getter private double ax;
+  @Getter private double ay;
+  @Getter private double mass;
+  @Getter private double radius;
+  @Getter private Appearance appearance;
 
-  private final double radius;
-
-  private CircMassPoint(Builder builder) {
-    super(builder);
-    this.radius = builder.radius;
+  public getInitialComponentState() {
+    return new ComponentState(this)
+        .put(Field.X, x)
+        .put(Field.Y, y)
+        .put(Field.DIRX, dirX)
+        .put(Field.DIRY, dirY)
+        .put(Field.VX, vx)
+        .put(Field.VY, vy);
   }
 
-  public static Builder newBuilder() {
-    return new Builder();
-  }
-
-  public double getRadius() {
-    return this.radius;
-  }
-
-
-  public static final class Builder
-      extends MassPoint.Builder<Builder> {
-    
-    protected double radius;
-
-    public Builder setRadius(double radius) {
-      this.radius = radius;
-      return this;
-    }
- 
-    @Override
-    public CircMassPoint build() {
-      checkArgument(radius > 0, "radius has to be positive");
-      return new CircMassPoint(this);
-    }
+  public Painter getPainter() {
+    return new CirclePainter();
   }
 }

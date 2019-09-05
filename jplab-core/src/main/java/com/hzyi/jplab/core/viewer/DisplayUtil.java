@@ -8,7 +8,7 @@ public class DisplayUtil {
     // util class
   }
 
-  public static javafx.scene.paint.Color toJavaFxColor (DisplayContext.Color color) {
+  public static javafx.scene.paint.Color toJavaFxColor (Appearance.Color color) {
     switch (color) {
       case red:
           return javafx.scene.paint.Color.RED;
@@ -29,7 +29,7 @@ public class DisplayUtil {
     }
   }
 
-  public static void graphicsContextColorAndStyle(GraphicsContext graphics, DisplayContext context) {
+  public static void graphicsContextColorAndStyle(GraphicsContext graphics, Appearance context) {
     switch (context.style()) {
       case fill:
           graphics.setFill(toJavaFxColor(context.color()));

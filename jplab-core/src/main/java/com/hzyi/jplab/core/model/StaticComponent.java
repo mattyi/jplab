@@ -1,28 +1,35 @@
 package com.hzyi.jplab.core.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import com.hzyi.jplab.core.viewer.Painter;
-import com.hzyi.jplab.core.viewer.DisplayContext;
 
-@Builder(builderMethodName = "newBuilder")
-public class StaticComponent implements Component {    
+public abstract class StaticComponent implements Component {
 
-  private double initX;
-  private double initY;
-  private double initDirX;
-  private double initDirY;
-  @Getter private String name;
-  @Getter private Painter painter;
-  @Getter private DisplayContext displayContext;
+  @Override
+  public final double vx() {
+    return 0;
+  }
 
-  @Override 
-  public ComponentState getInitialComponentState() {
-    return new ComponentState(this)
-        .put(Field.X, initX)
-        .put(Field.Y, initY)
-        .put(Field.DIRX, initDirX)
-        .put(Field.DIRY, initDirY);
+  @Override
+  public final double vy() {
+    return 0;
+  }
+
+  @Override
+  public final double omega() {
+    return 0;
+  }
+
+  @Override
+  public final double ax() {
+    return 0;
+  }
+
+  @Override
+  public final double ay() {
+    return 0;
+  }
+
+  @Override
+  public final double alpha() {
+    return 0;
   }
 }

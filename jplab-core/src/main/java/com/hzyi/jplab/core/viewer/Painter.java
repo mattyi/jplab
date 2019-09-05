@@ -1,10 +1,9 @@
 package com.hzyi.jplab.core.viewer;
 
-import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.ComponentState;
 
-public interface Painter {
+public interface Painter<T extends Shape> {
 
-  void paint(Component component, ComponentState state, DisplayContext context);
+  void paint(T shape, double x, double y, double dirx, double diry);
   
 }
