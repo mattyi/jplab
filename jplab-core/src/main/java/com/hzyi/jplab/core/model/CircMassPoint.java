@@ -6,7 +6,7 @@ import com.hzyi.jplab.core.viewer.Painter;
 import com.hzyi.jplab.core.viewer.CirclePainter;
 
 @Builder(builderMethodName = "newBuilder")
-public final class CircMassPoint implements MassPoint, Circle {
+public final class CircMassPoint extends MassPoint implements Circle {
 
   @Getter private double x;
   @Getter private double y;
@@ -26,6 +26,10 @@ public final class CircMassPoint implements MassPoint, Circle {
         .put(Field.DIRY, dirY)
         .put(Field.VX, vx)
         .put(Field.VY, vy);
+  }
+
+  public update(ComponentState state) {
+    throw new UnsupportedOperationException();
   }
 
   public Painter getPainter() {

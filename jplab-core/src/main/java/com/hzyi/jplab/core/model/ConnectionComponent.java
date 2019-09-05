@@ -2,17 +2,21 @@ package com.hzyi.jplab.core.model;
 
 public abstract class ConnectionComponent extends DynamicComponent {
 
-  Component componentA();
+  public Component componentA();
 
-  double connectingPointAX();
+  // relative to A
+  public double connectingPointAx();
 
-  double connectingPointAY();
+  // relative to A
+  public double connectingPointAy();
 
-  Component componentB();
+  public Component componentB();
 
-  double connectingPointBX();
+  // relative to B
+  public double connectingPointBx();
 
-  double connectingPointBY();
+  // relative to B
+  public double connectingPointBy();
 
   @Override
   public double x() {
