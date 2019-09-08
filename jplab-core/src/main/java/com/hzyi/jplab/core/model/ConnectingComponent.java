@@ -1,22 +1,22 @@
 package com.hzyi.jplab.core.model;
 
-public abstract class ConnectionComponent extends DynamicComponent {
+public abstract class ConnectingComponent implements Component {
 
-  public Component componentA();
-
-  // relative to A
-  public double connectingPointAx();
+  public abstract Component componentA();
 
   // relative to A
-  public double connectingPointAy();
+  public abstract double connectingPointAX();
 
-  public Component componentB();
+  // relative to A
+  public abstract double connectingPointAY();
+
+  public abstract Component componentB();
 
   // relative to B
-  public double connectingPointBx();
+  public abstract double connectingPointBX();
 
   // relative to B
-  public double connectingPointBy();
+  public abstract double connectingPointBY();
 
   @Override
   public double x() {
@@ -30,7 +30,7 @@ public abstract class ConnectionComponent extends DynamicComponent {
 
   @Override
   public double theta() {
-    return (componentB().y() - componentA().y()) / (componentB.x() - componentA.x()); 
+    return (componentB().y() - componentA().y()) / (componentB().x() - componentA().x()); 
   }
 
   @Override
@@ -45,7 +45,7 @@ public abstract class ConnectionComponent extends DynamicComponent {
 
   @Override
   public double omega() {
-    return (componentB().vy() - componentA().vy()) / (componentB.vx() - componentA.vx());
+    return (componentB().vy() - componentA().vy()) / (componentB().vx() - componentA().vx());
   }
 
   @Override
@@ -60,6 +60,6 @@ public abstract class ConnectionComponent extends DynamicComponent {
 
   @Override
   public double alpha() {
-    return (componentB().ay() - componentA().ay()) / (componentB.ax() - componentA.ax());
+    return (componentB().ay() - componentA().ay()) / (componentB().ax() - componentA().ax());
   }
 }

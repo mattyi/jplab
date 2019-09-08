@@ -2,17 +2,20 @@ package com.hzyi.jplab.core.model;
 
 import java.util.Collection;
 import java.util.Map;
-import com.hzyi.jplab.view.Appearance;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Getter;
+import com.hzyi.jplab.core.viewer.shape.Shape;
+import com.hzyi.jplab.core.viewer.PainterFactory;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder(builderMethodName = "newBuilder")
 public class Assembly {
 
   @Singular private final Map<String, Component> components;
+  @Getter private PainterFactory painterFactory;
   @Getter private String name;
-  @Getter private Appearance appearance;
   
   public Collection<Component> getComponents() {
     return components.values();
@@ -23,6 +26,10 @@ public class Assembly {
   }
 
   public void paint() {
-    getComponents().stream().forEach();
+    getPaintableComponents().stream().forEach(Shape::paint);
+  }
+
+  private List<Shape> getPaintableComponents() {
+    return getComponents().stream().filter(c -> c instanceof Shape).map(c -> (Shape)c).collect(Collectors.toList());
   }
 }

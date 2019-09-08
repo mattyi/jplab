@@ -17,8 +17,8 @@ public abstract class JavaFxPainter<T extends Shape> implements Painter<T> {
   @Getter(AccessLevel.PROTECTED) private CoordinateTransformer coordinateTransformer;
 
   protected GraphicsContext getGraphicsContext() {
-    return getCanvas().getGraphicsContext2D();
+    return canvas.getGraphicsContext2D();
   }
 
-  public abstract void paint(T shape, double x, double y, double dirx, double diry);
+  public abstract void paint(T shape, double x, double y, double theta);
 }

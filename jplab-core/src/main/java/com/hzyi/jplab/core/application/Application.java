@@ -9,8 +9,10 @@ import javafx.scene.paint.Color;
 import com.hzyi.jplab.core.viewer.PainterFactory;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 @Builder
+@Accessors(fluent = true)
 public class Application {
 
   @Getter private String name;

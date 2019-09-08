@@ -23,8 +23,9 @@ public interface Component {
 
   double alpha();
 
-  Component update(ComponentState componentState);
+  void update(ComponentState componentState);
 
   ComponentState getInitialComponentState();
 
+  Assembly assembly();
 }

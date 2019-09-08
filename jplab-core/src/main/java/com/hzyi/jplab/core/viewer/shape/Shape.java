@@ -9,4 +9,6 @@ public interface Shape<T extends Shape> {
 
   public Appearance getAppearance();
 
+  public void paint();
+
 }

@@ -1,6 +1,6 @@
 package com.hzyi.jplab.core.model;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /** The dynamic state of a {@code Component} */
@@ -11,7 +11,7 @@ public class ComponentState {
 
   public ComponentState(Component component) {
     this.component = component;
-    this.fieldMap = new EnumMap<>();
+    this.fieldMap = new HashMap<>();
   }
 
   public Component getComponent() {

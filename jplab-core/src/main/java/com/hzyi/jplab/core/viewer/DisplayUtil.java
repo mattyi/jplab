@@ -30,15 +30,15 @@ public class DisplayUtil {
   }
 
   public static void graphicsContextColorAndStyle(GraphicsContext graphics, Appearance context) {
-    switch (context.style()) {
+    switch (context.getStyle()) {
       case fill:
-          graphics.setFill(toJavaFxColor(context.color()));
+          graphics.setFill(toJavaFxColor(context.getColor()));
           break;
       case stroke:
-          graphics.setStroke(toJavaFxColor(context.color()));
+          graphics.setStroke(toJavaFxColor(context.getColor()));
           break;
       default:
-          throw new IllegalArgumentException("Unknown style: " + context.style());
+          throw new IllegalArgumentException("Unknown style: " + context.getStyle());
     }
   }
 

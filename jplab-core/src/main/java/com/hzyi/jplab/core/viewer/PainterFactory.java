@@ -1,21 +1,23 @@
 package com.hzyi.jplab.core.viewer;
 
-import lombok.Builder;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Builder
 public class PainterFactory {
 
-  private Canvas canvas;
-  @Getter private CoordinateTransformer transformer;
+  @Getter private Canvas canvas;
+  private CoordinateTransformer transformer;
+  @Getter private final CirclePainter circlePainter;
+
+  public PainterFactory(Canvas canvas, CoordinateTransformer transformer) {
+    this.canvas = canvas;
+    this.transformer = transformer;
+    this.circlePainter = new CirclePainter(this.canvas, this.transformer);
+  }
 
   public GraphicsContext getGraphicsContext() {
-    return getCanvas().getGraphicsContext2D();
+    return canvas.getGraphicsContext2D();
   }
-
-  public newCirclePainter() {
-    return new CirclePainter(this.canvas, this.transformer);
-  }
-
 }

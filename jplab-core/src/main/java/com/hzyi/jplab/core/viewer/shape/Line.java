@@ -4,8 +4,8 @@ import com.hzyi.jplab.core.viewer.CirclePainter;
 
 public interface Line extends Shape<Line> {
 
-  double getLength();
+  double length();
 
-  double getWidth();
+  double width();
 
 }
