@@ -1,24 +1,30 @@
 package com.hzyi.jplab.core.model;
 
+import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Map;
-import lombok.Builder;
-import lombok.Singular;
 import lombok.Getter;
 import com.hzyi.jplab.core.viewer.shape.Shape;
 import com.hzyi.jplab.core.viewer.PainterFactory;
 import java.util.List;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
-@Builder(builderMethodName = "newBuilder")
 public class Assembly {
 
-  @Singular private final Map<String, Component> components;
-  @Getter private PainterFactory painterFactory;
-  @Getter private String name;
+  private final Map<String, Component> components = new HashMap<>();
+  @Getter private final PainterFactory painterFactory;
+  @Getter private final String name;
   
-  public void applySelfToComponents() {
-    getComponents().stream().forEach(c -> c.assembly(this));
+  public Assembly(String name, PainterFactory painterFactory) {
+    this.name = name;
+    this.painterFactory = painterFactory;
+  }
+
+  public Assembly withComponent(Component component) {
+    Preconditions.checkArgument(!components.containsKey(component.getName()), "component with name %s already exists", component.getName());
+    components.put(component.getName(), component);
+    return this;
   }
 
   public Collection<Component> getComponents() {

@@ -51,8 +51,8 @@ public class SingleCircApplication {
             .radius(20)
             .appearance(Appearance.of())
             .build();
-    Assembly assembly = Assembly.newBuilder().name("assembly").component("circ", circ).painterFactory(painterFactory).build();
-    assembly.applySelfToComponents();
+    Assembly assembly = new Assembly("assembly", painterFactory);
+    assembly.withComponent(circ);
     return assembly;
   }
 
