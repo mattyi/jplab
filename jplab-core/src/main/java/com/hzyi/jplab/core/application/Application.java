@@ -5,44 +5,23 @@ import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.solver.Solver;
-import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
-import com.hzyi.jplab.core.viewer.Displayer;
 import javafx.scene.paint.Color;
+import com.hzyi.jplab.core.viewer.PainterFactory;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-@AutoValue
-public abstract class Application {
+@Builder(builderMethodName = "newBuilder")
+@Accessors(fluent = true)
+public class Application {
 
-  public abstract String name();
-
-  public abstract Assembly assembly();
-
-  public abstract Solver solver();
-
-  public abstract Controller controller();
-
-  public abstract Displayer displayer();
+  @Getter private String name;
+  @Getter private Assembly assembly;
+  @Getter private Solver solver;
+  @Getter private Controller controller;
+  @Getter private PainterFactory painterFactory;
 
   public void start() {
-    displayer().display(assembly(), assembly().getInitialAssemblyState(), null);
-  }
-
-  public static Builder newBuilder() {
-    return new AutoValue_Application.Builder();
-  }
-
-  @AutoValue.Builder
-  public static abstract class Builder {
-
-    public abstract Builder name(String val);
-
-    public abstract Builder assembly(Assembly val);
-
-    public abstract Builder solver(Solver val);
-
-    public abstract Builder displayer(Displayer val);
-
-    public abstract Builder controller(Controller val);
-
-    public abstract Application build();
+    assembly().paint();
   }
 }

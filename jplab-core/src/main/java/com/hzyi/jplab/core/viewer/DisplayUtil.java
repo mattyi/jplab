@@ -8,7 +8,7 @@ public class DisplayUtil {
     // util class
   }
 
-  public static javafx.scene.paint.Color toJavaFxColor (DisplayContext.Color color) {
+  public static javafx.scene.paint.Color toJavaFxColor (Appearance.Color color) {
     switch (color) {
       case red:
           return javafx.scene.paint.Color.RED;
@@ -29,16 +29,16 @@ public class DisplayUtil {
     }
   }
 
-  public static void graphicsContextColorAndStyle(GraphicsContext graphics, DisplayContext context) {
-    switch (context.style()) {
+  public static void graphicsContextColorAndStyle(GraphicsContext graphics, Appearance context) {
+    switch (context.getStyle()) {
       case fill:
-          graphics.setFill(toJavaFxColor(context.color()));
+          graphics.setFill(toJavaFxColor(context.getColor()));
           break;
       case stroke:
-          graphics.setStroke(toJavaFxColor(context.color()));
+          graphics.setStroke(toJavaFxColor(context.getColor()));
           break;
       default:
-          throw new IllegalArgumentException("Unknown style: " + context.style());
+          throw new IllegalArgumentException("Unknown style: " + context.getStyle());
     }
   }
 

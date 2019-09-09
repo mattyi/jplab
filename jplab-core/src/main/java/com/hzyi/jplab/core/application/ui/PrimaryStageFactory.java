@@ -3,8 +3,7 @@ package com.hzyi.jplab.core.application.ui;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.hzyi.jplab.core.controller.Controller;
-import com.hzyi.jplab.core.viewer.Displayer;
-import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
+import com.hzyi.jplab.core.viewer.PainterFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -15,6 +14,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
+import javafx.scene.canvas.Canvas;
 
 public final class PrimaryStageFactory {
 
@@ -23,9 +23,7 @@ public final class PrimaryStageFactory {
   }
 
   public static Stage initPrimaryStage(
-      Stage primaryStage, String name, Controller controller, Displayer displayer) {
-    checkArgument(displayer instanceof JavaFxDisplayer, "Only Javafx displayer supported for now.");
-    JavaFxDisplayer javaFxDisplayer = (JavaFxDisplayer) displayer;
+      Stage primaryStage, String name, Controller controller, PainterFactory painterFactory) {
     GridPane grid = new GridPane();
     ColumnConstraints column1 = new ColumnConstraints();
     column1.setPercentWidth(60);
@@ -48,20 +46,20 @@ public final class PrimaryStageFactory {
 
     grid.add(applicationNameText, 0, 0);
     Pane canvasPane = new Pane();
-    canvasPane.getChildren().add(javaFxDisplayer.getCanvas());
+    Canvas canvas = painterFactory.getCanvas();
+    canvasPane.getChildren().add(canvas);
     grid.add(canvasPane, 0, 1, 1, 2);
     grid.add(controllerPane, 1, 0, 1, 2);
-    javaFxDisplayer.getCanvas().widthProperty().bind(canvasPane.widthProperty());
-    javaFxDisplayer.getCanvas().heightProperty().bind(canvasPane.heightProperty());
-    javaFxDisplayer.getCanvas().getGraphicsContext2D().setFill(Color.GREEN);
-    javaFxDisplayer
-        .getCanvas()
+    canvas.widthProperty().bind(canvasPane.widthProperty());
+    canvas.heightProperty().bind(canvasPane.heightProperty());
+    canvas.getGraphicsContext2D().setFill(Color.GREEN);
+    canvas
         .getGraphicsContext2D()
         .fillRect(
             0,
             0, 
-            javaFxDisplayer.getCanvas().getWidth(),
-            javaFxDisplayer.getCanvas().getHeight());
+            painterFactory.getCanvas().getWidth(),
+            painterFactory.getCanvas().getHeight());
     grid.add(new Text("text"), 1, 2, 1, 1);
 
     Scene scene = new Scene(grid, 800, 800);

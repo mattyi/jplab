@@ -1,52 +1,51 @@
 package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.core.util.Coordinate;
+import com.hzyi.jplab.core.viewer.shape.Line;
+import com.hzyi.jplab.core.viewer.Painter;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.experimental.Accessors;
+import com.hzyi.jplab.core.viewer.Appearance;
 
-public class Spring extends ConnectionComponent {
+@Accessors(fluent = true)
+@Builder
+public class Spring extends ConnectingComponent implements Line {
 
-  private double k;
-  private double origLength;
+  @Getter private String name;
+  @Getter private double stiffness;
+  @Getter private Component componentA;
+  @Getter private Component componentB; 
+  @Getter private double connectingPointAX;
+  @Getter private double connectingPointAY;
+  @Getter private double connectingPointBX;
+  @Getter private double connectingPointBY;
+  @Getter @Setter private Assembly assembly;
+  @Getter private double width;
+  @Getter private double length;
+  @Getter private Appearance appearance;
 
-  Spring(Builder builder) {
-    super(builder);
-    this.k = builder.k;
-    this.origLength = builder.origLength;
+  public Painter getPainter() {
+    return assembly.getPainterFactory().getCirclePainter();
   }
 
-  public double getK() {
-    return k;
+  public ComponentState getInitialComponentState() {
+    return null;
   }
 
-  public double getOrigLength() {
-    return origLength;
+  public String getName() {
+    return name();
   }
 
-  public static final class Builder extends ConnectionComponent.Builder<Builder> {
-
-    private double k;
-    private double origLength;
-
-    protected Builder(){}
-
-    public Builder setK(double k) {
-      this.k = k;
-      return this;
-    }
-
-    public Builder setOrigLength(double origLength) {
-      this.origLength = origLength;
-      return this;
-    }
-
-    @Override
-    public Spring build() {
-      return new Spring(this);
-    }
-
+  public Appearance getAppearance() {
+    return appearance();
   }
 
+  public void update(ComponentState state) {
+    return;
+  }
 
-
-
-
+  public void paint() {
+    getPainter().paint(this, x(), y(), theta());
+  }
 }

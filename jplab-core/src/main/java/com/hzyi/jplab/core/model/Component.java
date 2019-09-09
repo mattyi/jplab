@@ -1,73 +1,33 @@
 package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.core.util.Buildable;
-import com.hzyi.jplab.core.viewer.Painter;
-import com.hzyi.jplab.core.viewer.DisplayContext;
 
-public class Component implements Buildable {
+public interface Component {
 
-  protected final String name;
-  protected ComponentState initState;
-  private final Painter painter;
-  private final DisplayContext context;
+  String getName();
 
-  Component(Builder<?> builder) {
-    this.name = builder.name;
-    this.initState = newComponentStateBuilder(builder).build();
-    this.painter = builder.painter;
-    this.context = builder.context;
-  }
+  double x();
 
-  public ComponentState getInitialComponentState() {
-    return null;
-  }
+  double y();
 
-  public String getName() {
-    return name;
-  }
+  double theta();
 
-  public Painter getPainter() {
-    return painter;
-  }
+  double vx();
 
-  public DisplayContext getDisplayContext() {
-    return context;
-  }
+  double vy();
 
-  protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
-    return ComponentState.newBuilder()
-        .setComponent(this);
-  }
+  double omega();
 
-  public static abstract class Builder<T extends Builder<T>> 
-      implements com.hzyi.jplab.core.util.Builder<T> {
-    
-    private String name;
-    private Painter painter;
-    private DisplayContext context;
+  double ax();
 
-    @SuppressWarnings("Unchecked")
-    public T setName(String name) {
-      this.name = name;
-      return (T)this;
-    }
+  double ay();
 
-    @SuppressWarnings("Unchecked")
-    public T setPainter(Painter painter) {
-      this.painter = painter;
-      return (T)this;
-    }
+  double alpha();
 
-    @SuppressWarnings("Unchecked")
-    public T setDisplayContext(DisplayContext context) {
-      this.context = context;
-      return (T)this;
-    }
+  void update(ComponentState componentState);
 
-    @Override
-    public Component build() {
-      throw new UnsupportedOperationException("build() is not supported for Component");
-    }
-  }
-  
+  ComponentState getInitialComponentState();
+
+  Assembly assembly();
+
+  Component assembly(Assembly assembly);
 }

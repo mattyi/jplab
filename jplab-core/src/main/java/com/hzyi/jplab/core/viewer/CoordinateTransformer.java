@@ -1,7 +1,6 @@
 package com.hzyi.jplab.core.viewer;
 
 import com.hzyi.jplab.core.controller.Parameter;
-import com.hzyi.jplab.core.model.AssemblyState;
 import com.hzyi.jplab.core.model.ComponentState;
 import com.hzyi.jplab.core.model.Field;
 import com.hzyi.jplab.core.util.CoordinateSystem;

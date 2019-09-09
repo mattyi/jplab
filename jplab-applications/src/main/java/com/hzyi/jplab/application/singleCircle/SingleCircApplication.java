@@ -7,15 +7,13 @@ import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Observer;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
-import com.hzyi.jplab.core.model.AssemblyState;
 import com.hzyi.jplab.core.model.CircMassPoint;
 import com.hzyi.jplab.core.solver.Solver;
 import com.hzyi.jplab.core.viewer.CoordinateTransformer;
-import com.hzyi.jplab.core.viewer.Displayer;
-import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
+import com.hzyi.jplab.core.viewer.PainterFactory;
 import com.hzyi.jplab.core.viewer.CirclePainter;
 import javafx.scene.canvas.Canvas;
-import com.hzyi.jplab.core.viewer.DisplayContext;
+import com.hzyi.jplab.core.viewer.Appearance;
 
 public class SingleCircApplication {
 
@@ -23,15 +21,15 @@ public class SingleCircApplication {
     String name = "Single Circle Application";
     Solver solver = initializeSolver();
     Controller controller = initializeController();
-    JavaFxDisplayer displayer = initializeDisplayer();
-    Assembly assembly = initializeAssembly(displayer);
+    PainterFactory painterFactory = initializePainterFactory();
+    Assembly assembly = initializeAssembly(painterFactory);
     Application application =
         Application.newBuilder()
             .name(name)
             .assembly(assembly)
             .solver(solver)
             .controller(controller)
-            .displayer(displayer)
+            .painterFactory(painterFactory)
             .build();
     UIWrapper.setApplication(application);
     UIWrapper.startSimulation();
@@ -41,23 +39,20 @@ public class SingleCircApplication {
     return "Single Circle Application";
   }
 
-  private static Assembly initializeAssembly(JavaFxDisplayer displayer) {
+  private static Assembly initializeAssembly(PainterFactory painterFactory) {
     CircMassPoint circ =
         CircMassPoint.newBuilder()
-            .setName("circ")
-            .setX(20.0)
-            .setY(0.0)
-            .setDirX(1.0)
-            .setDirY(0.0)
-            .setVX(0.0)
-            .setVY(0.0)
-            .setMass(1.0)
-            .setMomentOfInertia(1.0)
-            .setRadius(20)
-            .setPainter(new CirclePainter(displayer, CircMassPoint.TO_CIRCLE_PAINTER_PARAMS))
-            .setDisplayContext(DisplayContext.of())
+            .name("circ")
+            .x(20.0)
+            .y(0.0)
+            .vx(0.0)
+            .vy(0.0)
+            .mass(1.0)
+            .radius(20)
+            .appearance(Appearance.of())
             .build();
-    Assembly assembly = Assembly.newBuilder().setName("assembly").add(circ).build();
+    Assembly assembly = Assembly.newBuilder().name("assembly").component("circ", circ).painterFactory(painterFactory).build();
+    assembly.applySelfToComponents();
     return assembly;
   }
 
@@ -89,13 +84,9 @@ public class SingleCircApplication {
     return controller;
   }
 
-  private static JavaFxDisplayer initializeDisplayer() {
+  private static PainterFactory initializePainterFactory() {
     Canvas canvas = new Canvas(400, 400);
     double ratio = 1;
-    System.out.println("Setting up ratio: " + ratio);
-    return JavaFxDisplayer.newBuilder()
-        .setCanvas(canvas)
-        .setCoordinateTransformer(new CoordinateTransformer(canvas, ratio))
-        .build();
+    return new PainterFactory(canvas, new CoordinateTransformer(canvas, ratio));
   }
 }

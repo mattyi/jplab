@@ -1,56 +1,35 @@
 package com.hzyi.jplab.core.model;
 
-class StaticComponent extends Component {
-     
-  StaticComponent(Builder<?> builder) {
-    super(builder);
-    this.initState = newComponentStateBuilder(builder).build();
+
+public abstract class StaticComponent implements Component {
+
+  @Override
+  public final double vx() {
+    return 0;
   }
 
-  public ComponentState getInitialComponentState() {
-    return initState;
+  @Override
+  public final double vy() {
+    return 0;
   }
 
-  protected ComponentState.Builder newComponentStateBuilder(Builder<?> builder) {
-    return super.newComponentStateBuilder(builder)
-        .set(Field.LOCX, builder.x)
-        .set(Field.LOCY, builder.y)
-        .set(Field.DIRX, builder.dx)
-        .set(Field.DIRY, builder.dy);
+  @Override
+  public final double omega() {
+    return 0;
   }
 
-  public static class Builder<T extends Builder<T>>
-      extends Component.Builder<T> {
+  @Override
+  public final double ax() {
+    return 0;
+  }
 
-    protected double x, y, dx, dy;
+  @Override
+  public final double ay() {
+    return 0;
+  }
 
-    @SuppressWarnings("Unchecked")
-    public T setX(double x) {
-      this.x = x;
-      return (T)this;
-    }
-
-    @SuppressWarnings("Unchecked")
-    public T setY(double y) {
-      this.y = y;
-      return (T)this;
-    }
-
-    @SuppressWarnings("Unchecked")
-    public T setDirX(double dx) {
-      this.dx = dx;
-      return (T)this;
-    }
-
-    @SuppressWarnings("Unchecked")
-    public T setDirY(double dy) {
-      this.dy = dy;
-      return (T)this;
-    }
-
-    @Override
-    public StaticComponent build() {
-      return new StaticComponent(this);
-    }
+  @Override
+  public final double alpha() {
+    return 0;
   }
 }

@@ -3,7 +3,6 @@ package com.hzyi.jplab.core.application;
 import java.util.function.Function;
 import javafx.stage.Stage;
 import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
-import com.hzyi.jplab.core.viewer.JavaFxDisplayer;
 
 public class UIWrapper extends javafx.application.Application {
 
@@ -20,10 +19,9 @@ public class UIWrapper extends javafx.application.Application {
                     primaryStage,
                     application.name(),
                     application.controller(),
-                    application.displayer());
+                    application.painterFactory());
     primaryStage.show();
     application.start();
-    System.out.println(((JavaFxDisplayer) application.displayer()).getCanvas().getWidth());
   }
 
   public static void startSimulation() {
