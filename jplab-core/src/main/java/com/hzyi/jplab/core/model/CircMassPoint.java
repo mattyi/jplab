@@ -2,6 +2,7 @@ package com.hzyi.jplab.core.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import com.hzyi.jplab.core.viewer.Appearance;
 import com.hzyi.jplab.core.viewer.shape.Circle;
@@ -22,7 +23,7 @@ public final class CircMassPoint extends MassPoint implements Circle {
   @Getter private double mass;
   @Getter private double radius;
   @Getter private Appearance appearance;
-  @Getter private Assembly assembly;
+  @Getter @Setter private Assembly assembly;
 
   public ComponentState getInitialComponentState() {
     return new ComponentState(this)
@@ -41,6 +42,7 @@ public final class CircMassPoint extends MassPoint implements Circle {
   }
 
   public Painter getPainter() {
+    System.out.println(assembly);
     return assembly.getPainterFactory().getCirclePainter();
   }
 

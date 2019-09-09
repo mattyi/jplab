@@ -17,6 +17,10 @@ public class Assembly {
   @Getter private PainterFactory painterFactory;
   @Getter private String name;
   
+  public void applySelfToComponents() {
+    getComponents().stream().forEach(c -> c.assembly(this));
+  }
+
   public Collection<Component> getComponents() {
     return components.values();
   }

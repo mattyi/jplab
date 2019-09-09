@@ -3,6 +3,7 @@ package com.hzyi.jplab.core.model;
 import com.hzyi.jplab.core.viewer.shape.Line;
 import com.hzyi.jplab.core.viewer.Painter;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Builder;
 import lombok.experimental.Accessors;
 import com.hzyi.jplab.core.viewer.Appearance;
@@ -19,7 +20,7 @@ public class Spring extends ConnectingComponent implements Line {
   @Getter private double connectingPointAY;
   @Getter private double connectingPointBX;
   @Getter private double connectingPointBY;
-  @Getter private Assembly assembly;
+  @Getter @Setter private Assembly assembly;
   @Getter private double width;
   @Getter private double length;
   @Getter private Appearance appearance;

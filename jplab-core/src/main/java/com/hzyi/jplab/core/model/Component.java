@@ -28,4 +28,6 @@ public interface Component {
   ComponentState getInitialComponentState();
 
   Assembly assembly();
+
+  Component assembly(Assembly assembly);
 }
