@@ -2,8 +2,7 @@ package com.hzyi.jplab.core.viewer;
 
 import com.hzyi.jplab.core.viewer.shape.Shape;
 import com.hzyi.jplab.core.model.ComponentState;
-import com.hzyi.jplab.core.viewer.DisplayContext;
-import java.util.function.BiFunction;
+import com.hzyi.jplab.core.viewer.Appearance;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import lombok.AllArgsConstructor;
