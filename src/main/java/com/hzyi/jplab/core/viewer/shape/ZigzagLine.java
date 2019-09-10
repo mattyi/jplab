@@ -2,10 +2,8 @@ package com.hzyi.jplab.core.viewer.shape;
 
 import com.hzyi.jplab.core.viewer.CirclePainter;
 
-public interface Line<T extends Line> extends Shape<T> {
+public interface ZigzagLine extends Line<ZigzagLine> {
 
-  double length();
-
-  double width();
+  int zigzagCount();
 
 }

@@ -1,6 +1,6 @@
 package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.core.viewer.shape.Line;
+import com.hzyi.jplab.core.viewer.shape.ZigzagLine;
 import com.hzyi.jplab.core.viewer.Painter;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import com.hzyi.jplab.core.viewer.Appearance;
 
 @Accessors(fluent = true)
 @Builder
-public class Spring extends ConnectingComponent implements Line {
+public class Spring extends ConnectingComponent implements ZigzagLine {
 
   @Getter private String name;
   @Getter private double stiffness;
@@ -26,7 +26,7 @@ public class Spring extends ConnectingComponent implements Line {
   @Getter private Appearance appearance;
 
   public Painter getPainter() {
-    return assembly.getPainterFactory().getCirclePainter();
+    return assembly.getPainterFactory().getZigzagLinePainter();
   }
 
   public ComponentState getInitialComponentState() {
