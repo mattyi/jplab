@@ -16,7 +16,7 @@ public class PainterFactory {
     this.canvas = canvas;
     this.transformer = transformer;
     this.circlePainter = new CirclePainter(this.canvas, this.transformer);
-    this.zigzagLinePainter = new ZigzagPainter(this.canvas, this.transformer);
+    this.zigzagLinePainter = new ZigzagLinePainter(this.canvas, this.transformer);
   }
 
   public GraphicsContext getGraphicsContext() {

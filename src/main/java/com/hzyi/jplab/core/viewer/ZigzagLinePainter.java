@@ -11,12 +11,11 @@ import com.hzyi.jplab.core.util.Coordinates;
 import com.hzyi.jplab.core.util.CoordinateSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.canvas.Canvas;
-import java.util.Math;
 import javafx.scene.shape.Line;
 
-public class ZigzagPainter extends JavaFxPainter<Circle> {
+public class ZigzagLinePainter extends JavaFxPainter<ZigzagLine> {
 
-  ZigzagPainter(Canvas canvas, CoordinateTransformer transformer) {
+  ZigzagLinePainter(Canvas canvas, CoordinateTransformer transformer) {
     super(canvas, transformer);
   }
 
@@ -25,29 +24,55 @@ public class ZigzagPainter extends JavaFxPainter<Circle> {
       ZigzagLine line, double x, double y, double theta) {
     Coordinate connectingPointA = 
         new Coordinate(
-            x - length() * Math.cos(theta) * 0.5,
-            y - length() * Math.sin(theta) * 0.5);
+            x - line.length() * Math.cos(theta) * 0.5,
+            y - line.length() * Math.sin(theta) * 0.5);
     Coordinate connectingPointB = 
         new Coordinate(
-            x + length() * Math.cos(theta) * 0.5,
-            y + length() + Math.sin(theta) * 0.5);
-    connectingPointA = Coordinates.transform(
-        connectingPointA,
-        getCoordinateTransformer().natural(),
-        getCoordinateTransformer().screen());
-    connectingPointB = Coordinates.transform(
-        connectingPointB,
-        getCoordinateTransformer().natural(),
-        getCoordinateTransformer().screen());
+            x + line.length() * Math.cos(theta) * 0.5,
+            y + line.length() + Math.sin(theta) * 0.5);
+
     x = connectingPointA.x();
     y = connectingPointA.y();
-    for (int i = 0.5; i < ling.zigzagCount(); i++) {
-      Line segment = new Line();
-      segment.setStartX(x);
-      segment.setStartY(y);
-      x = x + ;
-      y = y + ;
+    double zigzagLength = line.length() / (line.zigzagCount() + 1);
+    Coordinate previous = new Coordinate(x, y);
+    boolean clockwise = true;
+
+    // the first zigzag only takes up half the length
+    Coordinate next = getZigzagBoundaryPoint(connectingPointA, line.width() / 2, theta, zigzagLength / 2, clockwise);
+    System.out.println(previous);
+    System.out.println(next);
+    for (int i = 0; i <= line.zigzagCount(); i++) {
+      drawLine(previous, next);
+      previous = next;
+      clockwise = !clockwise;
+      next = getZigzagBoundaryPoint(previous, line.width(), theta, zigzagLength, clockwise);
     }
+  }
+
+  private static Coordinate getZigzagBoundaryPoint(Coordinate start, double width, double theta, double lengthFromStart, boolean clockwise) {
+    // First, move from A along the zigzag line by lengthFromStart
+    Coordinate destination = new Coordinate(lengthFromStart * Math.cos(theta), lengthFromStart * Math.sin(theta));
+    destination.x(destination.x() + start.x());
+    destination.y(destination.y() + start.y());
+
+    // Secondly, we move to the edge of the line
+    theta = theta + Math.PI / 2.0 * (clockwise ? 1 : -1);
+    destination.x(destination.x() + width * Math.cos(theta));
+    destination.y(destination.y() + width * Math.sin(theta));
+
+    return destination;
+  }
+
+  private void drawLine(Coordinate naturalA, Coordinate naturalB) {
+    Coordinate screenA = Coordinates.transform(
+        naturalA,
+        getCoordinateTransformer().natural(),
+        getCoordinateTransformer().screen());
+    Coordinate screenB = Coordinates.transform(
+        naturalB,
+        getCoordinateTransformer().natural(),
+        getCoordinateTransformer().screen());
+    getGraphicsContext().strokeLine(screenA.x(), screenA.y(), screenB.x(), screenB.y());
   }
 
 }

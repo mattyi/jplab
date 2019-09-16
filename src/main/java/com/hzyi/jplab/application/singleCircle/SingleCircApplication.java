@@ -8,6 +8,7 @@ import com.hzyi.jplab.core.controller.Observer;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.CircMassPoint;
+import com.hzyi.jplab.core.model.Spring;
 import com.hzyi.jplab.core.solver.Solver;
 import com.hzyi.jplab.core.viewer.CoordinateTransformer;
 import com.hzyi.jplab.core.viewer.PainterFactory;
@@ -51,8 +52,20 @@ public class SingleCircApplication {
             .radius(20)
             .appearance(Appearance.of())
             .build();
+    Spring spring =
+        Spring.newBuilder()
+            .name("spring")
+            .stiffness(3.0)
+            .connectingPointAX(20.0)
+            .connectingPointAY(100.0)
+            .connectingPointBX(20.0)
+            .connectingPointBY(0.0)
+            .width(15)
+            .zigzagCount(10)
+            .build();
     Assembly assembly = new Assembly("assembly", painterFactory);
     assembly.withComponent(circ);
+    assembly.withComponent(spring);
     return assembly;
   }
 

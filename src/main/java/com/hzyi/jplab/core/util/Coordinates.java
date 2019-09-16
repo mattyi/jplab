@@ -16,6 +16,10 @@ public class Coordinates {
     return areEqual(c1.x(), c2.x(), EPSILON) && areEqual(c1.y(), c2.y(), EPSILON);
   }
 
+  public static double distance(Coordinate c1, Coordinate c2) {
+    return Math.sqrt((c1.x() - c2.x()) * (c1.x() - c2.x()) + (c1.y() - c2.y()) * (c1.y() - c2.y()));
+  }
+
   /**
    * @returns the {@code Coordinate} in {@code to} which is the same value as {@code coordinate} in {@code from}.
    *
