@@ -9,6 +9,7 @@ import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.CircMassPoint;
 import com.hzyi.jplab.core.model.Spring;
+import com.hzyi.jplab.core.model.Wall;
 import com.hzyi.jplab.core.solver.Solver;
 import com.hzyi.jplab.core.viewer.CoordinateTransformer;
 import com.hzyi.jplab.core.viewer.PainterFactory;
@@ -63,9 +64,21 @@ public class SingleCircApplication {
             .width(15)
             .zigzagCount(10)
             .build();
+    Wall wall =
+        Wall.newBuilder()
+            .name("wall")
+            .x(20.0)
+            .y(100.0)
+            .theta(-Math.PI / 2)
+            .length(40)
+            .innerLineCount(6)
+            .innerLineAngle(Math.PI / 6)
+            .innerLineHeight(10)
+            .build();
     Assembly assembly = new Assembly("assembly", painterFactory);
     assembly.withComponent(circ);
     assembly.withComponent(spring);
+    assembly.withComponent(wall);
     return assembly;
   }
 
