@@ -39,8 +39,6 @@ public class ZigzagLinePainter extends JavaFxPainter<ZigzagLine> {
 
     // the first zigzag only takes up half the length
     Coordinate next = getZigzagBoundaryPoint(connectingPointA, line.width() / 2, theta, zigzagLength / 2, clockwise);
-    System.out.println(previous);
-    System.out.println(next);
     for (int i = 0; i <= line.zigzagCount(); i++) {
       drawLine(previous, next);
       previous = next;
@@ -62,17 +60,4 @@ public class ZigzagLinePainter extends JavaFxPainter<ZigzagLine> {
 
     return destination;
   }
-
-  private void drawLine(Coordinate naturalA, Coordinate naturalB) {
-    Coordinate screenA = Coordinates.transform(
-        naturalA,
-        getCoordinateTransformer().natural(),
-        getCoordinateTransformer().screen());
-    Coordinate screenB = Coordinates.transform(
-        naturalB,
-        getCoordinateTransformer().natural(),
-        getCoordinateTransformer().screen());
-    getGraphicsContext().strokeLine(screenA.x(), screenA.y(), screenB.x(), screenB.y());
-  }
-
 }

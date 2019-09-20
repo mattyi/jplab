@@ -42,8 +42,6 @@ public class CirclePainter extends JavaFxPainter<Circle> {
         lowerRight,
         getCoordinateTransformer().natural(),
         getCoordinateTransformer().screen());
-    System.out.println(upperLeft);
-    System.out.println(lowerRight);
     double d = lowerRight.x() - upperLeft.x();
     switch (circle.getAppearance().getStyle()) {
       case stroke:
