@@ -20,6 +20,8 @@ public class EdgePainter extends JavaFxPainter<Edge> {
   @Override
   public void paint(
       Edge edge, double x, double y, double theta) {
+    GraphicsContext graphicsContext = getGraphicsContext();
+    DisplayUtil.graphicsContextColorAndStyle(graphicsContext, edge.getAppearance());
     double endAX = x + edge.length() * Math.cos(theta + (Math.PI / 2.0)) / 2;
     double endAY = y + edge.length() * Math.sin(theta + (Math.PI / 2.0)) / 2;
     double endBX = x * 2 - endAX;

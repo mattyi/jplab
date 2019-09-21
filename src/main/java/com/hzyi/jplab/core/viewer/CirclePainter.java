@@ -44,10 +44,10 @@ public class CirclePainter extends JavaFxPainter<Circle> {
         getCoordinateTransformer().screen());
     double d = lowerRight.x() - upperLeft.x();
     switch (circle.getAppearance().getStyle()) {
-      case stroke:
+      case STROKE:
           graphicsContext.strokeOval(upperLeft.x(), upperLeft.y(), d, d);
           break;
-      case fill:
+      case FILL:
           graphicsContext.fillOval(upperLeft.x(), upperLeft.y(), d, d);
           break;
       default: throw new IllegalArgumentException("Unknown style: " + circle.getAppearance().getStyle());

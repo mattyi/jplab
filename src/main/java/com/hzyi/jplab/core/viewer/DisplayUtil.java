@@ -10,37 +10,28 @@ public class DisplayUtil {
 
   public static javafx.scene.paint.Color toJavaFxColor (Appearance.Color color) {
     switch (color) {
-      case red:
+      case RED:
           return javafx.scene.paint.Color.RED;
-      case blue:
+      case BLUE:
           return javafx.scene.paint.Color.BLUE;
-      case yellow:
+      case YELLOW:
           return javafx.scene.paint.Color.YELLOW;
-      case green:
+      case GREEN:
           return javafx.scene.paint.Color.GREEN;
-      case black:
+      case BLACK:
           return javafx.scene.paint.Color.BLACK;
-      case white:
+      case WHITE:
           return javafx.scene.paint.Color.WHITE;
-      case gray:
+      case GRAY:
           return javafx.scene.paint.Color.GRAY;
       default:
           throw new IllegalArgumentException("Unknown color: " + color);
     }
   }
 
-  public static void graphicsContextColorAndStyle(GraphicsContext graphics, Appearance context) {
-    switch (context.getStyle()) {
-      case fill:
-          graphics.setFill(toJavaFxColor(context.getColor()));
-          break;
-      case stroke:
-          graphics.setStroke(toJavaFxColor(context.getColor()));
-          break;
-      default:
-          throw new IllegalArgumentException("Unknown style: " + context.getStyle());
-    }
+  public static void graphicsContextColorAndStyle(GraphicsContext graphics, Appearance appearance) {
+    graphics.setFill(toJavaFxColor(appearance.getColor()));
+    graphics.setStroke(toJavaFxColor(appearance.getColor()));
+    graphics.setLineWidth(appearance.getLineWidth());
   }
-
-
 }

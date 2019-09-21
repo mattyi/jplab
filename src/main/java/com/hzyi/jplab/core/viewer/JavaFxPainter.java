@@ -24,14 +24,8 @@ public abstract class JavaFxPainter<T extends Shape> implements Painter<T> {
   public abstract void paint(T shape, double x, double y, double theta);
 
   protected void drawLine(Coordinate naturalA, Coordinate naturalB) {
-    Coordinate screenA = Coordinates.transform(
-        naturalA,
-        getCoordinateTransformer().natural(),
-        getCoordinateTransformer().screen());
-    Coordinate screenB = Coordinates.transform(
-        naturalB,
-        getCoordinateTransformer().natural(),
-        getCoordinateTransformer().screen());
+    Coordinate screenA = coordinateTransformer.toScreen(naturalA);
+    Coordinate screenB = coordinateTransformer.toScreen(naturalB);
     getGraphicsContext().strokeLine(screenA.x(), screenA.y(), screenB.x(), screenB.y());
   }
 }

@@ -22,6 +22,8 @@ public class ZigzagLinePainter extends JavaFxPainter<ZigzagLine> {
   @Override
   public void paint(
       ZigzagLine line, double x, double y, double theta) {
+    GraphicsContext graphicsContext = getGraphicsContext();
+    DisplayUtil.graphicsContextColorAndStyle(graphicsContext, line.getAppearance());
     Coordinate connectingPointA = 
         new Coordinate(
             x - line.length() * Math.cos(theta) * 0.5,

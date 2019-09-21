@@ -63,6 +63,12 @@ public class SingleCircApplication {
             .connectingPointBY(0.0)
             .width(15)
             .zigzagCount(10)
+            .appearance(
+                Appearance
+                    .newBuilder()
+                    .color(Appearance.Color.BLUE)
+                    .lineWidth(3)
+                    .build())
             .build();
     Wall wall =
         Wall.newBuilder()
@@ -71,9 +77,15 @@ public class SingleCircApplication {
             .y(100.0)
             .theta(-Math.PI / 2)
             .length(40)
-            .innerLineCount(6)
+            .innerLineCount(4)
             .innerLineAngle(Math.PI / 6)
             .innerLineHeight(10)
+            .appearance(
+                Appearance
+                    .newBuilder()
+                    .color(Appearance.Color.RED)
+                    .lineWidth(2)
+                    .build())
             .build();
     Assembly assembly = new Assembly("assembly", painterFactory);
     assembly.withComponent(circ);
