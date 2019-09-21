@@ -24,6 +24,7 @@ public class Assembly {
   public Assembly withComponent(Component component) {
     Preconditions.checkArgument(!components.containsKey(component.getName()), "component with name %s already exists", component.getName());
     components.put(component.getName(), component);
+    component.assembly(this);
     return this;
   }
 

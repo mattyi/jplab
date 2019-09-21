@@ -8,6 +8,8 @@ import com.hzyi.jplab.core.controller.Observer;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.CircMassPoint;
+import com.hzyi.jplab.core.model.Spring;
+import com.hzyi.jplab.core.model.Wall;
 import com.hzyi.jplab.core.solver.Solver;
 import com.hzyi.jplab.core.viewer.CoordinateTransformer;
 import com.hzyi.jplab.core.viewer.PainterFactory;
@@ -51,8 +53,44 @@ public class SingleCircApplication {
             .radius(20)
             .appearance(Appearance.of())
             .build();
+    Spring spring =
+        Spring.newBuilder()
+            .name("spring")
+            .stiffness(3.0)
+            .connectingPointAX(20.0)
+            .connectingPointAY(100.0)
+            .connectingPointBX(20.0)
+            .connectingPointBY(0.0)
+            .width(15)
+            .zigzagCount(10)
+            .appearance(
+                Appearance
+                    .newBuilder()
+                    .color(Appearance.Color.BLUE)
+                    .lineWidth(3)
+                    .build())
+            .build();
+    Wall wall =
+        Wall.newBuilder()
+            .name("wall")
+            .x(20.0)
+            .y(100.0)
+            .theta(-Math.PI / 2)
+            .length(40)
+            .innerLineCount(4)
+            .innerLineAngle(Math.PI / 6)
+            .innerLineHeight(10)
+            .appearance(
+                Appearance
+                    .newBuilder()
+                    .color(Appearance.Color.RED)
+                    .lineWidth(2)
+                    .build())
+            .build();
     Assembly assembly = new Assembly("assembly", painterFactory);
     assembly.withComponent(circ);
+    assembly.withComponent(spring);
+    assembly.withComponent(wall);
     return assembly;
   }
 

@@ -7,18 +7,19 @@ import lombok.Getter;
 public class Appearance {
 
   public static enum Color {
-    red, blue, yellow, green, black, white, gray
+    RED, BLUE, YELLOW, GREEN, BLACK, WHITE, GRAY
   }
 
   public static enum Style {
-    fill, stroke
+    FILL, STROKE
   }
 
   @Getter private Color color;
   @Getter private Style style;
+  @Getter private double lineWidth;
 
   public static Appearance of() {
-    return newBuilder().color(Color.red).style(Style.fill).build();
+    return newBuilder().color(Color.RED).style(Style.FILL).lineWidth(1).build();
   }
 
 }

@@ -42,7 +42,6 @@ public final class CircMassPoint extends MassPoint implements Circle {
   }
 
   public Painter getPainter() {
-    System.out.println(assembly);
     return assembly.getPainterFactory().getCirclePainter();
   }
 

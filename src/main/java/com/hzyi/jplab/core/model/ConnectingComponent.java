@@ -20,17 +20,17 @@ public abstract class ConnectingComponent implements Component {
 
   @Override
   public double x() {
-    return (componentA().x() + componentB().x()) / 2;
+    return (connectingPointAX() + connectingPointBX()) / 2;
   }
 
   @Override
   public double y() {
-    return (componentA().y() + componentB().y()) / 2;
+    return (connectingPointAY() + connectingPointBY()) / 2;
   }
 
   @Override
   public double theta() {
-    return (componentB().y() - componentA().y()) / (componentB().x() - componentA().x()); 
+    return Math.atan2(connectingPointBY() - connectingPointAY(), connectingPointBX() - connectingPointAX()); 
   }
 
   @Override
