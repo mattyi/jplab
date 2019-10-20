@@ -41,7 +41,6 @@ public class Assembly {
   }
 
   public void paint() {
-
     AssemblySnapshot.AssemblySnapshotBuilder initialAssemblySnapshot =
         AssemblySnapshot.newBuilder();
     for (Component component : getComponents()) {
