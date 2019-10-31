@@ -1,12 +1,9 @@
 package com.hzyi.jplab.core.application;
 
-import com.google.auto.value.AutoValue;
-import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.solver.Solver;
-import javafx.scene.paint.Color;
-import com.hzyi.jplab.core.viewer.PainterFactory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;

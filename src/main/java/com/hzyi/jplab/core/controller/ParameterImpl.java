@@ -37,5 +37,4 @@ class ParameterImpl<E> implements Parameter<E> {
   public String getName() {
     return this.name;
   }
-
 }

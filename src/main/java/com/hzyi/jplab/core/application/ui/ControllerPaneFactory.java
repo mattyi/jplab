@@ -5,7 +5,6 @@ import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Parameter;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 
 public class ControllerPaneFactory {
 
@@ -18,7 +17,7 @@ public class ControllerPaneFactory {
     FlowPane container = new FlowPane();
     for (Parameter parameter : controller.getParameters()) {
       if (parameter instanceof IntervalDoubleParameter) {
-        IntervalDoubleParameter p = (IntervalDoubleParameter)parameter;
+        IntervalDoubleParameter p = (IntervalDoubleParameter) parameter;
         container.getChildren().add(ParameterPaneFactory.newParameterPane(p));
       }
     }

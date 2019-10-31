@@ -1,7 +1,6 @@
-package com.hzyi.jplab.core.model;
+package com.hzyi.jplab.core.model.kinematic;
 
-
-public abstract class StaticComponent implements Component {
+public abstract class StaticModel implements KinematicModel {
 
   @Override
   public final double vx() {

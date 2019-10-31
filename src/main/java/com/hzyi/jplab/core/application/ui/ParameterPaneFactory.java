@@ -2,8 +2,8 @@ package com.hzyi.jplab.core.application.ui;
 
 import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Parameter;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
@@ -29,7 +29,7 @@ public class ParameterPaneFactory {
       return newIntervalDoubleParameterSlider((IntervalDoubleParameter) parameter);
     } else {
       throw new IllegalArgumentException("Parameter type currently not supported");
-    } 
+    }
   }
 
   private static Slider newIntervalDoubleParameterSlider(IntervalDoubleParameter parameter) {
@@ -45,9 +45,11 @@ public class ParameterPaneFactory {
   }
 
   private static void sliderListener(IntervalDoubleParameter parameter, Slider slider) {
-    slider.valueProperty().addListener(
-        (obs, oldVal, newVal) -> {
-          parameter.setValue(newVal.doubleValue());
-        });
+    slider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              parameter.setValue(newVal.doubleValue());
+            });
   }
 }

@@ -4,21 +4,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public class CoordinateSystem {
   /**
-   * implicitly the absolute coordinate system.
-   * x positive direction: right
-   * y positive direction: up
-   * unit length: 1 pixel on screen
-   * origin: center of the canvas
-   *
+   * implicitly the absolute coordinate system. x positive direction: right y positive direction: up
+   * unit length: 1 pixel on screen origin: center of the canvas
    */
 
-  /**
-   * The natural coordinate system. 
-   * x: (ratio, 0)
-   * y: (0, ratio)
-   * origin: Fixed at (0, 0)
-   * 
-   */
+  /** The natural coordinate system. x: (ratio, 0) y: (0, ratio) origin: Fixed at (0, 0) */
   private static final CoordinateSystem NATURAL = new CoordinateSystem(0, 0, 1, 0, 0, 1);
 
   /*

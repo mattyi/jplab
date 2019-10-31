@@ -1,20 +1,18 @@
 package com.hzyi.jplab.core.application.ui;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.hzyi.jplab.core.controller.Controller;
-import com.hzyi.jplab.core.viewer.PainterFactory;
+import com.hzyi.jplab.core.painter.PainterFactory;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
-import javafx.scene.canvas.Canvas;
 
 public final class PrimaryStageFactory {
 
@@ -56,10 +54,7 @@ public final class PrimaryStageFactory {
     canvas
         .getGraphicsContext2D()
         .fillRect(
-            0,
-            0, 
-            painterFactory.getCanvas().getWidth(),
-            painterFactory.getCanvas().getHeight());
+            0, 0, painterFactory.getCanvas().getWidth(), painterFactory.getCanvas().getHeight());
     grid.add(new Text("text"), 1, 2, 1, 1);
 
     Scene scene = new Scene(grid, 800, 800);
