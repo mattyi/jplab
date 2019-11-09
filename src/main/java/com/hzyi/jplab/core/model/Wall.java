@@ -1,14 +1,15 @@
 package com.hzyi.jplab.core.model;
 
+import com.hzyi.jplab.core.model.kinematic.StaticModel;
+import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Edge;
-import com.hzyi.jplab.core.painter.Appearance;
 import com.hzyi.jplab.core.painter.Painter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Builder(builderMethodName = "newBuilder")
-public class Wall extends StaticComponent implements Edge {
+public class Wall implements Component {
 
   private double x;
   private double y;
@@ -29,16 +30,18 @@ public class Wall extends StaticComponent implements Edge {
   }
 
   @Override
-  public KinematicModel getInitialKinematicModel() {
-    return MassPoint.newBuilder().x(x).y(y).theta(theta).build();
+  public StaticModel getInitialKinematicModel() {
+    return StaticModel.newBuilder().x(x).y(y).theta(theta).build();
   }
 
   @Override
-  public Shape getShape() {
+  public Edge getShape() {
     return Edge.newBuilder()
         .appearance(appearance)
         .innerLineHeight(innerLineHeight)
         .innerLineAngle(innerLineAngle)
+        .innerLineCount(innerLineCount)
+        .length(length)
         .build();
   }
 }

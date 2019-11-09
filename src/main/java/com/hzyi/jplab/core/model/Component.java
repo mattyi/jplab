@@ -18,7 +18,7 @@ public interface Component<K extends KinematicModel, S extends Shape> {
 
   Assembly getAssembly();
 
-  Component setAssembly(Assembly assembly);
+  void setAssembly(Assembly assembly);
 
   Painter<K, S> getPainter();
 

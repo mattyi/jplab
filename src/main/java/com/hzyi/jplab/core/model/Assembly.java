@@ -37,6 +37,17 @@ public class Assembly {
   }
 
   public void paint(AssemblySnapshot assemblySnapshot) {
-    components.valueSet().stream().forEach(c -> c.paint(c.getKinematicModel(assemblySnapshot)));
+    components.values().stream().forEach(c -> c.paint(c.getKinematicModel(assemblySnapshot)));
+  }
+
+  public void paint() {
+
+    AssemblySnapshot.AssemblySnapshotBuilder initialAssemblySnapshot =
+        AssemblySnapshot.newBuilder();
+    for (Component component : getComponents()) {
+      initialAssemblySnapshot.kinematicModel(
+          component.getName(), component.getInitialKinematicModel());
+    }
+    paint(initialAssemblySnapshot.build());
   }
 }

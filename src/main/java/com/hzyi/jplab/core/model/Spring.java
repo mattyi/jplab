@@ -1,6 +1,8 @@
 package com.hzyi.jplab.core.model;
 
-import com.hzyi.jplab.core.painter.Appearance;
+import com.hzyi.jplab.core.model.kinematic.SpringModel;
+import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.painter.Painter;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,20 +27,20 @@ public class Spring implements Component {
   private Appearance appearance;
 
   @Override
-  public KinematicModel getInitialKinematicModel() {
-    return MassPoint.newBuilder()
+  public SpringModel getInitialKinematicModel() {
+    return SpringModel.newBuilder()
         .stiffness(stiffness)
-        .componentA(componentA)
-        .componentB(componentB)
-        .componentAX(componentAX)
-        .componentAY(componentAY)
-        .componentBX(componentBX)
-        .componentBY(componentBY)
+        .connectingModelA(componentA.getInitialKinematicModel())
+        .connectingModelB(componentB.getInitialKinematicModel())
+        .connectingPointAX(connectingPointAX)
+        .connectingPointAY(connectingPointAY)
+        .connectingPointBX(connectingPointBX)
+        .connectingPointBY(connectingPointBY)
         .build();
   }
 
   @Override
-  public Shape getShape() {
+  public ZigzagLine getShape() {
     return ZigzagLine.newBuilder()
         .appearance(appearance)
         .zigzagCount(zigzagCount)

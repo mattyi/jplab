@@ -10,7 +10,7 @@ import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.CircleMassPoint;
 import com.hzyi.jplab.core.model.Spring;
 import com.hzyi.jplab.core.model.Wall;
-import com.hzyi.jplab.core.painter.Appearance;
+import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.solver.Solver;
@@ -52,18 +52,6 @@ public class SingleCircApplication {
             .radius(20)
             .appearance(Appearance.of())
             .build();
-    Spring spring =
-        Spring.newBuilder()
-            .name("spring")
-            .stiffness(3.0)
-            .connectingPointAX(20.0)
-            .connectingPointAY(100.0)
-            .connectingPointBX(20.0)
-            .connectingPointBY(0.0)
-            .width(15)
-            .zigzagCount(10)
-            .appearance(Appearance.newBuilder().color(Appearance.Color.BLUE).lineWidth(3).build())
-            .build();
     Wall wall =
         Wall.newBuilder()
             .name("wall")
@@ -76,10 +64,24 @@ public class SingleCircApplication {
             .innerLineHeight(10)
             .appearance(Appearance.newBuilder().color(Appearance.Color.RED).lineWidth(2).build())
             .build();
+    Spring spring =
+        Spring.newBuilder()
+            .name("spring")
+            .stiffness(3.0)
+            .connectingPointAX(20.0)
+            .connectingPointAY(100.0)
+            .connectingPointBX(20.0)
+            .connectingPointBY(0.0)
+            .componentA(circ)
+            .componentB(wall)
+            .width(15)
+            .zigzagCount(10)
+            .appearance(Appearance.newBuilder().color(Appearance.Color.BLUE).lineWidth(3).build())
+            .build();
     Assembly assembly = new Assembly("assembly", painterFactory);
     assembly.withComponent(circ);
-    assembly.withComponent(spring);
     assembly.withComponent(wall);
+    assembly.withComponent(spring);
     return assembly;
   }
 

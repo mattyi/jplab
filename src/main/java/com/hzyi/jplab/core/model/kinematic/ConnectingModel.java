@@ -1,18 +1,17 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
 
 public abstract class ConnectingModel implements KinematicModel {
 
-  public abstract Component componentA();
+  public abstract KinematicModel connectingModelA();
 
   public abstract double connectingPointAX();
 
   public abstract double connectingPointAY();
 
-  public abstract Component componentB();
+  public abstract KinematicModel connectingModelB();
 
   public abstract double connectingPointBX();
 
@@ -48,31 +47,33 @@ public abstract class ConnectingModel implements KinematicModel {
 
   @Override
   public final double vx() {
-    return (componentA().vx() + componentB().vx()) / 2;
+    return (connectingModelA().vx() + connectingModelB().vx()) / 2;
   }
 
   @Override
   public final double vy() {
-    return (componentA().vy() + componentB().vy()) / 2;
+    return (connectingModelA().vy() + connectingModelB().vy()) / 2;
   }
 
   @Override
   public final double omega() {
-    return (componentB().vy() - componentA().vy()) / (componentB().vx() - componentA().vx());
+    return (connectingModelB().vy() - connectingModelA().vy())
+        / (connectingModelB().vx() - connectingModelA().vx());
   }
 
   @Override
   public final double ax() {
-    return (componentA().ax() + componentB().ax()) / 2;
+    return (connectingModelA().ax() + connectingModelB().ax()) / 2;
   }
 
   @Override
   public final double ay() {
-    return (componentA().ay() + componentB().ay()) / 2;
+    return (connectingModelA().ay() + connectingModelB().ay()) / 2;
   }
 
   @Override
   public final double alpha() {
-    return (componentB().ay() - componentA().ay()) / (componentB().ax() - componentA().ax());
+    return (connectingModelB().ay() - connectingModelA().ay())
+        / (connectingModelB().ax() - connectingModelA().ax());
   }
 }

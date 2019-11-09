@@ -2,9 +2,9 @@ package com.hzyi.jplab.core.model.kinematic;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.Accessor;
+import lombok.experimental.Accessors;
 
-@Accessor(fluent = true)
+@Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder")
 public class MassPoint implements RigidBody {
 

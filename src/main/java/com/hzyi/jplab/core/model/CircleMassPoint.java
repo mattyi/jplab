@@ -1,7 +1,8 @@
 package com.hzyi.jplab.core.model;
 
+import com.hzyi.jplab.core.model.kinematic.MassPoint;
+import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Circle;
-import com.hzyi.jplab.core.painter.Appearance;
 import com.hzyi.jplab.core.painter.Painter;
 import lombok.Builder;
 import lombok.Getter;

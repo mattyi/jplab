@@ -6,7 +6,7 @@ import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
 import javafx.scene.canvas.Canvas;
 
-public class ZigzagLinePainter extends JavaFxPainter<ZigzagLine, ConnectingModel> {
+public class ZigzagLinePainter extends JavaFxPainter<ConnectingModel, ZigzagLine> {
 
   ZigzagLinePainter(Canvas canvas, CoordinateTransformer transformer) {
     super(canvas, transformer);

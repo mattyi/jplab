@@ -1,16 +1,22 @@
 package com.hzyi.jplab.core.model.shape;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
-public class ZigzagLine extends Shape {
+@Builder(builderMethodName = "newBuilder")
+public class ZigzagLine implements Shape {
 
-  @Getter(fluent = true)
+  @Getter
+  @Accessors(fluent = true)
   private double length;
 
-  @Getter(fluent = true)
+  @Getter
+  @Accessors(fluent = true)
   private double width;
 
-  @Getter(fluent = true)
+  @Getter
+  @Accessors(fluent = true)
   private int zigzagCount;
 
   @Getter private Appearance appearance;

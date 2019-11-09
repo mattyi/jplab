@@ -1,8 +1,8 @@
 package com.hzyi.jplab.core.painter;
 
+import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Shape;
-import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.util.Coordinate;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,7 +24,6 @@ public abstract class JavaFxPainter<K extends KinematicModel, S extends Shape>
   }
 
   protected void drawLine(Coordinate from, Coordinate to) {
-    applyAppearance(appearance);
     from = coordinateTransformer.toScreen(from);
     to = coordinateTransformer.toScreen(to);
     getGraphicsContext().strokeLine(from.x(), from.y(), to.x(), to.y());
@@ -34,25 +33,23 @@ public abstract class JavaFxPainter<K extends KinematicModel, S extends Shape>
     applyAppearance(appearance);
     switch (appearance.getStyle()) {
       case STROKE:
-        return drawCircle(center, radius);
+        strokeCircle(center, radius);
+        return;
       case FILL:
-        return fillCircle(center, radius);
+        fillCircle(center, radius);
+        return;
       default:
-        throw new IllegalArgumentException("Unknown style: " + circle.getAppearance().getStyle());
+        throw new IllegalArgumentException("Unknown style: " + appearance.getStyle());
     }
   }
 
   private void strokeCircle(Coordinate center, double radius) {
-    GraphicsContext graphicsContext = getGraphicsContext();
-    DisplayUtil.graphicsContextColorAndStyle(graphicsContext, circle.getAppearance());
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
     getGraphicsContext().strokeOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
   }
 
   private void fillCircle(Coordinate center, double radius) {
-    GraphicsContext graphicsContext = getGraphicsContext();
-    DisplayUtil.graphicsContextColorAndStyle(graphicsContext, circle.getAppearance());
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
     getGraphicsContext().fillOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
