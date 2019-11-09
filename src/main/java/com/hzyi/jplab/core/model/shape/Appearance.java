@@ -1,4 +1,4 @@
-package com.hzyi.jplab.core.viewer;
+package com.hzyi.jplab.core.model.shape;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,11 +7,18 @@ import lombok.Getter;
 public class Appearance {
 
   public static enum Color {
-    RED, BLUE, YELLOW, GREEN, BLACK, WHITE, GRAY
+    RED,
+    BLUE,
+    YELLOW,
+    GREEN,
+    BLACK,
+    WHITE,
+    GRAY
   }
 
   public static enum Style {
-    FILL, STROKE
+    FILL,
+    STROKE
   }
 
   @Getter private Color color;
@@ -21,5 +28,4 @@ public class Appearance {
   public static Appearance of() {
     return newBuilder().color(Color.RED).style(Style.FILL).lineWidth(1).build();
   }
-
 }

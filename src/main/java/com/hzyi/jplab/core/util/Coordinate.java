@@ -4,7 +4,7 @@ package com.hzyi.jplab.core.util;
 public class Coordinate {
 
   private double x, y;
-  
+
   public Coordinate(double x, double y) {
     this.x = x;
     this.y = y;
@@ -29,7 +29,7 @@ public class Coordinate {
   }
 
   public double dot(Coordinate c2) {
-  	return x * c2.x + y * c2.y;
+    return x * c2.x + y * c2.y;
   }
 
   @Override

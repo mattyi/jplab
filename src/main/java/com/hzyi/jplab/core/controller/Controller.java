@@ -13,5 +13,4 @@ public interface Controller {
   public static Controller newController() {
     return new ControllerImpl();
   }
-
 }

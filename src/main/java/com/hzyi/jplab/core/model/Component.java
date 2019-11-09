@@ -1,33 +1,28 @@
 package com.hzyi.jplab.core.model;
 
+import com.hzyi.jplab.core.model.kinematic.KinematicModel;
+import com.hzyi.jplab.core.model.shape.Shape;
+import com.hzyi.jplab.core.painter.Painter;
 
-public interface Component {
+public interface Component<K extends KinematicModel, S extends Shape> {
 
   String getName();
 
-  double x();
+  K getInitialKinematicModel();
 
-  double y();
+  default K getKinematicModel(AssemblySnapshot assemblySnapshot) {
+    return (K) (assemblySnapshot.get(getName()));
+  }
 
-  double theta();
+  S getShape();
 
-  double vx();
+  Assembly getAssembly();
 
-  double vy();
+  void setAssembly(Assembly assembly);
 
-  double omega();
+  Painter<K, S> getPainter();
 
-  double ax();
-
-  double ay();
-
-  double alpha();
-
-  void update(ComponentState componentState);
-
-  ComponentState getInitialComponentState();
-
-  Assembly assembly();
-
-  Component assembly(Assembly assembly);
+  default void paint(K kinematicModel) {
+    getPainter().paint(getShape(), kinematicModel);
+  }
 }

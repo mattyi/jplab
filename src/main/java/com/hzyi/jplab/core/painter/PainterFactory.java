@@ -1,8 +1,7 @@
-package com.hzyi.jplab.core.viewer;
+package com.hzyi.jplab.core.painter;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 public class PainterFactory {

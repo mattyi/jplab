@@ -1,7 +1,16 @@
-package com.hzyi.jplab.core.model;
+package com.hzyi.jplab.core.model.kinematic;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-public abstract class StaticComponent implements Component {
+@Accessors(fluent = true)
+@Builder(builderMethodName = "newBuilder")
+public class StaticModel implements KinematicModel {
+
+  @Getter private final double x;
+  @Getter private final double y;
+  @Getter private final double theta;
 
   @Override
   public final double vx() {

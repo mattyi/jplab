@@ -7,15 +7,14 @@ import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Observer;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
-import com.hzyi.jplab.core.model.CircMassPoint;
+import com.hzyi.jplab.core.model.CircleMassPoint;
 import com.hzyi.jplab.core.model.Spring;
 import com.hzyi.jplab.core.model.Wall;
+import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.painter.CoordinateTransformer;
+import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.solver.Solver;
-import com.hzyi.jplab.core.viewer.CoordinateTransformer;
-import com.hzyi.jplab.core.viewer.PainterFactory;
-import com.hzyi.jplab.core.viewer.CirclePainter;
 import javafx.scene.canvas.Canvas;
-import com.hzyi.jplab.core.viewer.Appearance;
 
 public class SingleCircApplication {
 
@@ -42,8 +41,8 @@ public class SingleCircApplication {
   }
 
   private static Assembly initializeAssembly(PainterFactory painterFactory) {
-    CircMassPoint circ =
-        CircMassPoint.newBuilder()
+    CircleMassPoint circ =
+        CircleMassPoint.newBuilder()
             .name("circ")
             .x(20.0)
             .y(0.0)
@@ -52,23 +51,6 @@ public class SingleCircApplication {
             .mass(1.0)
             .radius(20)
             .appearance(Appearance.of())
-            .build();
-    Spring spring =
-        Spring.newBuilder()
-            .name("spring")
-            .stiffness(3.0)
-            .connectingPointAX(20.0)
-            .connectingPointAY(100.0)
-            .connectingPointBX(20.0)
-            .connectingPointBY(0.0)
-            .width(15)
-            .zigzagCount(10)
-            .appearance(
-                Appearance
-                    .newBuilder()
-                    .color(Appearance.Color.BLUE)
-                    .lineWidth(3)
-                    .build())
             .build();
     Wall wall =
         Wall.newBuilder()
@@ -80,17 +62,26 @@ public class SingleCircApplication {
             .innerLineCount(4)
             .innerLineAngle(Math.PI / 6)
             .innerLineHeight(10)
-            .appearance(
-                Appearance
-                    .newBuilder()
-                    .color(Appearance.Color.RED)
-                    .lineWidth(2)
-                    .build())
+            .appearance(Appearance.newBuilder().color(Appearance.Color.RED).lineWidth(2).build())
+            .build();
+    Spring spring =
+        Spring.newBuilder()
+            .name("spring")
+            .stiffness(3.0)
+            .connectingPointAX(20.0)
+            .connectingPointAY(100.0)
+            .connectingPointBX(20.0)
+            .connectingPointBY(0.0)
+            .componentA(circ)
+            .componentB(wall)
+            .width(15)
+            .zigzagCount(10)
+            .appearance(Appearance.newBuilder().color(Appearance.Color.BLUE).lineWidth(3).build())
             .build();
     Assembly assembly = new Assembly("assembly", painterFactory);
     assembly.withComponent(circ);
-    assembly.withComponent(spring);
     assembly.withComponent(wall);
+    assembly.withComponent(spring);
     return assembly;
   }
 

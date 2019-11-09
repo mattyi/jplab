@@ -1,31 +1,29 @@
-package com.hzyi.jplab.core.viewer;
+package com.hzyi.jplab.core.painter;
 
-import com.google.common.base.Preconditions;
-import com.hzyi.jplab.core.model.CircMassPoint;
-import com.hzyi.jplab.core.viewer.shape.Edge;
-import com.hzyi.jplab.core.model.Field;
-import com.hzyi.jplab.core.viewer.Appearance;
+import com.hzyi.jplab.core.model.kinematic.StaticModel;
+import com.hzyi.jplab.core.model.shape.Edge;
 import com.hzyi.jplab.core.util.Coordinate;
-import com.hzyi.jplab.core.util.Coordinates;
-import com.hzyi.jplab.core.util.CoordinateSystem;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.shape.Line;
 
-public class EdgePainter extends JavaFxPainter<Edge> {
+public class EdgePainter extends JavaFxPainter<StaticModel, Edge> {
   EdgePainter(Canvas canvas, CoordinateTransformer transformer) {
     super(canvas, transformer);
   }
 
   @Override
-  public void paint(
-      Edge edge, double x, double y, double theta) {
-    GraphicsContext graphicsContext = getGraphicsContext();
-    DisplayUtil.graphicsContextColorAndStyle(graphicsContext, edge.getAppearance());
+  public void paint(Edge edge, StaticModel model) {
+    System.out.println("here");
+    double x = model.x();
+    double y = model.y();
+    double theta = model.theta();
     double endAX = x + edge.length() * Math.cos(theta + (Math.PI / 2.0)) / 2;
     double endAY = y + edge.length() * Math.sin(theta + (Math.PI / 2.0)) / 2;
     double endBX = x * 2 - endAX;
     double endBY = y * 2 - endAY;
+    System.out.println(endAX);
+    System.out.println(endAY);
+    System.out.println(endBX);
+    System.out.println(endBY);
     drawLine(new Coordinate(endAX, endAY), new Coordinate(endBX, endBY));
 
     Coordinate start = new Coordinate(0, 0);

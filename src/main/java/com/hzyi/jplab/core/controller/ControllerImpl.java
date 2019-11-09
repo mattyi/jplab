@@ -1,7 +1,7 @@
 package com.hzyi.jplab.core.controller;
 
-import java.util.HashMap;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ControllerImpl implements Controller {
@@ -30,5 +30,4 @@ public class ControllerImpl implements Controller {
     }
     return param;
   }
-
 }
