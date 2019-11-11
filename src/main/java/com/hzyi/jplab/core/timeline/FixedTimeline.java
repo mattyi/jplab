@@ -1,23 +1,27 @@
 package com.hzyi.jplab.core.timeline;
 
-import org.threeten.bp.Instant;
+import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.kinematic.KinematicModel;
+import java.util.Map;
+import java.util.function.BiFunction;
 import lombok.Builder;
 import lombok.Singular;
-import java.util.BiFunction;
 
 @Builder(builderMethodName = "newBuilder")
 public class FixedTimeline implements Timeline {
 
-  private final initialAssembly;
-  @Singular private final Table<String, Field, BiFunction<Assembly, Double, Double>> functions;
+  private final AssemblySnapshot initialAssemblySnapshot;
 
-  public Assembly getAssemblySnapshot(Instant timestamp) {
-    Assembly snapshot = initialAssembly.getSnapshot();
-    for (Cell<String, Field, BiFunction<Assembly, Double, Double> cell : functions.cellSet()) {
-      Component component = snapshot.getComponent(cell.getRowKey());
-      component.update(cell.getColumnKey(), cell.getValue().apply(initialAssembly, timestamp));
+  @Singular
+  private final Map<String, BiFunction<AssemblySnapshot, Double, KinematicModel>> functions;
+
+  public AssemblySnapshot getAssemblySnapshot(double timestamp) {
+    AssemblySnapshot.AssemblySnapshotBuilder snapshot = initialAssemblySnapshot.toBuilder();
+    for (Map.Entry<String, BiFunction<AssemblySnapshot, Double, KinematicModel>> entry :
+        functions.entrySet()) {
+      snapshot.kinematicModel(
+          entry.getKey(), entry.getValue().apply(initialAssemblySnapshot, timestamp));
     }
-    return snapshot;
+    return snapshot.build();
   }
-
 }

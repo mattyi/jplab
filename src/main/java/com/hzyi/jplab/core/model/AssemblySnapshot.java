@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Singular;
 
-@Builder(builderMethodName = "newBuilder")
+@Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class AssemblySnapshot {
 
   @Singular private final Map<String, KinematicModel> kinematicModels;

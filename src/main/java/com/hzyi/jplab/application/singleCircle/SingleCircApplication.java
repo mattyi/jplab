@@ -7,13 +7,19 @@ import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
 import com.hzyi.jplab.core.controller.Observer;
 import com.hzyi.jplab.core.controller.Parameter;
 import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.CircleMassPoint;
 import com.hzyi.jplab.core.model.Spring;
 import com.hzyi.jplab.core.model.Wall;
+import com.hzyi.jplab.core.model.kinematic.MassPoint;
+import com.hzyi.jplab.core.model.kinematic.SpringModel;
+import com.hzyi.jplab.core.model.kinematic.StaticModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.timeline.SimpleFixedTimeline;
+import com.hzyi.jplab.core.timeline.Timeline;
 import javafx.scene.canvas.Canvas;
 
 public class SingleCircApplication {
@@ -24,6 +30,7 @@ public class SingleCircApplication {
     Controller controller = initializeController();
     PainterFactory painterFactory = initializePainterFactory();
     Assembly assembly = initializeAssembly(painterFactory);
+    Timeline timeline = initializeTimeline(assembly);
     Application application =
         Application.newBuilder()
             .name(name)
@@ -31,6 +38,7 @@ public class SingleCircApplication {
             .solver(solver)
             .controller(controller)
             .painterFactory(painterFactory)
+            .timeline(timeline)
             .build();
     UIWrapper.setApplication(application);
     UIWrapper.startSimulation();
@@ -47,8 +55,8 @@ public class SingleCircApplication {
             .x(20.0)
             .y(0.0)
             .vx(0.0)
-            .vy(0.0)
-            .mass(1.0)
+            .vy(-30.0)
+            .mass(10.0)
             .radius(20)
             .appearance(Appearance.of())
             .build();
@@ -67,10 +75,11 @@ public class SingleCircApplication {
     Spring spring =
         Spring.newBuilder()
             .name("spring")
-            .stiffness(3.0)
-            .connectingPointAX(20.0)
-            .connectingPointAY(100.0)
-            .connectingPointBX(20.0)
+            .stiffness(30.0)
+            .originalLength(100)
+            .connectingPointAX(0.0)
+            .connectingPointAY(0.0)
+            .connectingPointBX(0.0)
             .connectingPointBY(0.0)
             .componentA(circ)
             .componentB(wall)
@@ -83,6 +92,33 @@ public class SingleCircApplication {
     assembly.withComponent(wall);
     assembly.withComponent(spring);
     return assembly;
+  }
+
+  private static Timeline initializeTimeline(Assembly assembly) {
+    AssemblySnapshot initialAssemblySnapshot = assembly.getInitialAssemblySnapshot();
+    Timeline timeline =
+        new SimpleFixedTimeline(initialAssemblySnapshot, SingleCircApplication::calculate);
+    return timeline;
+  }
+
+  public static AssemblySnapshot calculate(
+      AssemblySnapshot initialAssemblySnapshot, double timestamp) {
+    AssemblySnapshot.AssemblySnapshotBuilder snapshot = AssemblySnapshot.newBuilder();
+    MassPoint massPoint = (MassPoint) initialAssemblySnapshot.get("circ");
+    SpringModel springModel = (SpringModel) initialAssemblySnapshot.get("spring");
+    double m = massPoint.mass();
+    double k = springModel.stiffness();
+    double w = Math.sqrt(k / m);
+    double a = massPoint.vy() / w;
+    MassPoint circle = massPoint.toBuilder().y(a * Math.sin(w * timestamp / 1000)).build();
+    StaticModel wall = ((StaticModel) initialAssemblySnapshot.get("wall")).toBuilder().build();
+    SpringModel spring =
+        springModel.toBuilder().connectingModelA(circle).connectingModelB(wall).build();
+    return snapshot
+        .kinematicModel("circ", circle)
+        .kinematicModel("wall", wall)
+        .kinematicModel("spring", spring)
+        .build();
   }
 
   private static Solver initializeSolver() {

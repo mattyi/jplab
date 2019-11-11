@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
-@Builder(builderMethodName = "newBuilder")
+@Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class MassPoint implements RigidBody {
 
   @Getter private double x;

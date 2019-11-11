@@ -1,9 +1,8 @@
 package com.hzyi.jplab.core.timeline;
 
-import org.threeten.bp.Instant;
+import com.hzyi.jplab.core.model.AssemblySnapshot;
 
 public interface Timeline {
 
-  Assembly getAssemblySnapshot(Instant timestamp);
-
+  AssemblySnapshot getAssemblySnapshot(double timestamp);
 }

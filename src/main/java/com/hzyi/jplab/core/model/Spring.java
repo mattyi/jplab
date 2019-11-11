@@ -13,6 +13,7 @@ public class Spring implements Component {
 
   @Getter private String name;
   private double stiffness;
+  private double originalLength;
   private Component componentA;
   private Component componentB;
   private double connectingPointAX;
@@ -30,6 +31,7 @@ public class Spring implements Component {
   public SpringModel getInitialKinematicModel() {
     return SpringModel.newBuilder()
         .stiffness(stiffness)
+        .originalLength(originalLength)
         .connectingModelA(componentA.getInitialKinematicModel())
         .connectingModelB(componentB.getInitialKinematicModel())
         .connectingPointAX(connectingPointAX)
