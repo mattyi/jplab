@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
-@Builder(builderMethodName = "newBuilder")
+@Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class StaticModel implements KinematicModel {
 
   @Getter private final double x;

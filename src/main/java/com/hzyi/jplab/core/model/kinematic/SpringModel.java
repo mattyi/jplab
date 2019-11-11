@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
-@Builder(builderMethodName = "newBuilder")
+@Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class SpringModel extends ConnectingModel {
 
   @Getter private double stiffness;
+  @Getter private double originalLength;
   @Getter private double connectingPointAX;
   @Getter private double connectingPointAY;
   @Getter private double connectingPointBX;

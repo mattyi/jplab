@@ -25,7 +25,7 @@ public final class CircleMassPoint implements Component<MassPoint, Circle> {
 
   @Override
   public MassPoint getInitialKinematicModel() {
-    return MassPoint.newBuilder().x(x).y(y).vx(x).vy(y).ax(x).ay(y).mass(mass).build();
+    return MassPoint.newBuilder().x(x).y(y).vx(vx).vy(vy).ax(x).ay(y).mass(mass).build();
   }
 
   @Override
