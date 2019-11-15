@@ -1,5 +1,6 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
 
@@ -7,42 +8,45 @@ public abstract class ConnectingModel implements KinematicModel {
 
   public abstract KinematicModel connectingModelA();
 
-  public abstract double connectingPointAX();
+  public abstract Coordinate relativeConnectingPointA();
 
-  public abstract double connectingPointAY();
+  public Coordinate absoluteConnectingPointA() {
+    return Coordinates.transform(
+        relativeConnectingPointA(),
+        connectingModelA().bodyCoordinateSystem(),
+        CoordinateTransformer.absoluteNatural());
+  }
 
   public abstract KinematicModel connectingModelB();
 
-  public abstract double connectingPointBX();
+  public abstract Coordinate relativeConnectingPointB();
 
-  public abstract double connectingPointBY();
-
-  public Coordinate connectingPointA() {
-    return new Coordinate(connectingPointAX(), connectingPointAY());
-  }
-
-  public Coordinate connectingPointB() {
-    return new Coordinate(connectingPointBX(), connectingPointBY());
+  public Coordinate absoluteConnectingPointB() {
+    return Coordinates.transform(
+        relativeConnectingPointB(),
+        connectingModelB().bodyCoordinateSystem(),
+        CoordinateTransformer.absoluteNatural());
   }
 
   public double length() {
-    return Coordinates.distance(connectingPointA(), connectingPointB());
+    return Coordinates.distance(absoluteConnectingPointA(), absoluteConnectingPointB());
   }
 
   @Override
   public final double x() {
-    return (connectingPointAX() + connectingPointBX()) / 2;
+    return (absoluteConnectingPointA().x() + absoluteConnectingPointB().x()) / 2;
   }
 
   @Override
   public final double y() {
-    return (connectingPointAY() + connectingPointBY()) / 2;
+    return (absoluteConnectingPointA().y() + absoluteConnectingPointB().y()) / 2;
   }
 
   @Override
   public final double theta() {
     return Math.atan2(
-        connectingPointBY() - connectingPointAY(), connectingPointBX() - connectingPointAX());
+        absoluteConnectingPointB().y() - absoluteConnectingPointA().y(),
+        absoluteConnectingPointB().x() - absoluteConnectingPointA().x());
   }
 
   @Override
