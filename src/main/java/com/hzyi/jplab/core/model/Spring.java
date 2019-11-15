@@ -34,10 +34,10 @@ public class Spring implements Component {
         .originalLength(originalLength)
         .connectingModelA(componentA.getInitialKinematicModel())
         .connectingModelB(componentB.getInitialKinematicModel())
-        .connectingPointAX(connectingPointAX)
-        .connectingPointAY(connectingPointAY)
-        .connectingPointBX(connectingPointBX)
-        .connectingPointBY(connectingPointBY)
+        .relativeConnectingPointAX(connectingPointAX)
+        .relativeConnectingPointAY(connectingPointAY)
+        .relativeConnectingPointBX(connectingPointBX)
+        .relativeConnectingPointBY(connectingPointBY)
         .build();
   }
 

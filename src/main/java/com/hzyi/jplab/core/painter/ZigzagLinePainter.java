@@ -3,7 +3,6 @@ package com.hzyi.jplab.core.painter;
 import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.util.Coordinate;
-import com.hzyi.jplab.core.util.CoordinateSystem;
 import com.hzyi.jplab.core.util.Coordinates;
 import javafx.scene.canvas.Canvas;
 
@@ -15,15 +14,8 @@ public class ZigzagLinePainter extends JavaFxPainter<ConnectingModel, ZigzagLine
 
   @Override
   public void paint(ZigzagLine line, ConnectingModel model) {
-    Coordinate connectingPointA = model.connectingPointA();
-    Coordinate connectingPointB = model.connectingPointB();
-    CoordinateSystem natural = new CoordinateSystem(0, 0, 1, 0, 0, 1);
-    connectingPointA =
-        Coordinates.transform(
-            connectingPointA, model.connectingModelA().bodyCoordinateSystem(), natural);
-    connectingPointB =
-        Coordinates.transform(
-            connectingPointB, model.connectingModelB().bodyCoordinateSystem(), natural);
+    Coordinate connectingPointA = model.absoluteConnectingPointA();
+    Coordinate connectingPointB = model.absoluteConnectingPointB();
     double x = connectingPointA.x();
     double y = connectingPointA.y();
     double length = Coordinates.distance(connectingPointA, connectingPointB);
@@ -41,6 +33,7 @@ public class ZigzagLinePainter extends JavaFxPainter<ConnectingModel, ZigzagLine
       clockwise = !clockwise;
       next = getZigzagBoundaryPoint(previous, line.width(), model.theta(), zigzagLength, clockwise);
     }
+    drawLine(previous, connectingPointB);
   }
 
   private static Coordinate getZigzagBoundaryPoint(
