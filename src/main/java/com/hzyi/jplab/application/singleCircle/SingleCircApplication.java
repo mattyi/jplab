@@ -1,6 +1,7 @@
 package com.hzyi.jplab.application.singlecircle;
 
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.Singleton;
 import com.hzyi.jplab.core.application.UIWrapper;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.controller.IntervalDoubleParameter;
@@ -31,8 +32,8 @@ public class SingleCircApplication {
     PainterFactory painterFactory = initializePainterFactory();
     Assembly assembly = initializeAssembly(painterFactory);
     Timeline timeline = initializeTimeline(assembly);
-    Application application =
-        Application.newBuilder()
+    Singleton singleton =
+        Singleton.newBuilder()
             .name(name)
             .assembly(assembly)
             .solver(solver)
@@ -40,6 +41,8 @@ public class SingleCircApplication {
             .painterFactory(painterFactory)
             .timeline(timeline)
             .build();
+    Application application = new Application();
+    application.loadApplicationSingleton(singleton);
     UIWrapper.setApplication(application);
     UIWrapper.startSimulation();
   }
@@ -87,7 +90,7 @@ public class SingleCircApplication {
             .zigzagCount(10)
             .appearance(Appearance.newBuilder().color(Appearance.Color.BLUE).lineWidth(3).build())
             .build();
-    Assembly assembly = new Assembly("assembly", painterFactory);
+    Assembly assembly = new Assembly("assembly");
     assembly.withComponent(circ);
     assembly.withComponent(wall);
     assembly.withComponent(spring);
@@ -103,7 +106,7 @@ public class SingleCircApplication {
 
   public static AssemblySnapshot calculate(
       AssemblySnapshot initialAssemblySnapshot, double timestamp) {
-    AssemblySnapshot.AssemblySnapshotBuilder snapshot = AssemblySnapshot.newBuilder();
+    AssemblySnapshot.Builder snapshot = AssemblySnapshot.newBuilder();
     MassPoint massPoint = (MassPoint) initialAssemblySnapshot.get("circ");
     SpringModel springModel = (SpringModel) initialAssemblySnapshot.get("spring");
     double m = massPoint.mass();

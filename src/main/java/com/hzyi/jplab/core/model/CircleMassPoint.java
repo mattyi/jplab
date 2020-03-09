@@ -1,12 +1,12 @@
 package com.hzyi.jplab.core.model;
 
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Circle;
 import com.hzyi.jplab.core.painter.Painter;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Builder(builderMethodName = "newBuilder")
 public final class CircleMassPoint implements Component<MassPoint, Circle> {
@@ -21,11 +21,10 @@ public final class CircleMassPoint implements Component<MassPoint, Circle> {
   private double mass;
   private double radius;
   private Appearance appearance;
-  @Getter @Setter private Assembly assembly;
 
   @Override
   public MassPoint getInitialKinematicModel() {
-    return MassPoint.newBuilder().x(x).y(y).vx(vx).vy(vy).ax(x).ay(y).mass(mass).build();
+    return MassPoint.newBuilder().name(name).x(x).y(y).vx(vx).vy(vy).ax(x).ay(y).mass(mass).build();
   }
 
   @Override
@@ -35,6 +34,6 @@ public final class CircleMassPoint implements Component<MassPoint, Circle> {
 
   @Override
   public Painter getPainter() {
-    return assembly.getPainterFactory().getCirclePainter();
+    return Application.singleton().getPainterFactory().getCirclePainter();
   }
 }

@@ -16,11 +16,10 @@ public class FixedTimeline implements Timeline {
   private final Map<String, BiFunction<AssemblySnapshot, Double, KinematicModel>> functions;
 
   public AssemblySnapshot getAssemblySnapshot(double timestamp) {
-    AssemblySnapshot.AssemblySnapshotBuilder snapshot = initialAssemblySnapshot.toBuilder();
+    AssemblySnapshot.Builder snapshot = initialAssemblySnapshot.toBuilder();
     for (Map.Entry<String, BiFunction<AssemblySnapshot, Double, KinematicModel>> entry :
         functions.entrySet()) {
-      snapshot.kinematicModel(
-          entry.getKey(), entry.getValue().apply(initialAssemblySnapshot, timestamp));
+      snapshot.set(entry.getKey(), entry.getValue().apply(initialAssemblySnapshot, timestamp));
     }
     return snapshot.build();
   }

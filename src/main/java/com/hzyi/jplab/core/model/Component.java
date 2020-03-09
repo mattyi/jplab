@@ -16,10 +16,6 @@ public interface Component<K extends KinematicModel, S extends Shape> {
 
   S getShape();
 
-  Assembly getAssembly();
-
-  void setAssembly(Assembly assembly);
-
   Painter<K, S> getPainter();
 
   default void paint(K kinematicModel) {

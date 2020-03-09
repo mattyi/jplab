@@ -5,6 +5,8 @@ import com.hzyi.jplab.core.util.CoordinateSystem;
 
 public interface KinematicModel {
 
+  String name();
+
   double x();
 
   double y();
