@@ -1,12 +1,12 @@
 package com.hzyi.jplab.core.model;
 
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.painter.Painter;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Builder(builderMethodName = "newBuilder")
 public class Spring implements Component {
@@ -20,9 +20,6 @@ public class Spring implements Component {
   private double connectingPointAY;
   private double connectingPointBX;
   private double connectingPointBY;
-
-  @Getter @Setter private Assembly assembly;
-
   private double width;
   private int zigzagCount;
   private Appearance appearance;
@@ -30,6 +27,7 @@ public class Spring implements Component {
   @Override
   public SpringModel getInitialKinematicModel() {
     return SpringModel.newBuilder()
+        .name(name)
         .stiffness(stiffness)
         .originalLength(originalLength)
         .connectingModelA(componentA.getInitialKinematicModel())
@@ -52,6 +50,6 @@ public class Spring implements Component {
 
   @Override
   public Painter getPainter() {
-    return assembly.getPainterFactory().getZigzagLinePainter();
+    return Application.singleton().getPainterFactory().getZigzagLinePainter();
   }
 }

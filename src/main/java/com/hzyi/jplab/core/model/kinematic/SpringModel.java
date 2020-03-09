@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class SpringModel extends ConnectingModel {
 
+  @Getter private String name;
   @Getter private double stiffness;
   @Getter private double originalLength;
   private double relativeConnectingPointAX;

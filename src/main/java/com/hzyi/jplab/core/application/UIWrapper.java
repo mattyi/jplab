@@ -16,9 +16,9 @@ public class UIWrapper extends javafx.application.Application {
     primaryStage =
         PrimaryStageFactory.initPrimaryStage(
             primaryStage,
-            application.name(),
-            application.controller(),
-            application.painterFactory());
+            application.singleton().getName(),
+            application.singleton().getController(),
+            application.singleton().getPainterFactory());
     primaryStage.show();
     application.start();
   }

@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class MassPoint implements RigidBody {
 
+  @Getter private String name;
   @Getter private double x;
   @Getter private double y;
   @Getter private double vx;

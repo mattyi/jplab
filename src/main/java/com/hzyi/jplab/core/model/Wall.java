@@ -1,5 +1,6 @@
 package com.hzyi.jplab.core.model;
 
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Edge;
@@ -26,12 +27,12 @@ public class Wall implements Component {
 
   @Override
   public Painter getPainter() {
-    return assembly.getPainterFactory().getEdgePainter();
+    return Application.singleton().getPainterFactory().getEdgePainter();
   }
 
   @Override
   public StaticModel getInitialKinematicModel() {
-    return StaticModel.newBuilder().x(x).y(y).theta(theta).build();
+    return StaticModel.newBuilder().name(name).x(x).y(y).theta(theta).build();
   }
 
   @Override

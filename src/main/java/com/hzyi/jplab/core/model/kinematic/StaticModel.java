@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class StaticModel implements KinematicModel {
 
+  @Getter private String name;
   @Getter private final double x;
   @Getter private final double y;
   @Getter private final double theta;
