@@ -30,10 +30,22 @@ public class AssemblySnapshot {
     return builder;
   }
 
+  public AssmeblySnapshot advanceTimeStep(double timeStep) {
+    Builder builder = new Builder();
+    for (Map.Entry<String, KinematicModel> entry : kinematicModels.entrySet()) {
+      KinematicModel model = entry.getValue();
+      if (model instanceof ConnectingModel) {
+
+      } else {
+
+      }
+    }
+    return builder.build();
+  }
+
   public static class Builder {
 
     private HashMap<String, KinematicModel> kinematicModels;
-    private HashSet<String> updatedFields;
 
     public Builder kinematicModel(String name, KinematicModel model) {
       kinematicModels.put(name, model);
@@ -44,20 +56,8 @@ public class AssemblySnapshot {
       return kinematicModel(name, model);
     }
 
-    public Builder update(String name, KinematicModel model) {
-      if (kinematicModels.containsKey(name)) {
-        kinematicModels.put(name, model);
-        updatedFields.add(name);
-      }
-      return this;
-    }
-
     public KinematicModel get(String name) {
       return kinematicModels.get(name);
-    }
-
-    public boolean isUpdated(String name) {
-      return updatedFields.contains(name);
     }
 
     public AssemblySnapshot build() {
