@@ -1,12 +1,13 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
-public class MassPoint implements RigidBody {
+public class MassPoint extends RigidBody {
 
   @Getter private String name;
   @Getter private double x;
@@ -34,6 +35,18 @@ public class MassPoint implements RigidBody {
 
   @Override
   public final double momentOfInertia() {
-    return 0;
+    return Double.POSITIVE_INFINITY;
+  }
+
+  @Override
+  public MassPoint unpack(Map<String, Object> map) {
+    return toBuilder()
+        .x((Double) map.get("x"))
+        .y((Double) map.get("y"))
+        .vx((Double) map.get("vx"))
+        .vy((Double) map.get("vy"))
+        .ax((Double) map.get("ax"))
+        .ay((Double) map.get("ay"))
+        .build();
   }
 }
