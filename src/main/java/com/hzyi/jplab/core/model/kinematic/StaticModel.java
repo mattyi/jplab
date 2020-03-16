@@ -1,12 +1,13 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
-public class StaticModel implements KinematicModel {
+public class StaticModel extends SingleKinematicModel {
 
   @Getter private String name;
   @Getter private final double x;
@@ -41,5 +42,10 @@ public class StaticModel implements KinematicModel {
   @Override
   public final double alpha() {
     return 0;
+  }
+
+  @Override
+  public StaticModel unpack(Map<String, Object> map) {
+    return this;
   }
 }

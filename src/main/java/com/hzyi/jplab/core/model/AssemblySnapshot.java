@@ -35,6 +35,10 @@ public class AssemblySnapshot {
     private HashMap<String, KinematicModel> kinematicModels;
     private HashSet<String> updatedFields;
 
+    public Builder() {
+      kinematicModels = new HashMap<>();
+    }
+
     public Builder kinematicModel(String name, KinematicModel model) {
       kinematicModels.put(name, model);
       return this;
