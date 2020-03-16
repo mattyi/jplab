@@ -1,8 +1,8 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-public interface RigidBody extends KinematicModel {
+public abstract class RigidBody extends SingleKinematicModel {
 
-  public double mass();
+  public abstract double mass();
 
-  public double momentOfInertia();
+  public abstract double momentOfInertia();
 }

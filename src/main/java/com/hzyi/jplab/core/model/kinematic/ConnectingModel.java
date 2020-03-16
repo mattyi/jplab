@@ -1,8 +1,10 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import com.google.common.collect.ImmutableMap;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
+import java.util.Map;
 
 public abstract class ConnectingModel implements KinematicModel {
 
@@ -32,17 +34,6 @@ public abstract class ConnectingModel implements KinematicModel {
     return Coordinates.distance(absoluteConnectingPointA(), absoluteConnectingPointB());
   }
 
-  @Override
-  public final double x() {
-    return (absoluteConnectingPointA().x() + absoluteConnectingPointB().x()) / 2;
-  }
-
-  @Override
-  public final double y() {
-    return (absoluteConnectingPointA().y() + absoluteConnectingPointB().y()) / 2;
-  }
-
-  @Override
   public final double theta() {
     return Math.atan2(
         absoluteConnectingPointB().y() - absoluteConnectingPointA().y(),
@@ -50,34 +41,42 @@ public abstract class ConnectingModel implements KinematicModel {
   }
 
   @Override
-  public final double vx() {
-    return (connectingModelA().vx() + connectingModelB().vx()) / 2;
+  public Map<String, Object> pack() {
+    return ImmutableMap.<String, Object>builder()
+        .put("connecting_model_a", connectingModelA())
+        .put("connecting_model_b", connectingModelB())
+        .build();
   }
 
-  @Override
-  public final double vy() {
-    return (connectingModelA().vy() + connectingModelB().vy()) / 2;
-  }
+  // @Override
+  // public final double vx() {
+  //   return (connectingModelA().vx() + connectingModelB().vx()) / 2;
+  // }
 
-  @Override
-  public final double omega() {
-    return (connectingModelB().vy() - connectingModelA().vy())
-        / (connectingModelB().vx() - connectingModelA().vx());
-  }
+  // @Override
+  // public final double vy() {
+  //   return (connectingModelA().vy() + connectingModelB().vy()) / 2;
+  // }
 
-  @Override
-  public final double ax() {
-    return (connectingModelA().ax() + connectingModelB().ax()) / 2;
-  }
+  // @Override
+  // public final double omega() {
+  //   return (connectingModelB().vy() - connectingModelA().vy())
+  //       / (connectingModelB().vx() - connectingModelA().vx());
+  // }
 
-  @Override
-  public final double ay() {
-    return (connectingModelA().ay() + connectingModelB().ay()) / 2;
-  }
+  // @Override
+  // public final double ax() {
+  //   return (connectingModelA().ax() + connectingModelB().ax()) / 2;
+  // }
 
-  @Override
-  public final double alpha() {
-    return (connectingModelB().ay() - connectingModelA().ay())
-        / (connectingModelB().ax() - connectingModelA().ax());
-  }
+  // @Override
+  // public final double ay() {
+  //   return (connectingModelA().ay() + connectingModelB().ay()) / 2;
+  // }
+
+  // @Override
+  // public final double alpha() {
+  //   return (connectingModelB().ay() - connectingModelA().ay())
+  //       / (connectingModelB().ax() - connectingModelA().ax());
+  // }
 }

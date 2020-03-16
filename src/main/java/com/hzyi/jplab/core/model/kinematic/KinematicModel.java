@@ -2,34 +2,17 @@ package com.hzyi.jplab.core.model.kinematic;
 
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.CoordinateSystem;
+import java.util.Map;
 
 public interface KinematicModel {
 
   String name();
 
-  double x();
+  Coordinate getLocation();
 
-  double y();
+  CoordinateSystem bodyCoordinateSystem();
 
-  double theta();
+  Map<String, Object> pack();
 
-  double vx();
-
-  double vy();
-
-  double omega();
-
-  double ax();
-
-  double ay();
-
-  double alpha();
-
-  default Coordinate getLocation() {
-    return new Coordinate(x(), y());
-  }
-
-  default CoordinateSystem bodyCoordinateSystem() {
-    return new CoordinateSystem(x(), y(), 1, 0, 0, 1);
-  }
+  KinematicModel unpack(Map<String, Object> map);
 }
