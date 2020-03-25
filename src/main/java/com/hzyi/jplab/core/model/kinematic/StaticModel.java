@@ -1,10 +1,16 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Table;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+@EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class StaticModel extends SingleKinematicModel {
@@ -45,7 +51,17 @@ public class StaticModel extends SingleKinematicModel {
   }
 
   @Override
-  public StaticModel unpack(Map<String, Object> map) {
+  public StaticModel unpack(Map<String, ?> map) {
     return this;
+  }
+
+  @Override
+  public List<String> codependentFields() {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public Table<String, String, Double> codependentMultipliers() {
+    return ImmutableTable.of();
   }
 }

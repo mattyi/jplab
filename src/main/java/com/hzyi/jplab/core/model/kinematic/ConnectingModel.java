@@ -1,14 +1,14 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import com.google.common.collect.ImmutableMap;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ConnectingModel implements KinematicModel {
 
-  public abstract KinematicModel connectingModelA();
+  public abstract SingleKinematicModel connectingModelA();
 
   public abstract Coordinate relativeConnectingPointA();
 
@@ -19,7 +19,7 @@ public abstract class ConnectingModel implements KinematicModel {
         CoordinateTransformer.absoluteNatural());
   }
 
-  public abstract KinematicModel connectingModelB();
+  public abstract SingleKinematicModel connectingModelB();
 
   public abstract Coordinate relativeConnectingPointB();
 
@@ -42,41 +42,10 @@ public abstract class ConnectingModel implements KinematicModel {
 
   @Override
   public Map<String, Object> pack() {
-    return ImmutableMap.<String, Object>builder()
-        .put("connecting_model_a", connectingModelA())
-        .put("connecting_model_b", connectingModelB())
-        .build();
+    Map<String, Object> answer = new HashMap<>();
+    answer.put("connecting_model_a", connectingModelA());
+    answer.put("connecting_model_b", connectingModelB());
+    answer.put("name", name());
+    return answer;
   }
-
-  // @Override
-  // public final double vx() {
-  //   return (connectingModelA().vx() + connectingModelB().vx()) / 2;
-  // }
-
-  // @Override
-  // public final double vy() {
-  //   return (connectingModelA().vy() + connectingModelB().vy()) / 2;
-  // }
-
-  // @Override
-  // public final double omega() {
-  //   return (connectingModelB().vy() - connectingModelA().vy())
-  //       / (connectingModelB().vx() - connectingModelA().vx());
-  // }
-
-  // @Override
-  // public final double ax() {
-  //   return (connectingModelA().ax() + connectingModelB().ax()) / 2;
-  // }
-
-  // @Override
-  // public final double ay() {
-  //   return (connectingModelA().ay() + connectingModelB().ay()) / 2;
-  // }
-
-  // @Override
-  // public final double alpha() {
-  //   return (connectingModelB().ay() - connectingModelA().ay())
-  //       / (connectingModelB().ax() - connectingModelA().ax());
-  // }
 }
