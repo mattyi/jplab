@@ -19,8 +19,9 @@ import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.solver.Solver;
+import com.hzyi.jplab.core.timeline.AdvancingTimeline;
+import com.hzyi.jplab.core.timeline.NumericTimeline;
 import com.hzyi.jplab.core.timeline.SimpleFixedTimeline;
-import com.hzyi.jplab.core.timeline.Timeline;
 import javafx.scene.canvas.Canvas;
 
 public class SingleCircApplication {
@@ -31,7 +32,7 @@ public class SingleCircApplication {
     Controller controller = initializeController();
     PainterFactory painterFactory = initializePainterFactory();
     Assembly assembly = initializeAssembly(painterFactory);
-    Timeline timeline = initializeTimeline(assembly);
+    AdvancingTimeline timeline = initializeTimeline(assembly);
     Singleton singleton =
         Singleton.newBuilder()
             .name(name)
@@ -55,7 +56,7 @@ public class SingleCircApplication {
     CircleMassPoint circ =
         CircleMassPoint.newBuilder()
             .name("circ")
-            .x(20.0)
+            .x(60.0)
             .y(0.0)
             .vx(0.0)
             .vy(-30.0)
@@ -78,7 +79,7 @@ public class SingleCircApplication {
     Spring spring =
         Spring.newBuilder()
             .name("spring")
-            .stiffness(30.0)
+            .stiffness(80.0)
             .originalLength(100)
             .connectingPointAX(0.0)
             .connectingPointAY(0.0)
@@ -97,10 +98,11 @@ public class SingleCircApplication {
     return assembly;
   }
 
-  private static Timeline initializeTimeline(Assembly assembly) {
+  private static AdvancingTimeline initializeTimeline(Assembly assembly) {
     AssemblySnapshot initialAssemblySnapshot = assembly.getInitialAssemblySnapshot();
-    Timeline timeline =
+    AdvancingTimeline timeline =
         new SimpleFixedTimeline(initialAssemblySnapshot, SingleCircApplication::calculate);
+    timeline = new NumericTimeline(initialAssemblySnapshot);
     return timeline;
   }
 

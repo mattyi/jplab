@@ -2,6 +2,7 @@ package com.hzyi.jplab.core.application;
 
 import com.google.common.base.Preconditions;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.timeline.AdvancingTimeline;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.scene.canvas.Canvas;
@@ -32,15 +33,20 @@ public class Application {
         new TimerTask() {
           @Override
           public void run() {
-            clearCanvas();
-            timestamp.increment(50);
-            AssemblySnapshot snapshot =
-                _singleton.getTimeline().getAssemblySnapshot(timestamp.get());
-            _singleton.getAssembly().paint(snapshot);
+
+            AdvancingTimeline timeline = _singleton.getTimeline();
+            timeline.advance(0.01);
+            timestamp.increment(0.01);
+            AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
+            if (timestamp.count == 10) {
+              clearCanvas();
+              _singleton.getAssembly().paint(snapshot);
+              timestamp.count = 0;
+            }
           }
         };
 
-    new Timer().schedule(task, 100L, 50L);
+    new Timer().schedule(task, 100L, 10L);
   }
 
   private static void clearCanvas() {
@@ -52,6 +58,7 @@ public class Application {
 
   private static class MutableTimestamp {
     double timestamp;
+    int count;
 
     private MutableTimestamp(double timestamp) {
       this.timestamp = timestamp;
@@ -63,6 +70,7 @@ public class Application {
 
     private void increment(double delta) {
       this.timestamp = timestamp + delta;
+      count++;
     }
 
     private double get() {

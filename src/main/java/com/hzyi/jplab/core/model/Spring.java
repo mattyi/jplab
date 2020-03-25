@@ -1,8 +1,10 @@
 package com.hzyi.jplab.core.model;
 
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.Shape;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.painter.Painter;
 import lombok.Builder;
@@ -14,8 +16,8 @@ public class Spring implements Component {
   @Getter private String name;
   private double stiffness;
   private double originalLength;
-  private Component componentA;
-  private Component componentB;
+  private Component<? extends SingleKinematicModel, ? extends Shape> componentA;
+  private Component<? extends SingleKinematicModel, ? extends Shape> componentB;
   private double connectingPointAX;
   private double connectingPointAY;
   private double connectingPointBX;

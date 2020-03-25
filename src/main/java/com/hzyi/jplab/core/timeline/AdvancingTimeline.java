@@ -7,5 +7,4 @@ public interface AdvancingTimeline {
   AssemblySnapshot getLatestAssemblySnapshot();
 
   void advance(double timeStep);
-
 }
