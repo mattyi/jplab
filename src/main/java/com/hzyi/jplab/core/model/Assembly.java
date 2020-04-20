@@ -1,11 +1,14 @@
 package com.hzyi.jplab.core.model;
 
 import com.google.common.base.Preconditions;
+import com.hzyi.jplab.core.application.Application;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class Assembly {
 
   private final Map<String, Component> components = new HashMap<>();
@@ -41,6 +44,7 @@ public class Assembly {
   }
 
   public void paint(AssemblySnapshot assemblySnapshot) {
+    Application.getPainterFactory().clearCanvas();
     components.values().stream().forEach(c -> c.paint(c.getKinematicModel(assemblySnapshot)));
   }
 

@@ -1,6 +1,7 @@
 package com.hzyi.jplab.core.painter;
 
 import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
+import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
@@ -13,7 +14,13 @@ public class ZigzagLinePainter extends JavaFxPainter<ConnectingModel, ZigzagLine
   }
 
   @Override
+  @Deprecated
   public void paint(ZigzagLine line, ConnectingModel model) {
+    paint(line, model, line.getAppearance());
+  }
+
+  @Override
+  public void paint(ZigzagLine line, ConnectingModel model, Appearance appearance) {
     Coordinate connectingPointA = model.absoluteConnectingPointA();
     Coordinate connectingPointB = model.absoluteConnectingPointB();
     double x = connectingPointA.x();
@@ -28,12 +35,12 @@ public class ZigzagLinePainter extends JavaFxPainter<ConnectingModel, ZigzagLine
         getZigzagBoundaryPoint(
             connectingPointA, line.width() / 2, model.theta(), zigzagLength / 2, clockwise);
     for (int i = 0; i <= line.zigzagCount(); i++) {
-      drawLine(previous, next);
+      drawLine(previous, next, appearance);
       previous = next;
       clockwise = !clockwise;
       next = getZigzagBoundaryPoint(previous, line.width(), model.theta(), zigzagLength, clockwise);
     }
-    drawLine(previous, connectingPointB);
+    drawLine(previous, connectingPointB, appearance);
   }
 
   private static Coordinate getZigzagBoundaryPoint(

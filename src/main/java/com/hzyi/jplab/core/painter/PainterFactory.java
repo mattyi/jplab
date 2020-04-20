@@ -23,4 +23,10 @@ public class PainterFactory {
   public GraphicsContext getGraphicsContext() {
     return canvas.getGraphicsContext2D();
   }
+
+  public void clearCanvas() {
+    double canvasWidth = canvas.getWidth();
+    double canvasHeight = canvas.getHeight();
+    getGraphicsContext().clearRect(0, 0, canvasWidth, canvasHeight);
+  }
 }

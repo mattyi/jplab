@@ -1,9 +1,12 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import com.google.common.base.MoreObjects;
+import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
+import static com.hzyi.jplab.core.util.UnpackHelper.checkPositivity;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -26,6 +29,11 @@ public class MassPoint extends RigidBody {
   @Getter private double mass;
 
   @Override
+  public final KinematicModel.Type type() {
+    return KinematicModel.Type.MASS_POINT;
+  }
+
+  @Override
   public final double theta() {
     return 0;
   }
@@ -46,15 +54,31 @@ public class MassPoint extends RigidBody {
   }
 
   @Override
-  public MassPoint unpack(Map<String, ?> map) {
-    return toBuilder()
-        .x(MoreObjects.firstNonNull((Double) map.get("x"), x()))
-        .y(MoreObjects.firstNonNull((Double) map.get("y"), y()))
-        .vx(MoreObjects.firstNonNull((Double) map.get("vx"), vx()))
-        .vy(MoreObjects.firstNonNull((Double) map.get("vy"), vy()))
-        .ax(MoreObjects.firstNonNull((Double) map.get("ax"), ax()))
-        .ay(MoreObjects.firstNonNull((Double) map.get("ay"), ay()))
-        .build();
+  public MassPoint merge(Map<String, ?> map) {
+    MassPointBuilder builder = toBuilder();
+    UnpackHelper<MassPointBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
+    helper.unpack("x", Double.class, MassPointBuilder::x);
+    helper.unpack("y", Double.class, MassPointBuilder::y);
+    helper.unpack("vx", Double.class, MassPointBuilder::vx);
+    helper.unpack("vy", Double.class, MassPointBuilder::vy);
+    helper.unpack("ax", Double.class, MassPointBuilder::ax);
+    helper.unpack("ay", Double.class, MassPointBuilder::ay);
+    return helper.getBuilder().build();
+  }
+
+  public static MassPoint of(Map<String, ?> map) {
+    MassPointBuilder builder = newBuilder();
+    UnpackHelper<MassPointBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
+    helper.unpack("x", Double.class, MassPointBuilder::x);
+    helper.unpack("y", Double.class, MassPointBuilder::y);
+    helper.unpack("vx", Double.class, MassPointBuilder::vx);
+    helper.unpack("vy", Double.class, MassPointBuilder::vy);
+    helper.unpack("ax", Double.class, MassPointBuilder::ax);
+    helper.unpack("ay", Double.class, MassPointBuilder::ay);
+    helper.unpack(
+        "mass", Double.class, MassPointBuilder::mass, checkExistence(), checkPositivity());
+    helper.unpack("name", String.class, MassPointBuilder::name, checkExistence());
+    return helper.getBuilder().build();
   }
 
   @Override

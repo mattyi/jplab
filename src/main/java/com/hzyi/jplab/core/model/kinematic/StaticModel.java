@@ -1,7 +1,10 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
+
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,11 @@ public class StaticModel extends SingleKinematicModel {
   @Getter private final double x;
   @Getter private final double y;
   @Getter private final double theta;
+
+  @Override
+  public final KinematicModel.Type type() {
+    return KinematicModel.Type.STATIC_MODEL;
+  }
 
   @Override
   public final double vx() {
@@ -51,8 +59,18 @@ public class StaticModel extends SingleKinematicModel {
   }
 
   @Override
-  public StaticModel unpack(Map<String, ?> map) {
+  public StaticModel merge(Map<String, ?> map) {
     return this;
+  }
+
+  public static StaticModel of(Map<String, ?> map) {
+    StaticModelBuilder builder = newBuilder();
+    UnpackHelper<StaticModelBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
+    helper.unpack("x", Double.class, StaticModelBuilder::x);
+    helper.unpack("y", Double.class, StaticModelBuilder::y);
+    helper.unpack("theta", Double.class, StaticModelBuilder::theta);
+    helper.unpack("name", String.class, StaticModelBuilder::name, checkExistence());
+    return helper.getBuilder().build();
   }
 
   @Override

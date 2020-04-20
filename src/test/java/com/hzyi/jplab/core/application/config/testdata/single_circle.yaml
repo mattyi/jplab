@@ -1,0 +1,51 @@
+name: Single Circle Application
+version: 1
+refresh_period: 0.02
+assembly:
+- name: circ
+  kinematic_model:
+    type: MASS_POINT
+    x: 60.0
+    "y": 0.0
+    vx: 0.0
+    vy: -30.0
+    mass: 10.0
+  shape:
+    type: CIRCLE
+    radius: 20
+- name: wall
+  kinematic_model:
+    type: STATIC_MODEL
+    x: 20.0
+    "y": 100.0
+    theta: 3.14159/2
+  shape:
+    type: EDGE
+    inner_line_count: 4
+    inner_line_angle: 3.14159/6
+    inner_line_height: 10
+  appearance:
+    color: RED
+    line_width: 2
+- name: spring
+  kinematic_model:
+    type: SPRING_MODEL
+    stiffness: 80.0
+    original_length: 100.0
+    component_a: circ
+    component_b: wall
+  shape:
+    type: ZIGZAG_LINE
+    width: 15.0
+    zigzag_count: 10
+  appearance:
+    color: BLUE
+    line_width: 3.0
+timeline:
+  type: NUMERIC
+  time_step: 0.02
+canvas:
+  width: 400
+  height: 400
+  natural_screen_ratio: 1.0
+

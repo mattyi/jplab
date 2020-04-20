@@ -29,6 +29,11 @@ public abstract class JavaFxPainter<K extends KinematicModel, S extends Shape>
     getGraphicsContext().strokeLine(from.x(), from.y(), to.x(), to.y());
   }
 
+  protected void drawLine(Coordinate from, Coordinate to, Appearance appearance) {
+    applyAppearance(appearance);
+    drawLine(from, to);
+  }
+
   protected void drawCircle(Coordinate center, double radius, Appearance appearance) {
     applyAppearance(appearance);
     switch (appearance.getStyle()) {

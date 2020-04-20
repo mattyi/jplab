@@ -52,6 +52,6 @@ public class Spring implements Component {
 
   @Override
   public Painter getPainter() {
-    return Application.singleton().getPainterFactory().getZigzagLinePainter();
+    return Application.getPainterFactory().getZigzagLinePainter();
   }
 }

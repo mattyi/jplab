@@ -2,5 +2,12 @@ package com.hzyi.jplab.core.model.shape;
 
 public interface Shape {
 
-  public Appearance getAppearance();
+  public Type type();
+
+  public static enum Type {
+    CIRCLE,
+    EDGE,
+    LINE,
+    ZIGZAG_LINE
+  }
 }

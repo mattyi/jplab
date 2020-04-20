@@ -45,7 +45,6 @@ public abstract class ConnectingModel implements KinematicModel {
     Map<String, Object> answer = new HashMap<>();
     answer.put("connecting_model_a", connectingModelA());
     answer.put("connecting_model_b", connectingModelB());
-    answer.put("name", name());
     return answer;
   }
 }

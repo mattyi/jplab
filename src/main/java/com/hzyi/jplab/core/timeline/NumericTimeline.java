@@ -6,26 +6,47 @@ import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import java.util.Map;
+import lombok.Getter;
 
-public class NumericTimeline implements AdvancingTimeline {
+public class NumericTimeline implements Timeline {
 
   private final AssemblySnapshot initialAssemblySnapshot;
+  @Getter private final double timeStep;
+  private double timestamp;
   private AssemblySnapshot latestAssemblySnapshot;
 
   public NumericTimeline(AssemblySnapshot initialAssemblySnapshot) {
     this.initialAssemblySnapshot = initialAssemblySnapshot;
     this.latestAssemblySnapshot = initialAssemblySnapshot;
+    this.timeStep = 0.02;
+  }
+
+  public NumericTimeline(AssemblySnapshot initialAssemblySnapshot, double timeStep) {
+    this.initialAssemblySnapshot = initialAssemblySnapshot;
+    this.latestAssemblySnapshot = initialAssemblySnapshot;
+    this.timeStep = timeStep;
   }
 
   @Override
   public void advance(double timeStep) {
     AssemblySnapshot snapshot = advanceTimeStep(latestAssemblySnapshot, timeStep);
     latestAssemblySnapshot = adjustInternalState(snapshot);
+    timestamp += timeStep;
   }
 
   @Override
   public AssemblySnapshot getLatestAssemblySnapshot() {
     return latestAssemblySnapshot;
+  }
+
+  @Override
+  public double getTimestamp() {
+    return timestamp;
+  }
+
+  @Override
+  public void advance() {
+    advance(this.timeStep);
   }
 
   static AssemblySnapshot advanceTimeStep(AssemblySnapshot snapshot, double timeStep) {
@@ -67,7 +88,7 @@ public class NumericTimeline implements AdvancingTimeline {
     map.put("vy", getDoubleValue(map, "vy") + getDoubleValue(map, "ay") * timeStep);
     map.put("theta", getDoubleValue(map, "theta") + getDoubleValue(map, "omega") * timeStep);
     map.put("omega", getDoubleValue(map, "omega") + getDoubleValue(map, "alpha") * timeStep);
-    SingleKinematicModel updatedModel = model.unpack(map);
+    SingleKinematicModel updatedModel = model.merge(map);
     builder.kinematicModel(updatedModel.name(), updatedModel);
     return updatedModel;
   }
@@ -94,7 +115,7 @@ public class NumericTimeline implements AdvancingTimeline {
     Map<String, Object> map = model.pack();
     map.put("connecting_model_a", connectingModelA);
     map.put("connecting_model_b", connectingModelB);
-    builder.kinematicModel(model.name(), model.unpack(map));
+    builder.kinematicModel(model.name(), model.merge(map));
   }
 
   private static double getDoubleValue(Map<String, Object> map, String key) {

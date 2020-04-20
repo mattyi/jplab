@@ -46,5 +46,5 @@ public abstract class SingleKinematicModel implements KinematicModel {
   }
 
   @Override
-  public abstract SingleKinematicModel unpack(Map<String, ?> map);
+  public abstract SingleKinematicModel merge(Map<String, ?> map);
 }

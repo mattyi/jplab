@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class AssemblySnapshot {
 
   @Getter private final Map<String, KinematicModel> kinematicModels;
@@ -71,13 +73,13 @@ public class AssemblySnapshot {
     Builder builder = toBuilder();
     for (Map.Entry<String, Map<String, Double>> entry : modelMap.entrySet()) {
       KinematicModel model = builder.get(entry.getKey());
-      model = model.unpack(entry.getValue());
+      model = model.merge(entry.getValue());
       builder.kinematicModel(model.name(), model);
     }
     for (ConnectingModel connector : getConnectingModels()) {
       builder.kinematicModel(
           connector.name(),
-          connector.unpack(
+          connector.merge(
               ImmutableMap.of(
                   "connecting_model_a",
                   builder.get(connector.connectingModelA().name()),

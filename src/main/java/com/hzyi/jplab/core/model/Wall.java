@@ -19,7 +19,7 @@ public class Wall implements Component {
 
   private double innerLineHeight;
   private double innerLineAngle;
-  private double innerLineCount;
+  private int innerLineCount;
   private double length;
 
   private Appearance appearance;
@@ -27,7 +27,7 @@ public class Wall implements Component {
 
   @Override
   public Painter getPainter() {
-    return Application.singleton().getPainterFactory().getEdgePainter();
+    return Application.getPainterFactory().getEdgePainter();
   }
 
   @Override

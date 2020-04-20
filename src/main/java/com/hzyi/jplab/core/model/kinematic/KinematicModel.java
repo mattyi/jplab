@@ -9,11 +9,13 @@ public interface KinematicModel {
 
   String name();
 
+  Type type();
+
   CoordinateSystem bodyCoordinateSystem();
 
   Map<String, Object> pack();
 
-  KinematicModel unpack(Map<String, ?> map);
+  KinematicModel merge(Map<String, ?> map);
 
   List<String> codependentFields();
 
@@ -29,5 +31,19 @@ public interface KinematicModel {
 
   default String getConstantFieldName() {
     return "CONST";
+  }
+
+  public enum Type {
+    MASS_POINT,
+    STATIC_MODEL,
+    SPRING_MODEL;
+
+    public boolean isConnectingModel() {
+      return this == SPRING_MODEL;
+    }
+
+    public boolean isSingleModel() {
+      return this == MASS_POINT || this == STATIC_MODEL;
+    }
   }
 }

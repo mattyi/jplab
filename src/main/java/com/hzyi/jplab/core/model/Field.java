@@ -37,6 +37,14 @@ public class Field {
     return new Field(model, field);
   }
 
+  public static String format(KinematicModel model, String field) {
+    return new Field(model, field).getFullName();
+  }
+
+  public static String formatConst() {
+    return CONST_FIELD;
+  }
+
   public String getFullName() {
     if (this == CONST) {
       return CONST_FIELD;
