@@ -2,7 +2,15 @@ package com.hzyi.jplab.core.timeline;
 
 import com.hzyi.jplab.core.model.AssemblySnapshot;
 
-public interface Timeline extends AdvancingTimeline {
+public interface Timeline {
 
-  AssemblySnapshot getAssemblySnapshot(double timestamp);
+  AssemblySnapshot getLatestAssemblySnapshot();
+
+  void advance(double timeStep);
+
+  void advance();
+
+  double getTimeStep();
+
+  double getTimestamp();
 }

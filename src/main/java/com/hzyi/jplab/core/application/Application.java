@@ -1,80 +1,95 @@
 package com.hzyi.jplab.core.application;
 
-import com.google.common.base.Preconditions;
+import com.hzyi.jplab.core.application.config.ApplicationConfig;
+import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
+import com.hzyi.jplab.core.controller.Controller;
+import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
-import com.hzyi.jplab.core.timeline.AdvancingTimeline;
+import com.hzyi.jplab.core.painter.PainterFactory;
+import com.hzyi.jplab.core.timeline.Timeline;
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.scene.canvas.Canvas;
-import lombok.Builder;
-import lombok.experimental.Accessors;
+import javafx.stage.Stage;
+import lombok.Getter;
 
-@Builder(builderMethodName = "newBuilder")
-@Accessors(fluent = true)
-public class Application {
+public class Application extends javafx.application.Application {
 
-  private static Singleton _singleton;
+  @Getter private static String name;
+  @Getter private static Assembly assembly;
+  @Getter private static Controller controller;
+  @Getter private static Timeline timeline;
+  @Getter private static PainterFactory painterFactory;
+  @Getter private static double refreshPeriod;
 
-  public Application() {}
+  private static boolean isInitialized;
 
-  public static void loadApplicationSingleton(Singleton singleton) {
-    Preconditions.checkArgument(singleton != null, "application is already initialized");
-    _singleton = singleton;
+  public static void load(ApplicationConfig config) {
+    ApplicationFactory.newApp(config);
   }
 
-  public static Singleton singleton() {
-    return _singleton;
+  public static void init(
+      String name,
+      Assembly assembly,
+      Controller controller,
+      PainterFactory painterFactory,
+      Timeline timeline,
+      double refreshPeriod) {
+    if (isInitialized) {
+      throw new IllegalStateException("application initialized twice");
+    }
+    Application.name = name;
+    Application.assembly = assembly;
+    Application.controller = controller;
+    Application.painterFactory = painterFactory;
+    Application.timeline = timeline;
+    Application.refreshPeriod = refreshPeriod;
+    Application.isInitialized = true;
   }
 
-  public void start() {
-    MutableTimestamp timestamp = new MutableTimestamp(0.0);
+  public static void reset() {
+    Application.name = null;
+    Application.assembly = null;
+    Application.controller = null;
+    Application.painterFactory = null;
+    Application.timeline = null;
+    Application.refreshPeriod = 0.0;
+    Application.isInitialized = false;
+  }
+
+  public static void run() {
+    launch();
+  }
+
+  @Override
+  public void start(Stage primaryStage) {
+    primaryStage =
+        PrimaryStageFactory.initPrimaryStage(
+            primaryStage,
+            Application.getName(),
+            Application.getController(),
+            Application.getPainterFactory());
+    primaryStage.show();
 
     TimerTask task =
         new TimerTask() {
+
+          private double nextRefreshThreshold = refreshPeriod;
+
           @Override
           public void run() {
-
-            AdvancingTimeline timeline = _singleton.getTimeline();
-            timeline.advance(0.01);
-            timestamp.increment(0.01);
+            timeline.advance();
             AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
-            if (timestamp.count == 10) {
-              clearCanvas();
-              _singleton.getAssembly().paint(snapshot);
-              timestamp.count = 0;
+            if (timeline.getTimestamp() >= nextRefreshThreshold) {
+              assembly.paint(snapshot);
+              nextRefreshThreshold += refreshPeriod;
             }
           }
         };
 
-    new Timer().schedule(task, 100L, 10L);
+    new Timer().schedule(task, 100L, (long) (timeline.getTimeStep() * 1000));
   }
 
-  private static void clearCanvas() {
-    Canvas canvas = singleton().getPainterFactory().getGraphicsContext().getCanvas();
-    double canvasWidth = canvas.getWidth();
-    double canvasHeight = canvas.getHeight();
-    singleton().getPainterFactory().getGraphicsContext().clearRect(0, 0, canvasWidth, canvasHeight);
-  }
-
-  private static class MutableTimestamp {
-    double timestamp;
-    int count;
-
-    private MutableTimestamp(double timestamp) {
-      this.timestamp = timestamp;
-    }
-
-    private void set(double timestamp) {
-      this.timestamp = timestamp;
-    }
-
-    private void increment(double delta) {
-      this.timestamp = timestamp + delta;
-      count++;
-    }
-
-    private double get() {
-      return this.timestamp;
-    }
+  public static void startSimulation() {
+    launch();
   }
 }

@@ -43,20 +43,20 @@ public class AssemblySnapshotTest {
 
   @Test
   public void testPackUnpack() {
-    assertThat(massPoint.unpack(massPoint.pack())).isEqualTo(massPoint);
-    assertThat(springModel.unpack(springModel.pack())).isEqualTo(springModel);
-    assertThat(staticModel.unpack(staticModel.pack())).isEqualTo(staticModel);
+    assertThat(massPoint.merge(massPoint.pack())).isEqualTo(massPoint);
+    assertThat(springModel.merge(springModel.pack())).isEqualTo(springModel);
+    assertThat(staticModel.merge(staticModel.pack())).isEqualTo(staticModel);
   }
 
   @Test
   public void testPackUpdateUnpack() {
     Map<String, Object> massPointMap = massPoint.pack();
     massPointMap.put("x", (Double) 10.0);
-    MassPoint updatedMassPoint = massPoint.unpack(massPointMap);
+    MassPoint updatedMassPoint = massPoint.merge(massPointMap);
     assertThat(updatedMassPoint).isEqualTo(massPoint.toBuilder().x(10.0).build());
     Map<String, Object> springMap = springModel.pack();
     springMap.put("connecting_model_a", updatedMassPoint);
-    assertThat(springModel.unpack(springMap))
+    assertThat(springModel.merge(springMap))
         .isEqualTo(springModel.toBuilder().connectingModelA(updatedMassPoint).build());
   }
 

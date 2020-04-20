@@ -34,6 +34,6 @@ public final class CircleMassPoint implements Component<MassPoint, Circle> {
 
   @Override
   public Painter getPainter() {
-    return Application.singleton().getPainterFactory().getCirclePainter();
+    return Application.getPainterFactory().getCirclePainter();
   }
 }

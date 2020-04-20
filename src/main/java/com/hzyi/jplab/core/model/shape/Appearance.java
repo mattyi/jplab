@@ -1,5 +1,6 @@
 package com.hzyi.jplab.core.model.shape;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -27,5 +28,26 @@ public class Appearance {
 
   public static Appearance of() {
     return newBuilder().color(Color.RED).style(Style.FILL).lineWidth(1).build();
+  }
+
+  public static AppearanceBuilder newDefaultBuilder() {
+    return newBuilder().color(Color.RED).style(Style.FILL).lineWidth(1);
+  }
+
+  public static Appearance unpack(Map<String, ?> map) {
+    AppearanceBuilder builder = newDefaultBuilder();
+    if (map.containsKey("color")) {
+      builder.color(Color.valueOf(((String) map.get("color")).toUpperCase()));
+    }
+
+    if (map.containsKey("style")) {
+      builder.style(Style.valueOf(((String) map.get("style")).toUpperCase()));
+    }
+
+    if (map.containsKey("line_width")) {
+      builder.lineWidth((Double) map.get("line_width"));
+    }
+
+    return builder.build();
   }
 }

@@ -15,6 +15,10 @@ public class ControllerPaneFactory {
   public static ScrollPane newControllerPane(Controller controller) {
     ScrollPane controllerPane = new ScrollPane();
     FlowPane container = new FlowPane();
+    if (controller == null) {
+      controllerPane.setContent(container);
+      return controllerPane;
+    }
     for (Parameter parameter : controller.getParameters()) {
       if (parameter instanceof IntervalDoubleParameter) {
         IntervalDoubleParameter p = (IntervalDoubleParameter) parameter;

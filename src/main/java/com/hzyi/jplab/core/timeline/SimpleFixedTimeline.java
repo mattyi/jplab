@@ -5,9 +5,11 @@ import java.util.function.BiFunction;
 
 public class SimpleFixedTimeline implements Timeline {
 
+  private static final double DEFAULT_TIMESTEP = 0.02;
+
   private final AssemblySnapshot initialAssemblySnapshot;
   private final BiFunction<AssemblySnapshot, Double, AssemblySnapshot> function;
-  private double latestTimestamp = 0;
+  private double latestTimestamp = 0.0;
 
   public SimpleFixedTimeline(
       AssemblySnapshot initialAssemblySnapshot,
@@ -16,7 +18,6 @@ public class SimpleFixedTimeline implements Timeline {
     this.function = function;
   }
 
-  @Override
   public AssemblySnapshot getAssemblySnapshot(double timestamp) {
     return function.apply(initialAssemblySnapshot, timestamp);
   }
@@ -24,6 +25,21 @@ public class SimpleFixedTimeline implements Timeline {
   @Override
   public void advance(double timeStep) {
     latestTimestamp += timeStep;
+  }
+
+  @Override
+  public void advance() {
+    advance(DEFAULT_TIMESTEP);
+  }
+
+  @Override
+  public double getTimestamp() {
+    return latestTimestamp;
+  }
+
+  @Override
+  public double getTimeStep() {
+    return DEFAULT_TIMESTEP;
   }
 
   @Override
