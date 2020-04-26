@@ -79,7 +79,7 @@ public class StaticModel extends SingleKinematicModel {
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers() {
+  public Table<String, String, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.of();
   }
 }

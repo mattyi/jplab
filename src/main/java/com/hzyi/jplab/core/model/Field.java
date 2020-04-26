@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class Field {
 
-  private static final String CONST_FIELD = "CONST";
+  private static final String CONST_FIELD = "_constant";
   private static final Field CONST = new Field("", CONST_FIELD);
 
   private final String model;
@@ -27,7 +27,7 @@ public class Field {
   }
 
   public static Field parse(String fullName) {
-    if (fullName.equals("CONST")) {
+    if (fullName.equals(CONST_FIELD)) {
       return CONST;
     }
     int index = fullName.indexOf('.');
@@ -41,7 +41,7 @@ public class Field {
     return new Field(model, field).getFullName();
   }
 
-  public static String formatConst() {
+  public static String constant() {
     return CONST_FIELD;
   }
 
@@ -52,11 +52,11 @@ public class Field {
     return String.format("%s.%s", model, field);
   }
 
-  public String getModelName() {
+  public String getModel() {
     return model;
   }
 
-  public String getShortName() {
+  public String getField() {
     return field;
   }
 }

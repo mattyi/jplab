@@ -6,15 +6,18 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkPositivity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.Field;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @EqualsAndHashCode
+@ToString
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class MassPoint extends RigidBody {
@@ -69,28 +72,43 @@ public class MassPoint extends RigidBody {
   public static MassPoint of(Map<String, ?> map) {
     MassPointBuilder builder = newBuilder();
     UnpackHelper<MassPointBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
+    helper.unpack(
+        "mass", Double.class, MassPointBuilder::mass, checkExistence(), checkPositivity());
+
     helper.unpack("x", Double.class, MassPointBuilder::x);
     helper.unpack("y", Double.class, MassPointBuilder::y);
     helper.unpack("vx", Double.class, MassPointBuilder::vx);
     helper.unpack("vy", Double.class, MassPointBuilder::vy);
     helper.unpack("ax", Double.class, MassPointBuilder::ax);
     helper.unpack("ay", Double.class, MassPointBuilder::ay);
-    helper.unpack(
-        "mass", Double.class, MassPointBuilder::mass, checkExistence(), checkPositivity());
     helper.unpack("name", String.class, MassPointBuilder::name, checkExistence());
     return helper.getBuilder().build();
   }
 
   @Override
   public List<String> codependentFields() {
-    return ImmutableList.of(getFieldFullName("ax"), getFieldFullName("ay"));
+    return ImmutableList.of(
+        Field.format(this, "x"),
+        Field.format(this, "y"),
+        Field.format(this, "vx"),
+        Field.format(this, "vy"),
+        Field.format(this, "ax"),
+        Field.format(this, "ay"));
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers() {
+  public Table<String, String, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.<String, String, Double>builder()
-        .put(getFieldFullName("ax"), getFieldFullName("ax"), -mass)
-        .put(getFieldFullName("ay"), getFieldFullName("ay"), -mass)
+        .put(Field.format(this, "x"), Field.format(this, "x"), 1.0)
+        .put(Field.format(this, "vx"), Field.format(this, "vx"), 1.0)
+        .put(Field.format(this, "y"), Field.format(this, "y"), 1.0)
+        .put(Field.format(this, "vy"), Field.format(this, "vy"), 1.0)
+        .put(Field.format(this, "x"), Field.constant(), -x() - vx() * timeStep)
+        .put(Field.format(this, "y"), Field.constant(), -y() - vy() * timeStep)
+        .put(Field.format(this, "vx"), Field.constant(), -vx() - ax() * timeStep)
+        .put(Field.format(this, "vy"), Field.constant(), -vy() - ay() * timeStep)
+        .put(Field.format(this, "ax"), Field.format(this, "ax"), -mass)
+        .put(Field.format(this, "ay"), Field.format(this, "ay"), -mass)
         .build();
   }
 }

@@ -39,10 +39,6 @@ public class SpringModel extends ConnectingModel {
     return KinematicModel.Type.SPRING_MODEL;
   }
 
-  public double force() {
-    return (length() - originalLength) * stiffness;
-  }
-
   @Override
   public Coordinate relativeConnectingPointA() {
     return new Coordinate(relativeConnectingPointAX, relativeConnectingPointAY);
@@ -122,18 +118,22 @@ public class SpringModel extends ConnectingModel {
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers() {
+  public Table<String, String, Double> codependentMultipliers(double timeStep) {
     String aax = Field.format(connectingModelA, "ax");
     String aay = Field.format(connectingModelA, "ay");
     String bax = Field.format(connectingModelB, "ax");
     String bay = Field.format(connectingModelB, "ay");
     return ImmutableTable.<String, String, Double>builder()
-        .put(aax, Field.formatConst(), force() * Math.cos(theta()))
-        .put(aay, Field.formatConst(), force() * Math.sin(theta()))
-        .put(bax, Field.formatConst(), -force() * Math.cos(theta()))
-        .put(bay, Field.formatConst(), -force() * Math.sin(theta()))
+        .put(aax, Field.constant(), force() * Math.cos(theta()))
+        .put(aay, Field.constant(), force() * Math.sin(theta()))
+        .put(bax, Field.constant(), -force() * Math.cos(theta()))
+        .put(bay, Field.constant(), -force() * Math.sin(theta()))
         // support rotation
         .build();
+  }
+
+  private double force() {
+    return (length() - originalLength) * stiffness;
   }
 
   private static BiFunction<SpringModelBuilder, String, SpringModelBuilder> componentExtractor(
