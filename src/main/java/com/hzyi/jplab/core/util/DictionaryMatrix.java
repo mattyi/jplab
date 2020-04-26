@@ -3,6 +3,7 @@ package com.hzyi.jplab.core.util;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.hzyi.jplab.core.model.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,8 @@ import org.apache.commons.math3.linear.RealVector;
 public class DictionaryMatrix {
 
   private final Map<String, Integer> indexNames = new HashMap<>();
-  private final String[] indices;
+  private final String[] rowKeys;
+  private final String[] colKeys;
   private final RealMatrix matrix;
 
   public DictionaryMatrix(String... keys) {
@@ -23,30 +25,21 @@ public class DictionaryMatrix {
   }
 
   public DictionaryMatrix(Collection<String> keys) {
-    Preconditions.checkArgument(
-        !keys.isEmpty(), "empty keys: expecting CONST and at least one other key");
-    Preconditions.checkArgument(
-        keys.size() != 1,
-        "only one key: expecting CONST and at least one other key, got %s",
-        keys.iterator().next());
+    Preconditions.checkArgument(!keys.isEmpty(), "empty keys: expecting at least one key");
 
-    matrix = new Array2DRowRealMatrix(keys.size() - 1, keys.size());
-    indices = new String[keys.size()];
+    matrix = new Array2DRowRealMatrix(keys.size(), keys.size() + 1);
+    rowKeys = new String[keys.size()];
+    colKeys = new String[keys.size() + 1];
     int index = 0;
-    boolean hasConst = false;
     for (String key : keys) {
-      if (key.equals("CONST")) {
-        hasConst = true;
-        continue;
-      }
       Integer oldIndex = indexNames.put(key, index);
-      indices[index] = key;
+      rowKeys[index] = key;
+      colKeys[index] = key;
       Preconditions.checkArgument(oldIndex == null, "non-unique key: %s", key);
       index++;
     }
-    Preconditions.checkArgument(hasConst, "CONST not in keys");
-    indexNames.put("CONST", index);
-    indices[index] = "CONST";
+    indexNames.put(Field.constant(), index);
+    colKeys[index] = Field.constant();
   }
 
   public double get(String row, String col) {
@@ -61,8 +54,8 @@ public class DictionaryMatrix {
         r != null, "non-existing key: %s, expecting one of: %s", row, indexNames.keySet());
     double[] matrixRow = matrix.getRow(r);
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
-    for (int i = 0; i < indexNames.size(); i++) {
-      builder.put(indices[i], matrixRow[i]);
+    for (int i = 0; i < colKeys.length; i++) {
+      builder.put(colKeys[i], matrixRow[i]);
     }
     return builder.build();
   }
@@ -73,34 +66,57 @@ public class DictionaryMatrix {
         c != null, "non-existing key: %s, expecting one of: %s", col, indexNames.keySet());
     double[] matrixCol = matrix.getColumn(c);
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
-    for (int i = 0; i < indexNames.size() - 1; i++) {
-      builder.put(indices[i], matrixCol[i]);
+    for (int i = 0; i < rowKeys.length; i++) {
+      builder.put(rowKeys[i], matrixCol[i]);
     }
     return builder.build();
   }
 
   public void set(String row, String col, double value) {
-    Preconditions.checkArgument(!row.equals("CONST"), "non-existing row: CONST");
+    Preconditions.checkArgument(!row.equals(Field.constant()), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(row), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(col), "non-existing col: %s", col);
     matrix.setEntry(indexNames.get(row), indexNames.get(col), value);
   }
 
   public void add(String row, String col, double value) {
-    Preconditions.checkArgument(!row.equals("CONST"), "non-existing row: CONST");
+    Preconditions.checkArgument(!row.equals(Field.constant()), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(row), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(col), "non-existing col: %s", col);
     matrix.addToEntry(indexNames.get(row), indexNames.get(col), value);
   }
 
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    for (String key : colKeys) {
+      builder.append(key);
+      builder.append(" ");
+    }
+    builder.append("\n");
+
+    int i = 0;
+    for (String key : rowKeys) {
+      builder.append(key);
+      builder.append(" ");
+      for (double value : matrix.getRow(i)) {
+        builder.append(value);
+        builder.append(" ");
+      }
+      builder.append("\n");
+      i++;
+    }
+
+    return builder.toString();
+  }
+
   public Map<String, Double> solve() {
-    int endRow = indexNames.size() - 2;
-    RealMatrix a = matrix.getSubMatrix(0, endRow, 0, endRow);
-    RealVector b = matrix.getColumnVector(endRow + 1).mapMultiply(-1);
+    int lastCol = colKeys.length - 1;
+    RealMatrix a = matrix.getSubMatrix(0, lastCol - 1, 0, lastCol - 1);
+    RealVector b = matrix.getColumnVector(lastCol).mapMultiply(-1);
     RealVector x = new LUDecomposition(a).getSolver().solve(b);
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
-    for (int i = 0; i <= endRow; i++) {
-      builder.put(indices[i], x.getEntry(i));
+    for (int i = 0; i < lastCol; i++) {
+      builder.put(colKeys[i], x.getEntry(i));
     }
     return builder.build();
   }

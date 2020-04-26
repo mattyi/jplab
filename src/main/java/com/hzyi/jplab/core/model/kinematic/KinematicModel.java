@@ -19,19 +19,7 @@ public interface KinematicModel {
 
   List<String> codependentFields();
 
-  Table<String, String, Double> codependentMultipliers();
-
-  default String getFieldFullName(String field) {
-    return name() + "." + field;
-  }
-
-  default String getFieldFullName(KinematicModel model, String field) {
-    return model.name() + "." + field;
-  }
-
-  default String getConstantFieldName() {
-    return "CONST";
-  }
+  Table<String, String, Double> codependentMultipliers(double timeStep);
 
   public enum Type {
     MASS_POINT,

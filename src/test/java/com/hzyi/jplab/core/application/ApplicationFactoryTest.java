@@ -10,7 +10,7 @@ import org.junit.Test;
 public class ApplicationFactoryTest {
 
   @Test
-  public void testCreateSingleton() throws Exception {
+  public void testCreateApplication() throws Exception {
 
     try (InputStream in =
         getClass().getResourceAsStream("/com/hzyi/jplab/core/application/single_circle.yaml")) {

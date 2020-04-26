@@ -26,10 +26,10 @@ public class ApplicationConfigTest {
             .kinematicModel(
                 ApplicationConfig.ComponentConfig.KinematicModelConfig.builder()
                     .type(KinematicModel.Type.MASS_POINT)
-                    .kinematicModelSpec("x", 60.0)
+                    .kinematicModelSpec("x", 20.0)
                     .kinematicModelSpec("y", 0.0)
                     .kinematicModelSpec("vx", 0.0)
-                    .kinematicModelSpec("vy", -30.0)
+                    .kinematicModelSpec("vy", 0.0)
                     .kinematicModelSpec("mass", 10.0)
                     .build())
             .shape(
@@ -65,7 +65,7 @@ public class ApplicationConfigTest {
                 ApplicationConfig.ComponentConfig.KinematicModelConfig.builder()
                     .type(KinematicModel.Type.SPRING_MODEL)
                     .kinematicModelSpec("stiffness", 80.0)
-                    .kinematicModelSpec("original_length", 100.0)
+                    .kinematicModelSpec("original_length", 90.0)
                     .kinematicModelSpec("component_a", "circ")
                     .kinematicModelSpec("component_b", "wall")
                     .build())
@@ -81,7 +81,7 @@ public class ApplicationConfigTest {
     ApplicationConfig.TimelineConfig timeline =
         ApplicationConfig.TimelineConfig.builder()
             .type(ApplicationConfig.TimelineConfig.Type.NUMERIC)
-            .timelineSpec("time_step", 0.02)
+            .timelineSpec("time_step", 0.002)
             .build();
 
     ApplicationConfig.CanvasConfig canvas =
