@@ -40,6 +40,9 @@ assembly:
   appearance:
     color: BLUE
     line_width: 3.0
+fields:
+- type: GRAVITY
+  gx: 3.5
 timeline:
   type: NUMERIC
   time_step: 0.002

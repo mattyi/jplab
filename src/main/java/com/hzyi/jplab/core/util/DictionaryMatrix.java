@@ -3,7 +3,7 @@ package com.hzyi.jplab.core.util;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.hzyi.jplab.core.model.Field;
+import com.hzyi.jplab.core.model.Property;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +38,8 @@ public class DictionaryMatrix {
       Preconditions.checkArgument(oldIndex == null, "non-unique key: %s", key);
       index++;
     }
-    indexNames.put(Field.constant(), index);
-    colKeys[index] = Field.constant();
+    indexNames.put(Property.constant(), index);
+    colKeys[index] = Property.constant();
   }
 
   public double get(String row, String col) {
@@ -73,14 +73,14 @@ public class DictionaryMatrix {
   }
 
   public void set(String row, String col, double value) {
-    Preconditions.checkArgument(!row.equals(Field.constant()), "non-existing row: %s", row);
+    Preconditions.checkArgument(!row.equals(Property.constant()), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(row), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(col), "non-existing col: %s", col);
     matrix.setEntry(indexNames.get(row), indexNames.get(col), value);
   }
 
   public void add(String row, String col, double value) {
-    Preconditions.checkArgument(!row.equals(Field.constant()), "non-existing row: %s", row);
+    Preconditions.checkArgument(!row.equals(Property.constant()), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(row), "non-existing row: %s", row);
     Preconditions.checkArgument(indexNames.containsKey(col), "non-existing col: %s", col);
     matrix.addToEntry(indexNames.get(row), indexNames.get(col), value);

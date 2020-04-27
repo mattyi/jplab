@@ -28,7 +28,7 @@ public class NumericTimeline implements Timeline {
   public void advance(double timeStep) {
     DictionaryMatrix matrix = latestAssemblySnapshot.getCodependentMatrix(timeStep);
     latestAssemblySnapshot = latestAssemblySnapshot.merge(matrix.solve());
-    timestamp += timeStep;
+    this.timestamp += timeStep;
   }
 
   @Override

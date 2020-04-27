@@ -74,7 +74,7 @@ public class StaticModel extends SingleKinematicModel {
   }
 
   @Override
-  public List<String> codependentFields() {
+  public List<String> codependentPropertys() {
     return Collections.emptyList();
   }
 

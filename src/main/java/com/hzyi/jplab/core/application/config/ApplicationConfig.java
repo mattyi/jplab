@@ -29,6 +29,9 @@ public class ApplicationConfig {
   /* The Assembly config, described in a list of components. */
   private List<ComponentConfig> assembly = new ArrayList<>();
 
+  /* The field configs, to be merged with assembly into AssemblyConfig. */
+  private List<FieldConfig> fields = new ArrayList<>();
+
   /* The timeline config. */
   private TimelineConfig timeline;
 
@@ -69,7 +72,7 @@ public class ApplicationConfig {
       @Singular private Map<String, Object> kinematicModelSpecs = new HashMap<>();
 
       @JsonAnySetter
-      public void setAnyField(String key, Object value) {
+      public void setAnyProperty(String key, Object value) {
         kinematicModelSpecs.put(key, value);
       }
     }
@@ -86,14 +89,37 @@ public class ApplicationConfig {
       @Singular private Map<String, Object> shapeSpecs = new HashMap<>();
 
       @JsonAnySetter
-      public void setAnyField(String key, Object value) {
+      public void setAnyProperty(String key, Object value) {
         shapeSpecs.put(key, value);
       }
     }
 
     @JsonAnySetter
-    public void setAnyField(String key, Object value) {
+    public void setAnyProperty(String key, Object value) {
       componentSpecs.put(key, value);
+    }
+  }
+
+  @AllArgsConstructor
+  @Builder
+  @Data
+  @NoArgsConstructor
+  public static class FieldConfig {
+
+    /* The type of the physical field. Supported values include GRAVITY. */
+    private Type type;
+
+    /* Extra details of the field. */
+    @Singular private Map<String, Object> fieldSpecs = new HashMap<>();
+
+    public static enum Type {
+      GRAVITY,
+      UNKNOWN
+    }
+
+    @JsonAnySetter
+    public void setAnyProperty(String key, Object value) {
+      fieldSpecs.put(key, value);
     }
   }
 
@@ -115,7 +141,7 @@ public class ApplicationConfig {
     }
 
     @JsonAnySetter
-    public void setAnyField(String key, Object value) {
+    public void setAnyProperty(String key, Object value) {
       timelineSpecs.put(key, value);
     }
   }

@@ -6,7 +6,7 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkPositivity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-import com.hzyi.jplab.core.model.Field;
+import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
 import java.util.Map;
@@ -86,29 +86,29 @@ public class MassPoint extends RigidBody {
   }
 
   @Override
-  public List<String> codependentFields() {
+  public List<String> codependentPropertys() {
     return ImmutableList.of(
-        Field.format(this, "x"),
-        Field.format(this, "y"),
-        Field.format(this, "vx"),
-        Field.format(this, "vy"),
-        Field.format(this, "ax"),
-        Field.format(this, "ay"));
+        Property.format(this, "x"),
+        Property.format(this, "y"),
+        Property.format(this, "vx"),
+        Property.format(this, "vy"),
+        Property.format(this, "ax"),
+        Property.format(this, "ay"));
   }
 
   @Override
   public Table<String, String, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.<String, String, Double>builder()
-        .put(Field.format(this, "x"), Field.format(this, "x"), 1.0)
-        .put(Field.format(this, "vx"), Field.format(this, "vx"), 1.0)
-        .put(Field.format(this, "y"), Field.format(this, "y"), 1.0)
-        .put(Field.format(this, "vy"), Field.format(this, "vy"), 1.0)
-        .put(Field.format(this, "x"), Field.constant(), -x() - vx() * timeStep)
-        .put(Field.format(this, "y"), Field.constant(), -y() - vy() * timeStep)
-        .put(Field.format(this, "vx"), Field.constant(), -vx() - ax() * timeStep)
-        .put(Field.format(this, "vy"), Field.constant(), -vy() - ay() * timeStep)
-        .put(Field.format(this, "ax"), Field.format(this, "ax"), -mass)
-        .put(Field.format(this, "ay"), Field.format(this, "ay"), -mass)
+        .put(Property.format(this, "x"), Property.format(this, "x"), 1.0)
+        .put(Property.format(this, "vx"), Property.format(this, "vx"), 1.0)
+        .put(Property.format(this, "y"), Property.format(this, "y"), 1.0)
+        .put(Property.format(this, "vy"), Property.format(this, "vy"), 1.0)
+        .put(Property.format(this, "x"), Property.constant(), -x() - vx() * timeStep)
+        .put(Property.format(this, "y"), Property.constant(), -y() - vy() * timeStep)
+        .put(Property.format(this, "vx"), Property.constant(), -vx() - ax() * timeStep)
+        .put(Property.format(this, "vy"), Property.constant(), -vy() - ay() * timeStep)
+        .put(Property.format(this, "ax"), Property.format(this, "ax"), -mass)
+        .put(Property.format(this, "ay"), Property.format(this, "ay"), -mass)
         .build();
   }
 }

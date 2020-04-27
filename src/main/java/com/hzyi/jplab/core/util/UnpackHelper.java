@@ -1,8 +1,8 @@
 package com.hzyi.jplab.core.util;
 
-import com.hzyi.jplab.core.application.exceptions.IllegalFieldTypeException;
-import com.hzyi.jplab.core.application.exceptions.IllegalFieldValueException;
-import com.hzyi.jplab.core.application.exceptions.MissingRequiredFieldException;
+import com.hzyi.jplab.core.application.exceptions.IllegalPropertyTypeException;
+import com.hzyi.jplab.core.application.exceptions.IllegalPropertyValueException;
+import com.hzyi.jplab.core.application.exceptions.MissingRequiredPropertyException;
 import java.util.Map;
 import java.util.function.BiFunction;
 import lombok.AllArgsConstructor;
@@ -20,11 +20,11 @@ public class UnpackHelper<BuilderT> {
    * Used by `unpack`. Caller will call `test` on certain values and if it evaluates to false,
    * caller will call `getException` to create a Throwable and throw it.
    */
-  public interface ThrowingPredicate<FieldT, ThrowableT extends RuntimeException> {
-    boolean test(FieldT value);
+  public interface ThrowingPredicate<PropertyT, ThrowableT extends RuntimeException> {
+    boolean test(PropertyT value);
 
     ThrowableT getException(
-        String field, FieldT value, Class<FieldT> expectedType, Class<?> destinationType);
+        String property, PropertyT value, Class<PropertyT> expectedType, Class<?> destinationType);
   }
 
   /** Creates an UnpackHelper. */
@@ -33,37 +33,43 @@ public class UnpackHelper<BuilderT> {
     return new UnpackHelper(builder, source, destinationType);
   }
 
-  public <FieldT> UnpackHelper<BuilderT> unpack(
-      String field, Class<FieldT> expectedType, BiFunction<BuilderT, FieldT, BuilderT> collector) {
-    return unpack(field, expectedType, collector, new ThrowingPredicate[0]);
+  public <PropertyT> UnpackHelper<BuilderT> unpack(
+      String property,
+      Class<PropertyT> expectedType,
+      BiFunction<BuilderT, PropertyT, BuilderT> collector) {
+    return unpack(property, expectedType, collector, new ThrowingPredicate[0]);
   }
 
-  public <FieldT> UnpackHelper<BuilderT> unpackRequiredPositive(
-      String field, Class<FieldT> expectedType, BiFunction<BuilderT, FieldT, BuilderT> collector) {
-    return unpack(field, expectedType, collector, checkExistence(), checkPositivity());
+  public <PropertyT> UnpackHelper<BuilderT> unpackRequiredPositive(
+      String property,
+      Class<PropertyT> expectedType,
+      BiFunction<BuilderT, PropertyT, BuilderT> collector) {
+    return unpack(property, expectedType, collector, checkExistence(), checkPositivity());
   }
 
-  public <FieldT> UnpackHelper<BuilderT> unpackPositive(
-      String field, Class<FieldT> expectedType, BiFunction<BuilderT, FieldT, BuilderT> collector) {
-    return unpack(field, expectedType, collector, checkPositivity());
+  public <PropertyT> UnpackHelper<BuilderT> unpackPositive(
+      String property,
+      Class<PropertyT> expectedType,
+      BiFunction<BuilderT, PropertyT, BuilderT> collector) {
+    return unpack(property, expectedType, collector, checkPositivity());
   }
 
-  public <FieldT> UnpackHelper<BuilderT> unpack(
-      String field,
-      Class<FieldT> expectedType,
-      BiFunction<BuilderT, FieldT, BuilderT> collector,
-      ThrowingPredicate<FieldT, ?>... checkers) {
+  public <PropertyT> UnpackHelper<BuilderT> unpack(
+      String property,
+      Class<PropertyT> expectedType,
+      BiFunction<BuilderT, PropertyT, BuilderT> collector,
+      ThrowingPredicate<PropertyT, ?>... checkers) {
 
-    Object value = source.get(field);
+    Object value = source.get(property);
     if (value != null && !expectedType.isInstance(value)) {
-      throw new IllegalFieldTypeException(
-          field, value.getClass().getName(), expectedType.getName());
+      throw new IllegalPropertyTypeException(
+          property, value.getClass().getName(), expectedType.getName());
     }
 
-    FieldT valueT = (FieldT) value;
-    for (ThrowingPredicate<FieldT, ?> checker : checkers) {
+    PropertyT valueT = (PropertyT) value;
+    for (ThrowingPredicate<PropertyT, ?> checker : checkers) {
       if (!checker.test(valueT)) {
-        throw checker.getException(field, valueT, expectedType, destinationType);
+        throw checker.getException(property, valueT, expectedType, destinationType);
       }
     }
 
@@ -73,45 +79,53 @@ public class UnpackHelper<BuilderT> {
     return this;
   }
 
-  /** Checks if input is non-null. Provides a MissingRequiredFieldException otherwise. */
-  public static <FieldT> ThrowingPredicate<FieldT, MissingRequiredFieldException> checkExistence() {
-    return new ThrowingPredicate<FieldT, MissingRequiredFieldException>() {
+  /** Checks if input is non-null. Provides a MissingRequiredPropertyException otherwise. */
+  public static <PropertyT>
+      ThrowingPredicate<PropertyT, MissingRequiredPropertyException> checkExistence() {
+    return new ThrowingPredicate<PropertyT, MissingRequiredPropertyException>() {
       @Override
-      public boolean test(FieldT value) {
+      public boolean test(PropertyT value) {
         return value != null;
       }
 
       @Override
-      public MissingRequiredFieldException getException(
-          String field, FieldT value, Class<FieldT> expectedType, Class<?> destinationType) {
-        return new MissingRequiredFieldException(destinationType.getName() + "." + field);
+      public MissingRequiredPropertyException getException(
+          String property,
+          PropertyT value,
+          Class<PropertyT> expectedType,
+          Class<?> destinationType) {
+        return new MissingRequiredPropertyException(destinationType.getName() + "." + property);
       }
     };
   }
 
   /**
-   * Checks if input is a number and is greater than zero. Provides an IllegalFieldValueException
+   * Checks if input is a number and is greater than zero. Provides an IllegalPropertyValueException
    * otherwise.
    */
-  public static <FieldT> ThrowingPredicate<FieldT, IllegalFieldValueException> checkPositivity() {
-    return new ThrowingPredicate<FieldT, IllegalFieldValueException>() {
+  public static <PropertyT>
+      ThrowingPredicate<PropertyT, IllegalPropertyValueException> checkPositivity() {
+    return new ThrowingPredicate<PropertyT, IllegalPropertyValueException>() {
       @Override
-      public boolean test(FieldT value) {
+      public boolean test(PropertyT value) {
         return value == null
             || (value instanceof Integer && (Integer) value > 0)
             || (value instanceof Double && (Double) value > 0.0);
       }
 
       @Override
-      public IllegalFieldValueException getException(
-          String field, FieldT value, Class<FieldT> expectedType, Class<?> destinationType) {
+      public IllegalPropertyValueException getException(
+          String property,
+          PropertyT value,
+          Class<PropertyT> expectedType,
+          Class<?> destinationType) {
         if (!(value instanceof Number)) {
-          return new IllegalFieldValueException(
-              destinationType.getName() + "." + field,
+          return new IllegalPropertyValueException(
+              destinationType.getName() + "." + property,
               String.format("not a number, type: %s", value.getClass()));
         }
-        return new IllegalFieldValueException(
-            destinationType.getName() + "." + field, "must be positive");
+        return new IllegalPropertyValueException(
+            destinationType.getName() + "." + property, "must be positive");
       }
     };
   }

@@ -17,7 +17,7 @@ public interface KinematicModel {
 
   KinematicModel merge(Map<String, ?> map);
 
-  List<String> codependentFields();
+  List<String> codependentPropertys();
 
   Table<String, String, Double> codependentMultipliers(double timeStep);
 

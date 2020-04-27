@@ -9,6 +9,8 @@ import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.InstantiatingComponent;
 import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
+import com.hzyi.jplab.core.model.kinematic.Field;
+import com.hzyi.jplab.core.model.kinematic.GravityField;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
@@ -38,7 +40,7 @@ public class ApplicationFactory {
     String name = config.getName();
     Controller controller = null;
     PainterFactory painterFactory = createPainterFactory(config.getCanvas());
-    Assembly assembly = createAssembly(config.getAssembly(), painterFactory);
+    Assembly assembly = createAssembly(config.getAssembly(), config.getFields(), painterFactory);
     Timeline timeline = createTimeline(assembly.getInitialAssemblySnapshot(), config.getTimeline());
     Application.init(
         name, assembly, controller, painterFactory, timeline, config.getRefreshPeriod());
@@ -63,18 +65,24 @@ public class ApplicationFactory {
   }
 
   private static Assembly createAssembly(
-      List<ApplicationConfig.ComponentConfig> componentConfigs, PainterFactory painterFactory) {
+      List<ApplicationConfig.ComponentConfig> componentConfigs,
+      List<ApplicationConfig.FieldConfig> fieldConfigs,
+      PainterFactory painterFactory) {
     // TODO: assembly name does not seem needed at all
     Assembly assembly = new Assembly("assembly");
-    for (ApplicationConfig.ComponentConfig schema : componentConfigs) {
-      if (schema.getKinematicModel().getType().isSingleModel()) {
-        assembly.withComponent(createComponent(schema, painterFactory, assembly));
+    for (ApplicationConfig.ComponentConfig config : componentConfigs) {
+      if (config.getKinematicModel().getType().isSingleModel()) {
+        assembly.withComponent(createComponent(config, painterFactory, assembly));
       }
     }
-    for (ApplicationConfig.ComponentConfig schema : componentConfigs) {
-      if (schema.getKinematicModel().getType().isConnectingModel()) {
-        assembly.withComponent(createComponent(schema, painterFactory, assembly));
+    for (ApplicationConfig.ComponentConfig config : componentConfigs) {
+      if (config.getKinematicModel().getType().isConnectingModel()) {
+        assembly.withComponent(createComponent(config, painterFactory, assembly));
       }
+    }
+
+    for (ApplicationConfig.FieldConfig config : fieldConfigs) {
+      assembly.withField(createField(config));
     }
     return assembly;
   }
@@ -138,12 +146,12 @@ public class ApplicationFactory {
   }
 
   private static KinematicModel createKinematicModel(
-      ApplicationConfig.ComponentConfig.KinematicModelConfig schema,
+      ApplicationConfig.ComponentConfig.KinematicModelConfig config,
       String componentName,
       Assembly assembly) {
-    Map<String, Object> specs = schema.getKinematicModelSpecs();
+    Map<String, Object> specs = config.getKinematicModelSpecs();
     specs.put("name", componentName);
-    switch (schema.getType()) {
+    switch (config.getType()) {
       case MASS_POINT:
         return MassPoint.of(specs);
       case SPRING_MODEL:
@@ -152,8 +160,15 @@ public class ApplicationFactory {
       case STATIC_MODEL:
         return StaticModel.of(specs);
       default:
-        checkArgument(false, "unsupported kinematic model type: %s", schema.getType());
+        checkArgument(false, "unsupported kinematic model type: %s", config.getType());
     }
     return null;
+  }
+
+  private static Field createField(ApplicationConfig.FieldConfig config) {
+    if (config.getType() == ApplicationConfig.FieldConfig.Type.GRAVITY) {
+      return GravityField.of(config.getFieldSpecs());
+    }
+    throw new UnsupportedOperationException("Only gravity field is supported.");
   }
 }
