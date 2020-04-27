@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.exceptions.Prechecks;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
-import com.hzyi.jplab.core.model.Field;
+import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.CoordinateSystem;
 import com.hzyi.jplab.core.util.UnpackHelper;
@@ -113,21 +113,21 @@ public class SpringModel extends ConnectingModel {
   }
 
   @Override
-  public List<String> codependentFields() {
+  public List<String> codependentPropertys() {
     return Collections.emptyList();
   }
 
   @Override
   public Table<String, String, Double> codependentMultipliers(double timeStep) {
-    String aax = Field.format(connectingModelA, "ax");
-    String aay = Field.format(connectingModelA, "ay");
-    String bax = Field.format(connectingModelB, "ax");
-    String bay = Field.format(connectingModelB, "ay");
+    String aax = Property.format(connectingModelA, "ax");
+    String aay = Property.format(connectingModelA, "ay");
+    String bax = Property.format(connectingModelB, "ax");
+    String bay = Property.format(connectingModelB, "ay");
     return ImmutableTable.<String, String, Double>builder()
-        .put(aax, Field.constant(), force() * Math.cos(theta()))
-        .put(aay, Field.constant(), force() * Math.sin(theta()))
-        .put(bax, Field.constant(), -force() * Math.cos(theta()))
-        .put(bay, Field.constant(), -force() * Math.sin(theta()))
+        .put(aax, Property.constant(), force() * Math.cos(theta()))
+        .put(aay, Property.constant(), force() * Math.sin(theta()))
+        .put(bax, Property.constant(), -force() * Math.cos(theta()))
+        .put(bay, Property.constant(), -force() * Math.sin(theta()))
         // support rotation
         .build();
   }
@@ -137,27 +137,27 @@ public class SpringModel extends ConnectingModel {
   }
 
   private static BiFunction<SpringModelBuilder, String, SpringModelBuilder> componentExtractor(
-      Map<String, ?> map, final String field) {
-    final AssemblySnapshot snapshot = Prechecks.checkFieldExists(map, "", "_assembly_snapshot");
+      Map<String, ?> map, final String property) {
+    final AssemblySnapshot snapshot = Prechecks.checkPropertyExists(map, "", "_assembly_snapshot");
     BiFunction<SpringModelBuilder, String, SpringModelBuilder> extractor =
         new BiFunction<SpringModelBuilder, String, SpringModelBuilder>() {
           @Override
           public SpringModelBuilder apply(SpringModelBuilder builder, String component) {
             KinematicModel model = snapshot.get(component);
-            Prechecks.checkFieldExists(model, "Spring", component);
-            Prechecks.checkFieldValue(
+            Prechecks.checkPropertyExists(model, "Spring", component);
+            Prechecks.checkPropertyValue(
                 model instanceof SingleKinematicModel,
                 "Spring",
                 component,
                 "component %s is not a single kinematic model",
                 component);
 
-            if (field.equals("component_a")) {
+            if (property.equals("component_a")) {
               builder.connectingModelA((SingleKinematicModel) model);
-            } else if (field.equals("component_b")) {
+            } else if (property.equals("component_b")) {
               builder.connectingModelB((SingleKinematicModel) model);
             } else {
-              throw new IllegalStateException("internal: unknown field " + field);
+              throw new IllegalStateException("internal: unknown property " + property);
             }
             return builder;
           }

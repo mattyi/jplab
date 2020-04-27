@@ -5,40 +5,40 @@ import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-public class Field {
+public class Property {
 
   private static final String CONST_FIELD = "_constant";
-  private static final Field CONST = new Field("", CONST_FIELD);
+  private static final Property CONST = new Property("", CONST_FIELD);
 
   private final String model;
-  private final String field;
+  private final String property;
 
-  public Field(String model, String field) {
+  public Property(String model, String property) {
     this.model = Preconditions.checkNotNull(model);
-    this.field = Preconditions.checkNotNull(field);
+    this.property = Preconditions.checkNotNull(property);
     if (model.isEmpty()) {
       Preconditions.checkArgument(
-          field.equals(CONST_FIELD), "model is empty string, but field is not CONST");
+          property.equals(CONST_FIELD), "model is empty string, but property is not CONST");
     }
   }
 
-  public Field(KinematicModel model, String field) {
-    this(model.name(), field);
+  public Property(KinematicModel model, String property) {
+    this(model.name(), property);
   }
 
-  public static Field parse(String fullName) {
+  public static Property parse(String fullName) {
     if (fullName.equals(CONST_FIELD)) {
       return CONST;
     }
     int index = fullName.indexOf('.');
     Preconditions.checkArgument(index != -1, "expecting full name, got: %s", fullName);
     String model = fullName.substring(0, index);
-    String field = fullName.substring(index + 1);
-    return new Field(model, field);
+    String property = fullName.substring(index + 1);
+    return new Property(model, property);
   }
 
-  public static String format(KinematicModel model, String field) {
-    return new Field(model, field).getFullName();
+  public static String format(KinematicModel model, String property) {
+    return new Property(model, property).getFullName();
   }
 
   public static String constant() {
@@ -49,14 +49,14 @@ public class Field {
     if (this == CONST) {
       return CONST_FIELD;
     }
-    return String.format("%s.%s", model, field);
+    return String.format("%s.%s", model, property);
   }
 
   public String getModel() {
     return model;
   }
 
-  public String getField() {
-    return field;
+  public String getProperty() {
+    return property;
   }
 }

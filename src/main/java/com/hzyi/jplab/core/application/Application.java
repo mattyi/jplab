@@ -73,20 +73,24 @@ public class Application extends javafx.application.Application {
     TimerTask task =
         new TimerTask() {
 
-          private double nextRefreshThreshold = refreshPeriod;
+          private double nextRefreshThreshold = 0;
 
           @Override
           public void run() {
-            timeline.advance();
+            // if (!finished) {
+            //   throw new IllegalStateException("race condition!");
+            //   System.exit(1);
+            // }
             AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
-            if (timeline.getTimestamp() >= nextRefreshThreshold) {
-              assembly.paint(snapshot);
-              nextRefreshThreshold += refreshPeriod;
+            assembly.paint(snapshot);
+            nextRefreshThreshold += refreshPeriod;
+            while (timeline.getTimestamp() < nextRefreshThreshold) {
+              timeline.advance();
             }
           }
         };
 
-    new Timer().schedule(task, 100L, (long) (timeline.getTimeStep() * 1000));
+    new Timer().schedule(task, 100L, (long) (refreshPeriod * 1000));
   }
 
   public static void startSimulation() {

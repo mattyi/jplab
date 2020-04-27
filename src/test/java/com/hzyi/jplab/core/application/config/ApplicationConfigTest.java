@@ -91,12 +91,19 @@ public class ApplicationConfigTest {
             .naturalScreenRatio(1.0)
             .build();
 
+    ApplicationConfig.FieldConfig field =
+        ApplicationConfig.FieldConfig.builder()
+            .type(ApplicationConfig.FieldConfig.Type.GRAVITY)
+            .fieldSpec("gx", 3.5)
+            .build();
+
     ApplicationConfig expected =
         ApplicationConfig.builder()
             .name(name)
             .version(version)
             .refreshPeriod(refreshPeriod)
             .assembly(assemblyOf(massPoint, wall, spring))
+            .fields(fieldsOf(field))
             .timeline(timeline)
             .canvas(canvas)
             .build();
@@ -140,10 +147,19 @@ public class ApplicationConfigTest {
       ApplicationConfig.ComponentConfig c,
       ApplicationConfig.ComponentConfig c2,
       ApplicationConfig.ComponentConfig c3) {
-    ArrayList<ApplicationConfig.ComponentConfig> arrayList = new ArrayList<>();
-    arrayList.add(c);
-    arrayList.add(c2);
-    arrayList.add(c3);
+    return arrayListOf(c, c2, c3);
+  }
+
+  private static ArrayList<ApplicationConfig.FieldConfig> fieldsOf(
+      ApplicationConfig.FieldConfig... fields) {
+    return arrayListOf(fields);
+  }
+
+  private static <E> ArrayList<E> arrayListOf(E... elements) {
+    ArrayList<E> arrayList = new ArrayList<>();
+    for (E e : elements) {
+      arrayList.add(e);
+    }
     return arrayList;
   }
 }

@@ -5,18 +5,18 @@ assembly:
 - name: circ
   kinematic_model:
     type: MASS_POINT
-    x: 20.0
+    x: 10.0
     "y": 0.0
-    vx: 0.0
-    vy: 0.0
-    mass: 10.0
+    vx: 5.0
+    vy: 1.0
+    mass: 1.0
   shape:
     type: CIRCLE
-    radius: 20.0
+    radius: 5.0
 - name: wall
   kinematic_model:
     type: STATIC_MODEL
-    x: 20.0
+    x: 2.0
     "y": 100.0
   shape:
     type: EDGE
@@ -29,21 +29,23 @@ assembly:
 - name: spring
   kinematic_model:
     type: SPRING_MODEL
-    stiffness: 80.0
-    original_length: 90.0
+    stiffness: 20.0
+    original_length: 100.0
     component_a: circ
     component_b: wall
   shape:
     type: ZIGZAG_LINE
-    width: 15.0
-    zigzag_count: 10
+    width: 5.0
+    zigzag_count: 15
   appearance:
     color: BLUE
     line_width: 3.0
+fields:
+- type: GRAVITY
 timeline:
   type: NUMERIC
-  time_step: 0.002
+  time_step: 0.001
 canvas:
   width: 400
   height: 400
-  natural_screen_ratio: 1.0
+  natural_screen_ratio: 2.0

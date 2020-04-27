@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
+import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import java.util.HashMap;
@@ -15,11 +16,14 @@ import lombok.ToString;
 
 @ToString
 public class AssemblySnapshot {
+  static int i = 0;
 
   @Getter private final Map<String, KinematicModel> kinematicModels;
+  @Getter private final Map<String, Field> fields;
 
   private AssemblySnapshot(Builder builder) {
     kinematicModels = ImmutableMap.copyOf(builder.kinematicModels);
+    fields = ImmutableMap.copyOf(builder.fields);
   }
 
   public KinematicModel get(String name) {
@@ -36,7 +40,7 @@ public class AssemblySnapshot {
   public DictionaryMatrix getCodependentMatrix(double timeStep) {
     List<String> keys =
         kinematicModels.values().stream()
-            .map(KinematicModel::codependentFields)
+            .map(KinematicModel::codependentPropertys)
             .flatMap(List::stream)
             .collect(ImmutableList.toImmutableList());
 
@@ -46,7 +50,17 @@ public class AssemblySnapshot {
           model.codependentMultipliers(timeStep).cellSet()) {
         String row = cell.getRowKey();
         String col = cell.getColumnKey();
-        if (keys.contains(row) && (keys.contains(col) || col.equals(Field.constant()))) {
+        if (keys.contains(row) && (keys.contains(col) || col.equals(Property.constant()))) {
+          matrix.add(row, col, cell.getValue());
+        }
+      }
+    }
+
+    for (Field field : fields.values()) {
+      for (Table.Cell<String, String, Double> cell : field.codependentMultipliers().cellSet()) {
+        String row = cell.getRowKey();
+        String col = cell.getColumnKey();
+        if (keys.contains(row) && (keys.contains(col) || col.equals(Property.constant()))) {
           matrix.add(row, col, cell.getValue());
         }
       }
@@ -57,11 +71,11 @@ public class AssemblySnapshot {
   public AssemblySnapshot merge(Map<String, Double> map) {
     Builder builder = toBuilder();
     for (Map.Entry<String, Double> entry : map.entrySet()) {
-      Field f = Field.parse(entry.getKey());
+      Property f = Property.parse(entry.getKey());
       String model = f.getModel();
-      String field = f.getField();
+      String property = f.getProperty();
       builder.kinematicModel(
-          model, builder.get(model).merge(ImmutableMap.of(field, entry.getValue())));
+          model, builder.get(model).merge(ImmutableMap.of(property, entry.getValue())));
     }
 
     for (ConnectingModel connector : getConnectingModels()) {
@@ -81,22 +95,28 @@ public class AssemblySnapshot {
 
   public Builder toBuilder() {
     Builder builder = new Builder();
-    for (Map.Entry<String, KinematicModel> entry : kinematicModels.entrySet()) {
-      builder.kinematicModel(entry.getKey(), entry.getValue());
-    }
+    builder.kinematicModels = new HashMap<>(kinematicModels);
+    builder.fields = new HashMap<>(fields);
     return builder;
   }
 
   public static class Builder {
 
     private HashMap<String, KinematicModel> kinematicModels;
+    private HashMap<String, Field> fields;
 
     public Builder() {
       kinematicModels = new HashMap<>();
+      fields = new HashMap<>();
     }
 
     public Builder kinematicModel(String name, KinematicModel model) {
       kinematicModels.put(name, model);
+      return this;
+    }
+
+    public Builder field(Field field) {
+      fields.put(field.name(), field);
       return this;
     }
 
