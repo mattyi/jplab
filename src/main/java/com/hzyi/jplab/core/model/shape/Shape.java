@@ -8,6 +8,7 @@ public interface Shape {
     CIRCLE,
     EDGE,
     LINE,
-    ZIGZAG_LINE
+    ZIGZAG_LINE,
+    CATENARY
   }
 }

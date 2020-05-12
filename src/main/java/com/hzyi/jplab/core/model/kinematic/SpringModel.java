@@ -5,8 +5,6 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkPositivity;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-import com.hzyi.jplab.core.application.exceptions.Prechecks;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.CoordinateSystem;
@@ -14,7 +12,6 @@ import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -74,11 +71,16 @@ public class SpringModel extends ConnectingModel {
   public static SpringModel of(Map<String, ?> map) {
     SpringModelBuilder builder = newBuilder();
     UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
-
     helper.unpack(
-        "component_a", String.class, componentExtractor(map, "component_a"), checkExistence());
+        "component_a",
+        String.class,
+        ConnectingModel.newExtractor(map, "Spring", "component_a"),
+        checkExistence());
     helper.unpack(
-        "component_b", String.class, componentExtractor(map, "component_b"), checkExistence());
+        "component_b",
+        String.class,
+        ConnectingModel.newExtractor(map, "Spring", "component_b"),
+        checkExistence());
     helper.unpack("name", String.class, SpringModelBuilder::name, checkExistence());
     helper.unpack(
         "original_length",
@@ -108,7 +110,6 @@ public class SpringModel extends ConnectingModel {
         "relative_connecting_point_by",
         Double.class,
         SpringModelBuilder::relativeConnectingPointBY);
-
     return helper.getBuilder().build();
   }
 
@@ -136,32 +137,5 @@ public class SpringModel extends ConnectingModel {
     return (length() - originalLength) * stiffness;
   }
 
-  private static BiFunction<SpringModelBuilder, String, SpringModelBuilder> componentExtractor(
-      Map<String, ?> map, final String property) {
-    final AssemblySnapshot snapshot = Prechecks.checkPropertyExists(map, "", "_assembly_snapshot");
-    BiFunction<SpringModelBuilder, String, SpringModelBuilder> extractor =
-        new BiFunction<SpringModelBuilder, String, SpringModelBuilder>() {
-          @Override
-          public SpringModelBuilder apply(SpringModelBuilder builder, String component) {
-            KinematicModel model = snapshot.get(component);
-            Prechecks.checkPropertyExists(model, "Spring", component);
-            Prechecks.checkPropertyValue(
-                model instanceof SingleKinematicModel,
-                "Spring",
-                component,
-                "component %s is not a single kinematic model",
-                component);
-
-            if (property.equals("component_a")) {
-              builder.connectingModelA((SingleKinematicModel) model);
-            } else if (property.equals("component_b")) {
-              builder.connectingModelB((SingleKinematicModel) model);
-            } else {
-              throw new IllegalStateException("internal: unknown property " + property);
-            }
-            return builder;
-          }
-        };
-    return extractor;
-  }
+  public static class SpringModelBuilder implements ConnectingModel.ConnectingModelBuilder {}
 }
