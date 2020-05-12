@@ -10,6 +10,10 @@ public class Coordinate {
     this.y = y;
   }
 
+  public static Coordinate of(double x, double y) {
+    return new Coordinate(x, y);
+  }
+
   public double x() {
     return x;
   }
