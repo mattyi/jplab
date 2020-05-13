@@ -21,6 +21,18 @@ public interface KinematicModel {
 
   Table<String, String, Double> codependentMultipliers(double timeStep);
 
+  public default isConnectingModel() {
+    return getType().isConnectingModel();
+  }
+
+  public default isSingleModel() {
+    return getType().isSingleModel();
+  }
+
+  public default isRigidBody() {
+    
+  }
+
   public enum Type {
     MASS_POINT,
     STATIC_MODEL,

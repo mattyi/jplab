@@ -1,6 +1,10 @@
 package com.hzyi.jplab.core.model;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import java.util.List;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.Field;
@@ -15,32 +19,44 @@ import lombok.ToString;
 @ToString
 public class Assembly {
 
+  private static final Assembly INSTANCE = new Assembly();
+
   private final Map<String, Component> components = new HashMap<>();
   private final Map<String, Field> fields = new HashMap<>();
-  @Getter private final String name;
+  private boolean isImmutable = false;
 
-  public Assembly(String name) {
-    this.name = name;
-  }
+  private Assembly() { }
 
   public Assembly withComponent(Component component) {
-    Preconditions.checkArgument(
-        !components.containsKey(component.getName()),
+    Component old = components.put(component.getName(), component);
+    checkState(
+        !isImmutable,
+        "assembly is immutable");
+    checkArgument(
+        old != null,
         "component with name %s already exists",
         component.getName());
-    components.put(component.getName(), component);
     return this;
   }
 
   public Assembly withField(Field field) {
-    Preconditions.checkArgument(
-        !fields.containsKey(field.name()), "field with name %s already exists", field.name());
-    fields.put(field.name(), field);
+    Field old = fields.put(field.getName(), field);
+    checkState(
+        !isImmutable,
+        "assembly is immutable");
+    checkArgument(
+        old != null,
+        "component with name %s already exists",
+        component.getName());
     return this;
   }
 
-  public Collection<Component> getComponents() {
-    return components.values();
+  public void makeImmutable() {
+    immutable = true;
+  }
+
+  public List<Component> getComponents() {
+    return ImmutableList.copyOf(components.values());
   }
 
   public Component getComponent(String componentName) {
@@ -48,24 +64,15 @@ public class Assembly {
   }
 
   public List<RigidBody> getRigidBodies() {
-    List<RigidBody> answer =
-        components.values().stream()
-            .map(Component::getInitialKinematicModel)
-            .filter(m -> m instanceof RigidBody)
-            .map(m -> (RigidBody) m)
-            .collect(ImmutableList.toImmutableList());
-    return answer;
-  }
+    return components.values().stream()
+        .map(Component::getInitialKinematicModel)
+        .filter(m -> m instanceof RigidBody)
+        .map(m -> (RigidBody) m)
+        .collect(ImmutableList.toImmutableList());
+    }
 
   public AssemblySnapshot getInitialAssemblySnapshot() {
-    AssemblySnapshot.Builder initialAssemblySnapshot = AssemblySnapshot.newBuilder();
-    for (Component component : getComponents()) {
-      initialAssemblySnapshot.set(component.getName(), component.getInitialKinematicModel());
-    }
-    for (Field field : fields.values()) {
-      initialAssemblySnapshot.field(field);
-    }
-    return initialAssemblySnapshot.build();
+
   }
 
   public void paint(AssemblySnapshot assemblySnapshot) {

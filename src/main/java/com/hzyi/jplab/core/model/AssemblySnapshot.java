@@ -1,5 +1,9 @@
 package com.hzyi.jplab.core.model;
 
+import java.util.HashMap;
+import java.util.HashMap;
+import java.util.HashMap;
+import java.util.HashMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
@@ -16,14 +20,13 @@ import lombok.ToString;
 
 @ToString
 public class AssemblySnapshot {
-  static int i = 0;
+  
+  private final Map<String, KinematicModel> kinematicModels;
+  private final Map<String, Field> fields;
 
-  @Getter private final Map<String, KinematicModel> kinematicModels;
-  @Getter private final Map<String, Field> fields;
-
-  private AssemblySnapshot(Builder builder) {
-    kinematicModels = ImmutableMap.copyOf(builder.kinematicModels);
-    fields = ImmutableMap.copyOf(builder.fields);
+  AssemblySnapshot() {
+    this.kinematicModels = new HashMap<>();
+    this.fields = new HashMap<>();
   }
 
   public KinematicModel get(String name) {
@@ -98,38 +101,5 @@ public class AssemblySnapshot {
     builder.kinematicModels = new HashMap<>(kinematicModels);
     builder.fields = new HashMap<>(fields);
     return builder;
-  }
-
-  public static class Builder {
-
-    private HashMap<String, KinematicModel> kinematicModels;
-    private HashMap<String, Field> fields;
-
-    public Builder() {
-      kinematicModels = new HashMap<>();
-      fields = new HashMap<>();
-    }
-
-    public Builder kinematicModel(String name, KinematicModel model) {
-      kinematicModels.put(name, model);
-      return this;
-    }
-
-    public Builder field(Field field) {
-      fields.put(field.name(), field);
-      return this;
-    }
-
-    public Builder set(String name, KinematicModel model) {
-      return kinematicModel(name, model);
-    }
-
-    public KinematicModel get(String name) {
-      return kinematicModels.get(name);
-    }
-
-    public AssemblySnapshot build() {
-      return new AssemblySnapshot(this);
-    }
   }
 }
