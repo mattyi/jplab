@@ -36,10 +36,11 @@ public interface KinematicModel {
   public enum Type {
     MASS_POINT,
     STATIC_MODEL,
-    SPRING_MODEL;
+    SPRING_MODEL,
+    ROPE_MODEL;
 
     public boolean isConnectingModel() {
-      return this == SPRING_MODEL;
+      return this == SPRING_MODEL || this == ROPE_MODEL;
     }
 
     public boolean isSingleModel() {
