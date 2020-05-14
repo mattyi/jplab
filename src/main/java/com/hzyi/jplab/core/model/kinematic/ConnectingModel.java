@@ -64,7 +64,7 @@ public abstract class ConnectingModel implements KinematicModel {
         new BiFunction<B, String, B>() {
           @Override
           public B apply(B builder, String component) {
-            KinematicModel model = snapshot.get(component);
+            KinematicModel model = snapshot.getKinematicModel(component);
             Prechecks.checkPropertyExists(model, entity, component);
             Prechecks.checkPropertyValue(
                 model instanceof SingleKinematicModel,

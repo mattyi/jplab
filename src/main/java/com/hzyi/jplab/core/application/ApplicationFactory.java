@@ -68,15 +68,14 @@ public class ApplicationFactory {
       List<ApplicationConfig.ComponentConfig> componentConfigs,
       List<ApplicationConfig.FieldConfig> fieldConfigs,
       PainterFactory painterFactory) {
-    // TODO: assembly name does not seem needed at all
-    Assembly assembly = new Assembly("assembly");
+    Assembly assembly = Assembly.getInstance();
     for (ApplicationConfig.ComponentConfig config : componentConfigs) {
       if (config.getKinematicModel().getType().isSingleModel()) {
         assembly.withComponent(createComponent(config, painterFactory, assembly));
       }
     }
     for (ApplicationConfig.ComponentConfig config : componentConfigs) {
-      if (config.getKinematicModel().getType().isConnectingModel()) {
+      if (config.getKinematicModel().getType().isConnector()) {
         assembly.withComponent(createComponent(config, painterFactory, assembly));
       }
     }

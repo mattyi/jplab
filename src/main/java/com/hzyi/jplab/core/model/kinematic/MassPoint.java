@@ -86,7 +86,7 @@ public class MassPoint extends RigidBody {
   }
 
   @Override
-  public List<String> codependentPropertys() {
+  public List<String> codependentProperties() {
     return ImmutableList.of(
         Property.format(this, "x"),
         Property.format(this, "y"),

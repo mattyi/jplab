@@ -16,7 +16,7 @@ public interface Component<K extends KinematicModel, S extends Shape> {
   }
 
   default K getKinematicModel(AssemblySnapshot assemblySnapshot) {
-    return (K) (assemblySnapshot.get(getName()));
+    return (K) (assemblySnapshot.getKinematicModel(getName()));
   }
 
   S getShape();

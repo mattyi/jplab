@@ -17,9 +17,21 @@ public interface KinematicModel {
 
   KinematicModel merge(Map<String, ?> map);
 
-  List<String> codependentPropertys();
+  List<String> codependentProperties();
 
   Table<String, String, Double> codependentMultipliers(double timeStep);
+
+  public default boolean isConnector() {
+    return type().isConnector();
+  }
+
+  public default boolean isSingleModel() {
+    return type().isSingleModel();
+  }
+
+  public default boolean isRigidBody() {
+    return this instanceof RigidBody;
+  }
 
   public enum Type {
     MASS_POINT,
@@ -27,7 +39,7 @@ public interface KinematicModel {
     SPRING_MODEL,
     ROPE_MODEL;
 
-    public boolean isConnectingModel() {
+    public boolean isConnector() {
       return this == SPRING_MODEL || this == ROPE_MODEL;
     }
 

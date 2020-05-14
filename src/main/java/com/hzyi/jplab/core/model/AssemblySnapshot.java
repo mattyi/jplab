@@ -1,46 +1,95 @@
 package com.hzyi.jplab.core.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
 import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
+import com.hzyi.jplab.core.model.kinematic.RigidBody;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.Getter;
 import lombok.ToString;
 
 @ToString
 public class AssemblySnapshot {
-  static int i = 0;
 
-  @Getter private final Map<String, KinematicModel> kinematicModels;
-  @Getter private final Map<String, Field> fields;
+  private final Map<String, KinematicModel> kinematicModels;
+  private boolean isImmutable;
 
-  private AssemblySnapshot(Builder builder) {
-    kinematicModels = ImmutableMap.copyOf(builder.kinematicModels);
-    fields = ImmutableMap.copyOf(builder.fields);
+  private AssemblySnapshot() {
+    this.kinematicModels = new HashMap<>();
   }
 
-  public KinematicModel get(String name) {
+  /** Returns an empty snapshot. */
+  public static AssemblySnapshot empty() {
+    return new AssemblySnapshot();
+  }
+
+  /** Returns a mutable copy of this snapshot. */
+  public AssemblySnapshot copy() {
+    AssemblySnapshot copy = empty();
+    for (KinematicModel model : kinematicModels.values()) {
+      copy.withKinematicModel(model);
+    }
+    return copy;
+  }
+
+  /** Adds the model to this snapshot. Error if there are two models with the same name. */
+  public AssemblySnapshot withKinematicModel(KinematicModel model) {
+    KinematicModel old = this.kinematicModels.put(model.name(), model);
+    checkState(!isImmutable, "snapshot is immutable");
+    checkArgument(old == null, "component with name %s already exists", model.name());
+    return this;
+  }
+
+  /** Adds the model to this snapshot. Replace the old one if two models have the same name. */
+  public AssemblySnapshot updateKinematicModel(KinematicModel model) {
+    KinematicModel old = kinematicModels.put(model.name(), model);
+    checkState(!isImmutable, "snapshot is immutable");
+    return this;
+  }
+
+  /** Returns a kinematic model by its name, or null if there is no such model. */
+  public KinematicModel getKinematicModel(String name) {
     return kinematicModels.get(name);
   }
 
-  public List<ConnectingModel> getConnectingModels() {
+  /**
+   * Make the assembly immutable. After this method is called, all attempts to make change to this
+   * assembly will be illegal.
+   */
+  public void makeImmutable() {
+    this.isImmutable = true;
+  }
+
+  /** Returns an immutable copy of all the connectors in the assembly. */
+  public List<ConnectingModel> getConnectors() {
     return kinematicModels.values().stream()
-        .filter(m -> m instanceof ConnectingModel)
+        .filter(KinematicModel::isConnector)
         .map(m -> (ConnectingModel) m)
         .collect(Collectors.toList());
+  }
+
+  /** Returns an immutable copy of all the rigid body models in the assembly. */
+  public List<RigidBody> getRigidBodies() {
+    return kinematicModels.values().stream()
+        .filter(KinematicModel::isRigidBody)
+        .map(m -> (RigidBody) m)
+        .collect(ImmutableList.toImmutableList());
   }
 
   public DictionaryMatrix getCodependentMatrix(double timeStep) {
     List<String> keys =
         kinematicModels.values().stream()
-            .map(KinematicModel::codependentPropertys)
+            .map(KinematicModel::codependentProperties)
             .flatMap(List::stream)
             .collect(ImmutableList.toImmutableList());
 
@@ -56,7 +105,7 @@ public class AssemblySnapshot {
       }
     }
 
-    for (Field field : fields.values()) {
+    for (Field field : Application.getAssembly().getFields()) {
       for (Table.Cell<String, String, Double> cell : field.codependentMultipliers().cellSet()) {
         String row = cell.getRowKey();
         String col = cell.getColumnKey();
@@ -68,68 +117,26 @@ public class AssemblySnapshot {
     return matrix;
   }
 
-  public AssemblySnapshot merge(Map<String, Double> map) {
-    Builder builder = toBuilder();
-    for (Map.Entry<String, Double> entry : map.entrySet()) {
-      Property f = Property.parse(entry.getKey());
-      String model = f.getModel();
-      String property = f.getProperty();
-      builder.kinematicModel(
-          model, builder.get(model).merge(ImmutableMap.of(property, entry.getValue())));
+  public AssemblySnapshot merge(Table<String, String, Double> table) {
+    AssemblySnapshot copy = copy();
+    for (Map.Entry<String, Map<String, Double>> entry : table.rowMap().entrySet()) {
+      String model = entry.getKey();
+      Map<String, Double> data = entry.getValue();
+      copy.updateKinematicModel(getKinematicModel(model).merge(data));
     }
+    copy.updateConnectors();
+    copy.makeImmutable();
+    return copy;
+  }
 
-    for (ConnectingModel connector : getConnectingModels()) {
-      KinematicModel modelA = builder.get(connector.connectingModelA().name());
-      KinematicModel modelB = builder.get(connector.connectingModelB().name());
-      builder.kinematicModel(
-          connector.name(),
+  private void updateConnectors() {
+    for (ConnectingModel connector : getConnectors()) {
+      KinematicModel modelU = getKinematicModel(connector.connectingModelA().name());
+      KinematicModel modelV = getKinematicModel(connector.connectingModelB().name());
+      KinematicModel updatedConnector =
           connector.merge(
-              ImmutableMap.of("connecting_model_a", modelA, "connecting_model_b", modelB)));
-    }
-    return builder.build();
-  }
-
-  public static Builder newBuilder() {
-    return new Builder();
-  }
-
-  public Builder toBuilder() {
-    Builder builder = new Builder();
-    builder.kinematicModels = new HashMap<>(kinematicModels);
-    builder.fields = new HashMap<>(fields);
-    return builder;
-  }
-
-  public static class Builder {
-
-    private HashMap<String, KinematicModel> kinematicModels;
-    private HashMap<String, Field> fields;
-
-    public Builder() {
-      kinematicModels = new HashMap<>();
-      fields = new HashMap<>();
-    }
-
-    public Builder kinematicModel(String name, KinematicModel model) {
-      kinematicModels.put(name, model);
-      return this;
-    }
-
-    public Builder field(Field field) {
-      fields.put(field.name(), field);
-      return this;
-    }
-
-    public Builder set(String name, KinematicModel model) {
-      return kinematicModel(name, model);
-    }
-
-    public KinematicModel get(String name) {
-      return kinematicModels.get(name);
-    }
-
-    public AssemblySnapshot build() {
-      return new AssemblySnapshot(this);
+              ImmutableMap.of("connecting_model_a", modelU, "connecting_model_b", modelV));
+      updateKinematicModel(updatedConnector);
     }
   }
 }

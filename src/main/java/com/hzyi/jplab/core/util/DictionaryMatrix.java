@@ -3,6 +3,8 @@ package com.hzyi.jplab.core.util;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Table;
 import com.hzyi.jplab.core.model.Property;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,6 +119,23 @@ public class DictionaryMatrix {
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
     for (int i = 0; i < lastCol; i++) {
       builder.put(colKeys[i], x.getEntry(i));
+    }
+    return builder.build();
+  }
+
+  public Map<String, Double> getMapSolution() {
+    return solve();
+  }
+
+  public Table<String, String, Double> getTableSolution() {
+    int lastCol = colKeys.length - 1;
+    RealMatrix a = matrix.getSubMatrix(0, lastCol - 1, 0, lastCol - 1);
+    RealVector b = matrix.getColumnVector(lastCol).mapMultiply(-1);
+    RealVector x = new LUDecomposition(a).getSolver().solve(b);
+    ImmutableTable.Builder<String, String, Double> builder = ImmutableTable.builder();
+    for (int i = 0; i < lastCol; i++) {
+      Property property = Property.parse(colKeys[i]);
+      builder.put(property.getModel(), property.getProperty(), x.getEntry(i));
     }
     return builder.build();
   }

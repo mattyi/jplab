@@ -2,7 +2,8 @@ package com.hzyi.jplab.core.model;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableTable;
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
@@ -34,11 +35,11 @@ public class AssemblySnapshotTest {
             .connectingModelB(staticModel)
             .build();
     snapshot =
-        AssemblySnapshot.newBuilder()
-            .kinematicModel("mass", massPoint)
-            .kinematicModel("wall", staticModel)
-            .kinematicModel("spring", springModel)
-            .build();
+        AssemblySnapshot.empty()
+            .withKinematicModel(massPoint)
+            .withKinematicModel(staticModel)
+            .withKinematicModel(springModel);
+    snapshot.makeImmutable();
   }
 
   @Test
@@ -62,16 +63,22 @@ public class AssemblySnapshotTest {
 
   @Test
   public void testUnpack() {
-    snapshot = snapshot.merge(ImmutableMap.<String, Double>of("mass.x", -10.0, "mass.ax", 5.0));
+    snapshot =
+        snapshot.merge(
+            ImmutableTable.<String, String, Double>builder()
+                .put("mass", "x", -10.0)
+                .put("mass", "ax", 5.0)
+                .build());
     MassPoint newMassPoint = massPoint.toBuilder().x(-10.0).ax(5.0).build();
     SpringModel newSpring = springModel.toBuilder().connectingModelA(newMassPoint).build();
-    assertThat((MassPoint) snapshot.get("mass")).isEqualTo(newMassPoint);
-    assertThat((StaticModel) snapshot.get("wall")).isEqualTo(staticModel);
-    assertThat((SpringModel) snapshot.get("spring")).isEqualTo(newSpring);
+    assertThat((MassPoint) snapshot.getKinematicModel("mass")).isEqualTo(newMassPoint);
+    assertThat((StaticModel) snapshot.getKinematicModel("wall")).isEqualTo(staticModel);
+    assertThat((SpringModel) snapshot.getKinematicModel("spring")).isEqualTo(newSpring);
   }
 
   @Test
   public void testToMatrix() {
+    Application.init(null, Assembly.getInstance(), null, null, null, 1.0);
     DictionaryMatrix matrix = snapshot.getCodependentMatrix(1.0);
     assertThat(matrix.getRow("mass.ax"))
         .containsExactly(
@@ -110,5 +117,6 @@ public class AssemblySnapshotTest {
         .containsExactly(
             "mass.x", 0.0, "mass.y", 0.0, "mass.vx", 0.0, "mass.vy", 0.0, "mass.ax", 1.0, "mass.ay",
             -0.0);
+    Application.reset();
   }
 }
