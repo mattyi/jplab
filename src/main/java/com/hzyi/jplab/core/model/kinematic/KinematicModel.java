@@ -17,20 +17,20 @@ public interface KinematicModel {
 
   KinematicModel merge(Map<String, ?> map);
 
-  List<String> codependentPropertys();
+  List<String> codependentProperties();
 
   Table<String, String, Double> codependentMultipliers(double timeStep);
 
-  public default isConnectingModel() {
-    return getType().isConnectingModel();
+  public default boolean isConnector() {
+    return type().isConnector();
   }
 
-  public default isSingleModel() {
-    return getType().isSingleModel();
+  public default boolean isSingleModel() {
+    return type().isSingleModel();
   }
 
-  public default isRigidBody() {
-    
+  public default boolean isRigidBody() {
+    return this instanceof RigidBody;
   }
 
   public enum Type {
@@ -39,7 +39,7 @@ public interface KinematicModel {
     SPRING_MODEL,
     ROPE_MODEL;
 
-    public boolean isConnectingModel() {
+    public boolean isConnector() {
       return this == SPRING_MODEL || this == ROPE_MODEL;
     }
 

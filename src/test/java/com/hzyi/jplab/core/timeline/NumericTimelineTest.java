@@ -32,11 +32,11 @@ public class NumericTimelineTest {
             .connectingModelB(staticModel)
             .build();
     snapshot =
-        AssemblySnapshot.newBuilder()
-            .kinematicModel("mass", massPoint)
-            .kinematicModel("wall", staticModel)
-            .kinematicModel("spring", springModel)
-            .build();
+        AssemblySnapshot.empty()
+            .withKinematicModel(massPoint)
+            .withKinematicModel(staticModel)
+            .withKinematicModel(springModel);
+    snapshot.makeImmutable();
   }
 
   @Test
@@ -44,17 +44,14 @@ public class NumericTimelineTest {
     NumericTimeline timeline = new NumericTimeline(snapshot);
     timeline.advance(1);
     AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
-    MassPoint newMassPoint = (MassPoint) snapshot.get("mass");
+    MassPoint newMassPoint = (MassPoint) snapshot.getKinematicModel("mass");
     assertThat(newMassPoint.x()).isEqualTo(1.0);
     assertThat(newMassPoint.y()).isEqualTo(0.0);
-    StaticModel newStaticModel = (StaticModel) snapshot.get("wall");
+    StaticModel newStaticModel = (StaticModel) snapshot.getKinematicModel("wall");
     assertThat(newStaticModel.x()).isEqualTo(2.0);
     assertThat(newStaticModel.y()).isEqualTo(0.0);
-    SpringModel newSpring = (SpringModel) snapshot.get("spring");
+    SpringModel newSpring = (SpringModel) snapshot.getKinematicModel("spring");
     assertThat(newSpring.connectingModelA()).isEqualTo(newMassPoint);
     assertThat(newSpring.connectingModelB()).isEqualTo(newStaticModel);
   }
-
-  @Test
-  public void testAdjustInternalState() {}
 }

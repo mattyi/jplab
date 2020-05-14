@@ -37,7 +37,7 @@ public class GravityField implements Field {
   public Table<String, String, Double> codependentMultipliers() {
     Assembly assembly = Application.getAssembly();
     ImmutableTable.Builder<String, String, Double> builder = ImmutableTable.builder();
-    for (RigidBody rigidBody : assembly.getRigidBodies()) {
+    for (RigidBody rigidBody : assembly.getInitialAssemblySnapshot().getRigidBodies()) {
       builder.put(Property.format(rigidBody, "ax"), Property.constant(), gx * rigidBody.mass());
       builder.put(Property.format(rigidBody, "ay"), Property.constant(), gy * rigidBody.mass());
       // TODO: support rotation

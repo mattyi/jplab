@@ -53,7 +53,7 @@ public class RopeModel extends ConnectingModel {
   }
 
   @Override
-  public List<String> codependentPropertys() {
+  public List<String> codependentProperties() {
     throw new UnsupportedOperationException("not needed yet");
   }
 

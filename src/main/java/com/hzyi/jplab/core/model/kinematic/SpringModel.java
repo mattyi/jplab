@@ -114,7 +114,7 @@ public class SpringModel extends ConnectingModel {
   }
 
   @Override
-  public List<String> codependentPropertys() {
+  public List<String> codependentProperties() {
     return Collections.emptyList();
   }
 
