@@ -12,11 +12,6 @@ public class EdgePainter extends JavaFxPainter<StaticModel, Edge> {
   }
 
   @Override
-  public void paint(Edge edge, StaticModel model) {
-    paint(edge, model, edge.getAppearance());
-  }
-
-  @Override
   public void paint(Edge edge, StaticModel model, Appearance appearance) {
     double x = model.x();
     double y = model.y();

@@ -28,8 +28,6 @@ public class Edge implements Shape {
   @Builder.Default
   private double innerLineHeight = 10.0;
 
-  @Getter @Deprecated private Appearance appearance;
-
   public final Shape.Type type() {
     return Shape.Type.EDGE;
   }

@@ -20,8 +20,6 @@ public class ZigzagLine implements Shape {
   @Accessors(fluent = true)
   private int zigzagCount = 10;
 
-  @Getter @Deprecated private Appearance appearance;
-
   public final Shape.Type type() {
     return Shape.Type.ZIGZAG_LINE;
   }

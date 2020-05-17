@@ -3,7 +3,7 @@ package com.hzyi.jplab.core.timeline;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
 import java.util.function.BiFunction;
 
-public class SimpleFixedTimeline implements Timeline {
+public class AnalyticTimeline implements Timeline {
 
   private static final double DEFAULT_TIMESTEP = 0.02;
 
@@ -11,7 +11,7 @@ public class SimpleFixedTimeline implements Timeline {
   private final BiFunction<AssemblySnapshot, Double, AssemblySnapshot> function;
   private double latestTimestamp = 0.0;
 
-  public SimpleFixedTimeline(
+  public AnalyticTimeline(
       AssemblySnapshot initialAssemblySnapshot,
       BiFunction<AssemblySnapshot, Double, AssemblySnapshot> function) {
     this.initialAssemblySnapshot = initialAssemblySnapshot;
