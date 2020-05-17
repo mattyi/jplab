@@ -26,6 +26,21 @@ public class DictionaryMatrix {
     this(ImmutableList.copyOf(keys));
   }
 
+  // public DictionaryMatrix(Collection<String> rowKeys, Collection<String> colKeys) {
+  //   Preconditions.checkArgument(!rowKeys.isEmpty(), "empty keys: expecting at least one key");
+  //   Preconditions.checkArgument(!colKeys.isEmpty(), "empty keys: expecting at least one key");
+  //   matrix = new Array2DRowRealMatrix(rowKeys.size(), colKeys.size());
+  //   for (String key : rowKeys) {
+  //     Integer oldIndex = indexNames.put(key, index);
+  //     rowKeys[index] = key;
+  //     colKeys[index] = key;
+  //     Preconditions.checkArgument(oldIndex == null, "non-unique key: %s", key);
+  //     index++;
+  //   }
+  //   indexNames.put(Property.constant(), index);
+  //   colKeys[index] = Property.constant();
+  // }
+
   public DictionaryMatrix(Collection<String> keys) {
     Preconditions.checkArgument(!keys.isEmpty(), "empty keys: expecting at least one key");
 
@@ -88,6 +103,7 @@ public class DictionaryMatrix {
     matrix.addToEntry(indexNames.get(row), indexNames.get(col), value);
   }
 
+  @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     for (String key : colKeys) {
@@ -128,6 +144,7 @@ public class DictionaryMatrix {
   }
 
   public Table<String, String, Double> getTableSolution() {
+    // System.out.println(this);
     int lastCol = colKeys.length - 1;
     RealMatrix a = matrix.getSubMatrix(0, lastCol - 1, 0, lastCol - 1);
     RealVector b = matrix.getColumnVector(lastCol).mapMultiply(-1);

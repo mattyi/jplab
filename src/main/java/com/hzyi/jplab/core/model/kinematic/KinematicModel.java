@@ -37,10 +37,11 @@ public interface KinematicModel {
     MASS_POINT,
     STATIC_MODEL,
     SPRING_MODEL,
+    ROD_MODEL,
     ROPE_MODEL;
 
     public boolean isConnector() {
-      return this == SPRING_MODEL || this == ROPE_MODEL;
+      return this == SPRING_MODEL || this == ROPE_MODEL || this == ROD_MODEL;
     }
 
     public boolean isSingleModel() {
