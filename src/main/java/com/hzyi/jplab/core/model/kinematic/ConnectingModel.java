@@ -65,13 +65,13 @@ public abstract class ConnectingModel implements KinematicModel {
           @Override
           public B apply(B builder, String component) {
             KinematicModel model = snapshot.getKinematicModel(component);
-            Prechecks.checkPropertyExists(model, entity, component);
+            Prechecks.checkPropertyExists(model, entity, property);
             Prechecks.checkPropertyValue(
                 model instanceof SingleKinematicModel,
                 entity,
-                component,
+                property,
                 "component %s is not a single kinematic model",
-                component);
+                property);
 
             if (property.equals("component_a")) {
               builder.connectingModelA((SingleKinematicModel) model);

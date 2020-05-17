@@ -26,4 +26,10 @@ public class Prechecks {
     }
     return (T) map.get(property);
   }
+
+  public static void checkFeature(boolean valid, String format, String... args) {
+    if (!valid) {
+      throw new UnsupportedOperationException(String.format(format, args));
+    }
+  }
 }

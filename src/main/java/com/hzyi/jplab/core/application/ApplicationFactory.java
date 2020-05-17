@@ -13,17 +13,20 @@ import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.GravityField;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
+import com.hzyi.jplab.core.model.kinematic.RodModel;
 import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Circle;
 import com.hzyi.jplab.core.model.shape.Edge;
+import com.hzyi.jplab.core.model.shape.Line;
 import com.hzyi.jplab.core.model.shape.Shape;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.painter.CirclePainter;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.EdgePainter;
+import com.hzyi.jplab.core.painter.LinePainter;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.painter.ZigzagLinePainter;
 import com.hzyi.jplab.core.timeline.NumericTimeline;
@@ -121,6 +124,14 @@ public class ApplicationFactory {
           (ZigzagLine) shape,
           painterFactory.getZigzagLinePainter(),
           appearance);
+    } else if (shapeType == Shape.Type.LINE
+        && kinematicModelType == KinematicModel.Type.ROD_MODEL) {
+      return new InstantiatingComponent<ConnectingModel, Line, LinePainter>(
+          componentConfig.getName(),
+          (ConnectingModel) model,
+          (Line) shape,
+          painterFactory.getLinePainter(),
+          appearance);
     }
     checkArgument(
         false,
@@ -138,6 +149,8 @@ public class ApplicationFactory {
         return ZigzagLine.unpack(shapeConfig.getShapeSpecs());
       case EDGE:
         return Edge.unpack(shapeConfig.getShapeSpecs());
+      case LINE:
+        return Line.unpack(shapeConfig.getShapeSpecs());
       default:
         checkArgument(false, "unsupported shape type: %s", shapeConfig.getType());
     }
@@ -158,6 +171,9 @@ public class ApplicationFactory {
         return SpringModel.of(specs);
       case STATIC_MODEL:
         return StaticModel.of(specs);
+      case ROD_MODEL:
+        specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
+        return RodModel.of(specs);
       default:
         checkArgument(false, "unsupported kinematic model type: %s", config.getType());
     }
