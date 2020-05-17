@@ -14,12 +14,6 @@ public class ZigzagLinePainter extends JavaFxPainter<ConnectingModel, ZigzagLine
   }
 
   @Override
-  @Deprecated
-  public void paint(ZigzagLine line, ConnectingModel model) {
-    paint(line, model, line.getAppearance());
-  }
-
-  @Override
   public void paint(ZigzagLine line, ConnectingModel model, Appearance appearance) {
     Coordinate connectingPointA = model.absoluteConnectingPointA();
     Coordinate connectingPointB = model.absoluteConnectingPointB();

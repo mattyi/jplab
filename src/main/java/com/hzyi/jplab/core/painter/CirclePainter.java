@@ -13,11 +13,6 @@ public class CirclePainter extends JavaFxPainter<SingleKinematicModel, Circle> {
   }
 
   @Override
-  public void paint(Circle circle, SingleKinematicModel model) {
-    drawCircle(new Coordinate(model.x(), model.y()), circle.radius(), circle.getAppearance());
-  }
-
-  @Override
   public void paint(Circle circle, SingleKinematicModel model, Appearance appearance) {
     drawCircle(new Coordinate(model.x(), model.y()), circle.radius(), appearance);
   }
