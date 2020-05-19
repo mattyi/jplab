@@ -125,5 +125,5 @@ public class RodModel extends Connector {
     return 0;
   }
 
-  public static class RodModelBuilder implements modelVuilder {}
+  public static class RodModelBuilder implements modelBuilder {}
 }

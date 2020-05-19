@@ -77,5 +77,5 @@ public class RopeModel extends Connector {
     return helper.getBuilder().build();
   }
 
-  public static class RopeModelBuilder implements modelVuilder {}
+  public static class RopeModelBuilder implements modelBuilder {}
 }

@@ -115,5 +115,5 @@ public class SpringModel extends Connector {
     return (length() - unstretchedLength) * stiffness;
   }
 
-  public static class SpringModelBuilder implements Connector.modelVuilder {}
+  public static class SpringModelBuilder implements Connector.modelBuilder {}
 }
