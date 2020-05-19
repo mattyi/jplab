@@ -49,18 +49,18 @@ public class SpringModel extends Connector {
 
   @Override
   public SpringModel merge(Map<String, ?> map) {
-    SpringConnectorBuilder builder = toBuilder();
-    UnpackHelper<SpringConnectorBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
+    SpringModelBuilder builder = toBuilder();
+    UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
     helper.unpack(
-        "model_u", SingleKinematicModel.class, SpringConnectorBuilder::modelU, checkExistence());
+        "model_u", SingleKinematicModel.class, SpringModelBuilder::modelU, checkExistence());
     helper.unpack(
-        "model_v", SingleKinematicModel.class, SpringConnectorBuilder::modelV, checkExistence());
+        "model_v", SingleKinematicModel.class, SpringModelBuilder::modelV, checkExistence());
     return helper.getBuilder().build();
   }
 
   public static SpringModel of(Map<String, ?> map) {
-    SpringConnectorBuilder builder = newBuilder();
-    UnpackHelper<SpringConnectorBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
+    SpringModelBuilder builder = newBuilder();
+    UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
     helper.unpack(
         "model_u",
         String.class,
@@ -71,23 +71,23 @@ public class SpringModel extends Connector {
         String.class,
         Connector.connectedModelExtractor(map, "Spring", "model_v"),
         checkExistence());
-    helper.unpack("name", String.class, SpringConnectorBuilder::name, checkExistence());
+    helper.unpack("name", String.class, SpringModelBuilder::name, checkExistence());
     helper.unpack(
         "unstretched_length",
         Double.class,
-        SpringConnectorBuilder::unstretchedLength,
+        SpringModelBuilder::unstretchedLength,
         checkExistence(),
         checkPositivity());
     helper.unpack(
         "stiffness",
         Double.class,
-        SpringConnectorBuilder::stiffness,
+        SpringModelBuilder::stiffness,
         checkExistence(),
         checkPositivity());
-    helper.unpack("relative_point_ux", Double.class, SpringConnectorBuilder::relativePointUX);
-    helper.unpack("relative_point_uy", Double.class, SpringConnectorBuilder::relativePointUY);
-    helper.unpack("relative_point_vx", Double.class, SpringConnectorBuilder::relativePointVX);
-    helper.unpack("relative_point_vy", Double.class, SpringConnectorBuilder::relativePointVY);
+    helper.unpack("relative_point_ux", Double.class, SpringModelBuilder::relativePointUX);
+    helper.unpack("relative_point_uy", Double.class, SpringModelBuilder::relativePointUY);
+    helper.unpack("relative_point_vx", Double.class, SpringModelBuilder::relativePointVX);
+    helper.unpack("relative_point_vy", Double.class, SpringModelBuilder::relativePointVY);
     return helper.getBuilder().build();
   }
 
@@ -115,5 +115,5 @@ public class SpringModel extends Connector {
     return (length() - unstretchedLength) * stiffness;
   }
 
-  public static class SpringConnectorBuilder implements Connector.ConnectorBuilder {}
+  public static class SpringModelBuilder implements Connector.ConnectorBuilder {}
 }

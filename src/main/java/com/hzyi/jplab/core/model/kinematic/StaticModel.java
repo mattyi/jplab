@@ -66,12 +66,12 @@ public class StaticModel extends SingleKinematicModel {
   }
 
   public static StaticModel of(Map<String, ?> map) {
-    StaticConnectorBuilder builder = newBuilder();
-    UnpackHelper<StaticConnectorBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
-    helper.unpack("x", Double.class, StaticConnectorBuilder::x);
-    helper.unpack("y", Double.class, StaticConnectorBuilder::y);
-    helper.unpack("theta", Double.class, StaticConnectorBuilder::theta);
-    helper.unpack("name", String.class, StaticConnectorBuilder::name, checkExistence());
+    StaticModelBuilder builder = newBuilder();
+    UnpackHelper<StaticModelBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
+    helper.unpack("x", Double.class, StaticModelBuilder::x);
+    helper.unpack("y", Double.class, StaticModelBuilder::y);
+    helper.unpack("theta", Double.class, StaticModelBuilder::theta);
+    helper.unpack("name", String.class, StaticModelBuilder::name, checkExistence());
     return helper.getBuilder().build();
   }
 
