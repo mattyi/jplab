@@ -17,7 +17,9 @@ public class ApplicationFactoryTest {
       ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
       mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
       ApplicationConfig config = mapper.readValue(in, ApplicationConfig.class);
+      Application.reset();
       Application.load(config);
+      Application.reset();
     } catch (Exception e) {
       throw e;
     }

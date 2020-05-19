@@ -51,13 +51,13 @@ public abstract class JavaFxPainter<K extends KinematicModel, S extends Shape>
   private void strokeCircle(Coordinate center, double radius) {
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
-    getGraphicsContext().strokeOval(upperLeft.x(), upperLeft.y(), 4 * radius, 4 * radius);
+    getGraphicsContext().strokeOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
   }
 
   private void fillCircle(Coordinate center, double radius) {
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
-    getGraphicsContext().fillOval(upperLeft.x(), upperLeft.y(), 4 * radius, 4 * radius);
+    getGraphicsContext().fillOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
   }
 
   private void applyAppearance(Appearance appearance) {

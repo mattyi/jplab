@@ -1,17 +1,17 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import static com.hzyi.jplab.core.application.exceptions.Prechecks.checkFeature;
 import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-import com.hzyi.jplab.core.application.exceptions.Prechecks;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.Coordinate;
-import com.hzyi.jplab.core.util.CoordinateSystem;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,106 +20,65 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
-public class RodModel extends ConnectingModel {
+public class RodModel extends Connector {
 
   @Getter private String name;
-  private double relativeConnectingPointAX;
-  private double relativeConnectingPointAY;
-  private double relativeConnectingPointBX;
-  private double relativeConnectingPointBY;
-  @Getter private SingleKinematicModel connectingModelA;
-  @Getter private SingleKinematicModel connectingModelB;
+  private double relativePointUX;
+  private double relativePointUY;
+  private double relativePointVX;
+  private double relativePointVY;
+  @Getter private SingleKinematicModel modelU;
+  @Getter private SingleKinematicModel modelV;
 
   public final KinematicModel.Type type() {
     return KinematicModel.Type.ROPE_MODEL;
   }
 
   @Override
-  public Coordinate relativeConnectingPointA() {
-    return new Coordinate(relativeConnectingPointAX, relativeConnectingPointAY);
+  public Coordinate relativePointU() {
+    return new Coordinate(relativePointUX, relativePointUY);
   }
 
   @Override
-  public Coordinate relativeConnectingPointB() {
-    return new Coordinate(relativeConnectingPointBX, relativeConnectingPointBY);
-  }
-
-  @Override
-  public CoordinateSystem bodyCoordinateSystem() {
-    throw new UnsupportedOperationException("not needed yet");
+  public Coordinate relativePointV() {
+    return new Coordinate(relativePointVX, relativePointVY);
   }
 
   @Override
   public Table<String, String, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.<String, String, Double>builder()
         .put(
-            Property.format(connectingModelA, "vx"),
+            Property.format(modelU, "vx"),
             Property.format(this, "force"),
-            velocityCompensator(connectingModelA) * Math.cos(theta()))
+            impulse(modelU, timeStep) * Math.cos(theta()))
         .put(
-            Property.format(connectingModelA, "vy"),
+            Property.format(modelU, "vy"),
             Property.format(this, "force"),
-            velocityCompensator(connectingModelA) * Math.sin(theta()))
+            impulse(modelU, timeStep) * Math.sin(theta()))
         .put(
-            Property.format(connectingModelB, "vx"),
+            Property.format(modelV, "vx"),
             Property.format(this, "force"),
-            velocityCompensator(connectingModelB) * -Math.cos(theta()))
+            impulse(modelV, timeStep) * -Math.cos(theta()))
         .put(
-            Property.format(connectingModelB, "vy"),
+            Property.format(modelV, "vy"),
             Property.format(this, "force"),
-            velocityCompensator(connectingModelB) * -Math.sin(theta()))
-        .put(
-            Property.format(this, "force"),
-            Property.format(connectingModelA, "vx"),
-            Math.cos(theta()))
-        .put(
-            Property.format(this, "force"),
-            Property.format(connectingModelA, "vy"),
-            Math.sin(theta()))
+            impulse(modelV, timeStep) * -Math.sin(theta()))
+        .put(Property.format(this, "force"), Property.format(modelU, "vx"), Math.cos(theta()))
+        .put(Property.format(this, "force"), Property.format(modelU, "vy"), Math.sin(theta()))
         // This assumes a connected model either is static or exposes unknown ax, ay fields, which
         // may be problematic in the future
-        .put(
-            Property.format(this, "force"),
-            Property.format(connectingModelB, "vx"),
-            -Math.cos(theta()))
-        .put(
-            Property.format(this, "force"),
-            Property.format(connectingModelB, "vy"),
-            -Math.sin(theta()))
-        .put(
-            Property.format(connectingModelA, "ax"),
-            Property.format(this, "force2"),
-            Math.cos(theta()))
-        .put(
-            Property.format(connectingModelA, "ay"),
-            Property.format(this, "force2"),
-            Math.sin(theta()))
-        .put(
-            Property.format(connectingModelB, "ax"),
-            Property.format(this, "force2"),
-            -Math.cos(theta()))
-        .put(
-            Property.format(connectingModelB, "ay"),
-            Property.format(this, "force2"),
-            -Math.sin(theta()))
-        .put(
-            Property.format(this, "force2"),
-            Property.format(connectingModelA, "ax"),
-            Math.cos(theta()))
-        .put(
-            Property.format(this, "force2"),
-            Property.format(connectingModelA, "ay"),
-            Math.sin(theta()))
+        .put(Property.format(this, "force"), Property.format(modelV, "vx"), -Math.cos(theta()))
+        .put(Property.format(this, "force"), Property.format(modelV, "vy"), -Math.sin(theta()))
+        .put(Property.format(modelU, "ax"), Property.format(this, "force2"), Math.cos(theta()))
+        .put(Property.format(modelU, "ay"), Property.format(this, "force2"), Math.sin(theta()))
+        .put(Property.format(modelV, "ax"), Property.format(this, "force2"), -Math.cos(theta()))
+        .put(Property.format(modelV, "ay"), Property.format(this, "force2"), -Math.sin(theta()))
+        .put(Property.format(this, "force2"), Property.format(modelU, "ax"), Math.cos(theta()))
+        .put(Property.format(this, "force2"), Property.format(modelU, "ay"), Math.sin(theta()))
         // This assumes a connected model either is static or exposes unknown ax, ay fields, which
         // may be problematic in the future
-        .put(
-            Property.format(this, "force2"),
-            Property.format(connectingModelB, "ax"),
-            -Math.cos(theta()))
-        .put(
-            Property.format(this, "force2"),
-            Property.format(connectingModelB, "ay"),
-            -Math.sin(theta()))
+        .put(Property.format(this, "force2"), Property.format(modelV, "ax"), -Math.cos(theta()))
+        .put(Property.format(this, "force2"), Property.format(modelV, "ay"), -Math.sin(theta()))
         .build();
   }
 
@@ -132,57 +91,39 @@ public class RodModel extends ConnectingModel {
   public RodModel merge(Map<String, ?> map) {
     RodModelBuilder builder = toBuilder();
     UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
-    helper.unpack(
-        "connecting_model_a", SingleKinematicModel.class, RodModelBuilder::connectingModelA);
-    helper.unpack(
-        "connecting_model_b", SingleKinematicModel.class, RodModelBuilder::connectingModelB);
+    helper.unpack("model_u", SingleKinematicModel.class, RodModelBuilder::modelU);
+    helper.unpack("model_v", SingleKinematicModel.class, RodModelBuilder::modelV);
     return helper.getBuilder().build();
   }
 
   public static RodModel of(Map<String, ?> map) {
     RodModelBuilder builder = newBuilder();
     UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
-    helper.unpack(
-        "component_a",
-        String.class,
-        ConnectingModel.newExtractor(map, "Rod", "component_a"),
-        checkExistence());
-    helper.unpack(
-        "component_b",
-        String.class,
-        ConnectingModel.newExtractor(map, "Rod", "component_b"),
-        checkExistence());
+    BiFunction<RodModelBuilder, String, RodModelBuilder> extractorU =
+        Connector.connectedModelExtractor(map, "Rod", "model_u");
+    BiFunction<RodModelBuilder, String, RodModelBuilder> extractorV =
+        Connector.connectedModelExtractor(map, "Rod", "model_u");
+    helper.unpack("model_u", String.class, extractorU, checkExistence());
+    helper.unpack("model_v", String.class, extractorV, checkExistence());
     helper.unpack("name", String.class, RodModelBuilder::name, checkExistence());
-    helper.unpack(
-        "relative_connecting_point_ax", Double.class, RodModelBuilder::relativeConnectingPointAX);
-    helper.unpack(
-        "relative_connecting_point_ay", Double.class, RodModelBuilder::relativeConnectingPointAY);
-    helper.unpack(
-        "relative_connecting_point_bx", Double.class, RodModelBuilder::relativeConnectingPointBX);
-    helper.unpack(
-        "relative_connecting_point_by", Double.class, RodModelBuilder::relativeConnectingPointBY);
+    helper.unpack("relative_point_ux", Double.class, RodModelBuilder::relativePointUX);
+    helper.unpack("relative_point_uy", Double.class, RodModelBuilder::relativePointUY);
+    helper.unpack("relative_point_vx", Double.class, RodModelBuilder::relativePointVX);
+    helper.unpack("relative_point_vy", Double.class, RodModelBuilder::relativePointVY);
     RodModel rod = helper.getBuilder().build();
-    Prechecks.checkFeature(
-        rod.connectingModelA().vx() == 0.0,
-        "unimplemented: model connected to rod is not static initially");
-    Prechecks.checkFeature(
-        rod.connectingModelA().vy() == 0.0,
-        "unimplemented: model connected to rod is not static initially");
-    Prechecks.checkFeature(
-        rod.connectingModelA().ax() == 0.0,
-        "unimplemented: model connected to rod is not static initially");
-    Prechecks.checkFeature(
-        rod.connectingModelA().ay() == 0.0,
-        "unimplemented: model connected to rod is not static initially");
+    checkFeature(rod.modelU().vx() == 0.0, "unimplemented: modelU is not static initially");
+    checkFeature(rod.modelU().vy() == 0.0, "unimplemented: modelU is not static initially");
+    checkFeature(rod.modelV().ax() == 0.0, "unimplemented: modelV is not static initially");
+    checkFeature(rod.modelV().ay() == 0.0, "unimplemented: modelV is not static initially");
     return rod;
   }
 
-  private static double velocityCompensator(SingleKinematicModel model) {
+  private static double impulse(SingleKinematicModel model, double timeStep) {
     if (model.isRigidBody()) {
-      return 1.0 / ((RigidBody) model).mass();
+      return 1.0 / ((RigidBody) model).mass() * timeStep;
     }
     return 0;
   }
 
-  public static class RodModelBuilder implements ConnectingModelBuilder {}
+  public static class RodModelBuilder implements modelVuilder {}
 }

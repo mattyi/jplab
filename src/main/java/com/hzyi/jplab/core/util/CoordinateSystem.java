@@ -3,9 +3,12 @@ package com.hzyi.jplab.core.util;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class CoordinateSystem {
-  /**
-   * implicitly the absolute coordinate system. x positive direction: right y positive direction: up
-   * unit length: 1 pixel on screen origin: center of the canvas
+  /*
+   * The absolute coordinate system.
+   * x positive direction: right
+   * y positive direction: up
+   * unit length: 1 pixel on
+   * screen origin: center of the canvas
    */
 
   /** The natural coordinate system. x: (ratio, 0) y: (0, ratio) origin: Fixed at (0, 0) */

@@ -31,7 +31,7 @@ assembly:
   kinematic_model:
     type: SPRING_MODEL
     stiffness: 80.0
-    original_length: 100.0
+    unstretched_length: 100.0
     component_a: circ
     component_b: wall
   shape:

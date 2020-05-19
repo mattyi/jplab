@@ -32,8 +32,8 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
 
   @Override
   public void paint(Catenary catenary, RopeModel model, Appearance appearance) {
-    Coordinate pointU = model.absoluteConnectingPointA();
-    Coordinate pointV = model.absoluteConnectingPointB();
+    Coordinate pointU = model.pointU();
+    Coordinate pointV = model.pointV();
     double length = Coordinates.distance(pointU, pointV);
     if (length > model.length()) {
       drawLine(pointU, pointV, appearance);
