@@ -71,7 +71,7 @@ public abstract class Connector implements KinematicModel {
    * A helper interface for unpacking connected models for subclasses of Connector. Builder classes
    * of a concrete connector has to implement this class in order to use connectedModelExtractor.
    */
-  protected static interface modelVuilder<B> {
+  protected static interface ConnectorBuilder<B> {
     B modelU(SingleKinematicModel model);
 
     B modelV(SingleKinematicModel model);
@@ -83,9 +83,9 @@ public abstract class Connector implements KinematicModel {
    * model keyed by `model_u` or `model_v`, and then looks up the connected model in the assembly
    * snapshot by the name. This assumes the map contains a `_assembly_snapshot` and either `model_u`
    * or `model_v`, otherwise a MissingRequiredPropertyException will be thrown at executing the
-   * function. The builder class must implement modelVuilder too.
+   * function. The builder class must implement ConnectorBuilder too.
    */
-  protected static <B extends modelVuilder<B>> BiFunction<B, String, B> connectedModelExtractor(
+  protected static <B extends ConnectorBuilder<B>> BiFunction<B, String, B> connectedModelExtractor(
       Map<String, ?> map, final String entity, final String property) {
     BiFunction<B, String, B> extractor =
         new BiFunction<B, String, B>() {

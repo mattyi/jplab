@@ -53,29 +53,29 @@ public class RopeModel extends Connector {
 
   @Override
   public RopeModel merge(Map<String, ?> map) {
-    RopeModelBuilder builder = toBuilder();
-    UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
-    helper.unpack("model_u", SingleKinematicModel.class, RopeModelBuilder::modelU);
-    helper.unpack("model_v", SingleKinematicModel.class, RopeModelBuilder::modelV);
+    RopeConnectorBuilder builder = toBuilder();
+    UnpackHelper<RopeConnectorBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
+    helper.unpack("model_u", SingleKinematicModel.class, RopeConnectorBuilder::modelU);
+    helper.unpack("model_v", SingleKinematicModel.class, RopeConnectorBuilder::modelV);
     return helper.getBuilder().build();
   }
 
   public static RopeModel of(Map<String, ?> map) {
-    RopeModelBuilder builder = newBuilder();
-    UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
-    BiFunction<RopeModelBuilder, String, RopeModelBuilder> extractorU =
+    RopeConnectorBuilder builder = newBuilder();
+    UnpackHelper<RopeConnectorBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
+    BiFunction<RopeConnectorBuilder, String, RopeConnectorBuilder> extractorU =
         Connector.connectedModelExtractor(map, "Rope", "model_u");
-    BiFunction<RopeModelBuilder, String, RopeModelBuilder> extractorV =
+    BiFunction<RopeConnectorBuilder, String, RopeConnectorBuilder> extractorV =
         Connector.connectedModelExtractor(map, "Rope", "model_u");
     helper.unpack("model_u", String.class, extractorU, checkExistence());
     helper.unpack("model_v", String.class, extractorV, checkExistence());
-    helper.unpack("name", String.class, RopeModelBuilder::name, checkExistence());
-    helper.unpack("relative_point_ux", Double.class, RopeModelBuilder::relativePointUX);
-    helper.unpack("relative_point_uy", Double.class, RopeModelBuilder::relativePointUY);
-    helper.unpack("relative_point_vx", Double.class, RopeModelBuilder::relativePointVX);
-    helper.unpack("relative_point_vy", Double.class, RopeModelBuilder::relativePointVY);
+    helper.unpack("name", String.class, RopeConnectorBuilder::name, checkExistence());
+    helper.unpack("relative_point_ux", Double.class, RopeConnectorBuilder::relativePointUX);
+    helper.unpack("relative_point_uy", Double.class, RopeConnectorBuilder::relativePointUY);
+    helper.unpack("relative_point_vx", Double.class, RopeConnectorBuilder::relativePointVX);
+    helper.unpack("relative_point_vy", Double.class, RopeConnectorBuilder::relativePointVY);
     return helper.getBuilder().build();
   }
 
-  public static class RopeModelBuilder implements modelVuilder {}
+  public static class RopeConnectorBuilder implements ConnectorBuilder {}
 }

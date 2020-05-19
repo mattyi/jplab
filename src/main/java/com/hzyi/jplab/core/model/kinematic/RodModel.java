@@ -89,27 +89,27 @@ public class RodModel extends Connector {
 
   @Override
   public RodModel merge(Map<String, ?> map) {
-    RodModelBuilder builder = toBuilder();
-    UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
-    helper.unpack("model_u", SingleKinematicModel.class, RodModelBuilder::modelU);
-    helper.unpack("model_v", SingleKinematicModel.class, RodModelBuilder::modelV);
+    RodConnectorBuilder builder = toBuilder();
+    UnpackHelper<RodConnectorBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
+    helper.unpack("model_u", SingleKinematicModel.class, RodConnectorBuilder::modelU);
+    helper.unpack("model_v", SingleKinematicModel.class, RodConnectorBuilder::modelV);
     return helper.getBuilder().build();
   }
 
   public static RodModel of(Map<String, ?> map) {
-    RodModelBuilder builder = newBuilder();
-    UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
-    BiFunction<RodModelBuilder, String, RodModelBuilder> extractorU =
+    RodConnectorBuilder builder = newBuilder();
+    UnpackHelper<RodConnectorBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
+    BiFunction<RodConnectorBuilder, String, RodConnectorBuilder> extractorU =
         Connector.connectedModelExtractor(map, "Rod", "model_u");
-    BiFunction<RodModelBuilder, String, RodModelBuilder> extractorV =
+    BiFunction<RodConnectorBuilder, String, RodConnectorBuilder> extractorV =
         Connector.connectedModelExtractor(map, "Rod", "model_u");
     helper.unpack("model_u", String.class, extractorU, checkExistence());
     helper.unpack("model_v", String.class, extractorV, checkExistence());
-    helper.unpack("name", String.class, RodModelBuilder::name, checkExistence());
-    helper.unpack("relative_point_ux", Double.class, RodModelBuilder::relativePointUX);
-    helper.unpack("relative_point_uy", Double.class, RodModelBuilder::relativePointUY);
-    helper.unpack("relative_point_vx", Double.class, RodModelBuilder::relativePointVX);
-    helper.unpack("relative_point_vy", Double.class, RodModelBuilder::relativePointVY);
+    helper.unpack("name", String.class, RodConnectorBuilder::name, checkExistence());
+    helper.unpack("relative_point_ux", Double.class, RodConnectorBuilder::relativePointUX);
+    helper.unpack("relative_point_uy", Double.class, RodConnectorBuilder::relativePointUY);
+    helper.unpack("relative_point_vx", Double.class, RodConnectorBuilder::relativePointVX);
+    helper.unpack("relative_point_vy", Double.class, RodConnectorBuilder::relativePointVY);
     RodModel rod = helper.getBuilder().build();
     checkFeature(rod.modelU().vx() == 0.0, "unimplemented: modelU is not static initially");
     checkFeature(rod.modelU().vy() == 0.0, "unimplemented: modelU is not static initially");
@@ -125,5 +125,5 @@ public class RodModel extends Connector {
     return 0;
   }
 
-  public static class RodModelBuilder implements modelVuilder {}
+  public static class RodConnectorBuilder implements ConnectorBuilder {}
 }
