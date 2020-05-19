@@ -7,8 +7,11 @@ import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
+import com.hzyi.jplab.core.painter.CoordinateTransformer;
+import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import java.util.Map;
+import javafx.scene.canvas.Canvas;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +24,7 @@ public class AssemblySnapshotTest {
   private SpringModel springModel;
   private StaticModel staticModel;
   private AssemblySnapshot snapshot;
+  private PainterFactory painterFactory;
 
   @Before
   public void setUp() {
@@ -30,9 +34,9 @@ public class AssemblySnapshotTest {
         SpringModel.newBuilder()
             .name("spring")
             .stiffness(1.0)
-            .originalLength(1.0)
-            .connectingModelA(massPoint)
-            .connectingModelB(staticModel)
+            .unstretchedLength(1.0)
+            .modelU(massPoint)
+            .modelV(staticModel)
             .build();
     snapshot =
         AssemblySnapshot.empty()
@@ -40,6 +44,8 @@ public class AssemblySnapshotTest {
             .withKinematicModel(staticModel)
             .withKinematicModel(springModel);
     snapshot.makeImmutable();
+    Canvas canvas = new Canvas(1, 1);
+    painterFactory = new PainterFactory(canvas, new CoordinateTransformer(canvas, 1));
   }
 
   @Test
@@ -56,9 +62,9 @@ public class AssemblySnapshotTest {
     MassPoint updatedMassPoint = massPoint.merge(massPointMap);
     assertThat(updatedMassPoint).isEqualTo(massPoint.toBuilder().x(10.0).build());
     Map<String, Object> springMap = springModel.pack();
-    springMap.put("connecting_model_a", updatedMassPoint);
+    springMap.put("model_u", updatedMassPoint);
     assertThat(springModel.merge(springMap))
-        .isEqualTo(springModel.toBuilder().connectingModelA(updatedMassPoint).build());
+        .isEqualTo(springModel.toBuilder().modelU(updatedMassPoint).build());
   }
 
   @Test
@@ -70,7 +76,7 @@ public class AssemblySnapshotTest {
                 .put("mass", "ax", 5.0)
                 .build());
     MassPoint newMassPoint = massPoint.toBuilder().x(-10.0).ax(5.0).build();
-    SpringModel newSpring = springModel.toBuilder().connectingModelA(newMassPoint).build();
+    SpringModel newSpring = springModel.toBuilder().modelU(newMassPoint).build();
     assertThat((MassPoint) snapshot.getKinematicModel("mass")).isEqualTo(newMassPoint);
     assertThat((StaticModel) snapshot.getKinematicModel("wall")).isEqualTo(staticModel);
     assertThat((SpringModel) snapshot.getKinematicModel("spring")).isEqualTo(newSpring);
@@ -78,7 +84,7 @@ public class AssemblySnapshotTest {
 
   @Test
   public void testToMatrix() {
-    Application.init(null, Assembly.getInstance(), null, null, null, 1.0);
+    Application.init(null, Assembly.getInstance(), null, painterFactory, null, 1.0);
     DictionaryMatrix matrix = snapshot.getCodependentMatrix(1.0);
     assertThat(matrix.getRow("mass.ax"))
         .containsExactly(

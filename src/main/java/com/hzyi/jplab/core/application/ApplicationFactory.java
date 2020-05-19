@@ -8,7 +8,7 @@ import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.Component;
 import com.hzyi.jplab.core.model.InstantiatingComponent;
-import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
+import com.hzyi.jplab.core.model.kinematic.Connector;
 import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.GravityField;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
@@ -94,44 +94,32 @@ public class ApplicationFactory {
       PainterFactory painterFactory,
       Assembly assembly) {
     Shape shape = createShape(componentConfig.getShape());
+    String name = componentConfig.getName();
     KinematicModel model =
-        createKinematicModel(
-            componentConfig.getKinematicModel(), componentConfig.getName(), assembly);
+        createKinematicModel(componentConfig.getKinematicModel(), name, assembly);
     Appearance appearance = Appearance.unpack(componentConfig.getAppearance());
     Shape.Type shapeType = componentConfig.getShape().getType();
     KinematicModel.Type kinematicModelType = componentConfig.getKinematicModel().getType();
 
     if (shapeType == Shape.Type.CIRCLE && kinematicModelType == KinematicModel.Type.MASS_POINT) {
       return new InstantiatingComponent<SingleKinematicModel, Circle, CirclePainter>(
-          componentConfig.getName(),
-          (MassPoint) model,
-          (Circle) shape,
-          painterFactory.getCirclePainter(),
-          appearance);
+          name, (MassPoint) model, (Circle) shape, painterFactory.getCirclePainter(), appearance);
     } else if (shapeType == Shape.Type.EDGE
         && kinematicModelType == KinematicModel.Type.STATIC_MODEL) {
       return new InstantiatingComponent<StaticModel, Edge, EdgePainter>(
-          componentConfig.getName(),
-          (StaticModel) model,
-          (Edge) shape,
-          painterFactory.getEdgePainter(),
-          appearance);
+          name, (StaticModel) model, (Edge) shape, painterFactory.getEdgePainter(), appearance);
     } else if (shapeType == Shape.Type.ZIGZAG_LINE
         && kinematicModelType == KinematicModel.Type.SPRING_MODEL) {
-      return new InstantiatingComponent<ConnectingModel, ZigzagLine, ZigzagLinePainter>(
-          componentConfig.getName(),
-          (ConnectingModel) model,
+      return new InstantiatingComponent<Connector, ZigzagLine, ZigzagLinePainter>(
+          name,
+          (Connector) model,
           (ZigzagLine) shape,
           painterFactory.getZigzagLinePainter(),
           appearance);
     } else if (shapeType == Shape.Type.LINE
         && kinematicModelType == KinematicModel.Type.ROD_MODEL) {
-      return new InstantiatingComponent<ConnectingModel, Line, LinePainter>(
-          componentConfig.getName(),
-          (ConnectingModel) model,
-          (Line) shape,
-          painterFactory.getLinePainter(),
-          appearance);
+      return new InstantiatingComponent<Connector, Line, LinePainter>(
+          name, (Connector) model, (Line) shape, painterFactory.getLinePainter(), appearance);
     }
     checkArgument(
         false,
@@ -166,11 +154,11 @@ public class ApplicationFactory {
     switch (config.getType()) {
       case MASS_POINT:
         return MassPoint.of(specs);
+      case STATIC_MODEL:
+        return StaticModel.of(specs);
       case SPRING_MODEL:
         specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
         return SpringModel.of(specs);
-      case STATIC_MODEL:
-        return StaticModel.of(specs);
       case ROD_MODEL:
         specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
         return RodModel.of(specs);

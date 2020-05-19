@@ -2,10 +2,13 @@ package com.hzyi.jplab.core.timeline;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
+import com.hzyi.jplab.core.painter.PainterFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +30,9 @@ public class NumericTimelineTest {
         SpringModel.newBuilder()
             .name("spring")
             .stiffness(1.0)
-            .originalLength(1.0)
-            .connectingModelA(massPoint)
-            .connectingModelB(staticModel)
+            .unstretchedLength(1.0)
+            .modelU(massPoint)
+            .modelV(staticModel)
             .build();
     snapshot =
         AssemblySnapshot.empty()
@@ -41,6 +44,8 @@ public class NumericTimelineTest {
 
   @Test
   public void testAdvanceTimeStep() {
+    Application.init(
+        null, Assembly.getInstance(), null, PainterFactory.getTestingPainterFactory(), null, 1.0);
     NumericTimeline timeline = new NumericTimeline(snapshot);
     timeline.advance(1);
     AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
@@ -51,7 +56,8 @@ public class NumericTimelineTest {
     assertThat(newStaticModel.x()).isEqualTo(2.0);
     assertThat(newStaticModel.y()).isEqualTo(0.0);
     SpringModel newSpring = (SpringModel) snapshot.getKinematicModel("spring");
-    assertThat(newSpring.connectingModelA()).isEqualTo(newMassPoint);
-    assertThat(newSpring.connectingModelB()).isEqualTo(newStaticModel);
+    assertThat(newSpring.modelU()).isEqualTo(newMassPoint);
+    assertThat(newSpring.modelV()).isEqualTo(newStaticModel);
+    Application.reset();
   }
 }

@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.Coordinate;
-import com.hzyi.jplab.core.util.CoordinateSystem;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Collections;
 import java.util.List;
@@ -15,40 +14,37 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @EqualsAndHashCode
+@ToString
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
-public class SpringModel extends ConnectingModel {
+public class SpringModel extends Connector {
 
   @Getter private String name;
   @Getter private double stiffness;
-  @Getter private double originalLength;
-  private double relativeConnectingPointAX;
-  private double relativeConnectingPointAY;
-  private double relativeConnectingPointBX;
-  private double relativeConnectingPointBY;
-  @Getter private SingleKinematicModel connectingModelA;
-  @Getter private SingleKinematicModel connectingModelB;
+  @Getter private double unstretchedLength;
+  private double relativePointUX;
+  private double relativePointUY;
+  private double relativePointVX;
+  private double relativePointVY;
+  @Getter private SingleKinematicModel modelU;
+  @Getter private SingleKinematicModel modelV;
 
   public final KinematicModel.Type type() {
     return KinematicModel.Type.SPRING_MODEL;
   }
 
   @Override
-  public Coordinate relativeConnectingPointA() {
-    return new Coordinate(relativeConnectingPointAX, relativeConnectingPointAY);
+  public Coordinate relativePointU() {
+    return new Coordinate(relativePointUX, relativePointUY);
   }
 
   @Override
-  public Coordinate relativeConnectingPointB() {
-    return new Coordinate(relativeConnectingPointBX, relativeConnectingPointBY);
-  }
-
-  @Override
-  public CoordinateSystem bodyCoordinateSystem() {
-    throw new UnsupportedOperationException("not needed yet");
+  public Coordinate relativePointV() {
+    return new Coordinate(relativePointVX, relativePointVY);
   }
 
   @Override
@@ -56,15 +52,9 @@ public class SpringModel extends ConnectingModel {
     SpringModelBuilder builder = toBuilder();
     UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
     helper.unpack(
-        "connecting_model_a",
-        SingleKinematicModel.class,
-        SpringModelBuilder::connectingModelA,
-        checkExistence());
+        "model_u", SingleKinematicModel.class, SpringModelBuilder::modelU, checkExistence());
     helper.unpack(
-        "connecting_model_b",
-        SingleKinematicModel.class,
-        SpringModelBuilder::connectingModelB,
-        checkExistence());
+        "model_v", SingleKinematicModel.class, SpringModelBuilder::modelV, checkExistence());
     return helper.getBuilder().build();
   }
 
@@ -72,20 +62,20 @@ public class SpringModel extends ConnectingModel {
     SpringModelBuilder builder = newBuilder();
     UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
     helper.unpack(
-        "component_a",
+        "model_u",
         String.class,
-        ConnectingModel.newExtractor(map, "Spring", "component_a"),
+        Connector.connectedModelExtractor(map, "Spring", "model_u"),
         checkExistence());
     helper.unpack(
-        "component_b",
+        "model_v",
         String.class,
-        ConnectingModel.newExtractor(map, "Spring", "component_b"),
+        Connector.connectedModelExtractor(map, "Spring", "model_v"),
         checkExistence());
     helper.unpack("name", String.class, SpringModelBuilder::name, checkExistence());
     helper.unpack(
-        "original_length",
+        "unstretched_length",
         Double.class,
-        SpringModelBuilder::originalLength,
+        SpringModelBuilder::unstretchedLength,
         checkExistence(),
         checkPositivity());
     helper.unpack(
@@ -94,22 +84,10 @@ public class SpringModel extends ConnectingModel {
         SpringModelBuilder::stiffness,
         checkExistence(),
         checkPositivity());
-    helper.unpack(
-        "relative_connecting_point_ax",
-        Double.class,
-        SpringModelBuilder::relativeConnectingPointAX);
-    helper.unpack(
-        "relative_connecting_point_ay",
-        Double.class,
-        SpringModelBuilder::relativeConnectingPointAY);
-    helper.unpack(
-        "relative_connecting_point_bx",
-        Double.class,
-        SpringModelBuilder::relativeConnectingPointBX);
-    helper.unpack(
-        "relative_connecting_point_by",
-        Double.class,
-        SpringModelBuilder::relativeConnectingPointBY);
+    helper.unpack("relative_point_ux", Double.class, SpringModelBuilder::relativePointUX);
+    helper.unpack("relative_point_uy", Double.class, SpringModelBuilder::relativePointUY);
+    helper.unpack("relative_point_vx", Double.class, SpringModelBuilder::relativePointVX);
+    helper.unpack("relative_point_vy", Double.class, SpringModelBuilder::relativePointVY);
     return helper.getBuilder().build();
   }
 
@@ -120,10 +98,10 @@ public class SpringModel extends ConnectingModel {
 
   @Override
   public Table<String, String, Double> codependentMultipliers(double timeStep) {
-    String aax = Property.format(connectingModelA, "ax");
-    String aay = Property.format(connectingModelA, "ay");
-    String bax = Property.format(connectingModelB, "ax");
-    String bay = Property.format(connectingModelB, "ay");
+    String aax = Property.format(modelU, "ax");
+    String aay = Property.format(modelU, "ay");
+    String bax = Property.format(modelV, "ax");
+    String bay = Property.format(modelV, "ay");
     return ImmutableTable.<String, String, Double>builder()
         .put(aax, Property.constant(), force() * Math.cos(theta()))
         .put(aay, Property.constant(), force() * Math.sin(theta()))
@@ -134,8 +112,8 @@ public class SpringModel extends ConnectingModel {
   }
 
   private double force() {
-    return (length() - originalLength) * stiffness;
+    return (length() - unstretchedLength) * stiffness;
   }
 
-  public static class SpringModelBuilder implements ConnectingModel.ConnectingModelBuilder {}
+  public static class SpringModelBuilder implements Connector.modelVuilder {}
 }

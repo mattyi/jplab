@@ -7,7 +7,7 @@ import lombok.Getter;
 public class PainterFactory {
 
   @Getter private Canvas canvas;
-  private CoordinateTransformer transformer;
+  @Getter private CoordinateTransformer coordinateTransformer;
   @Getter private final CirclePainter circlePainter;
   @Getter private final ZigzagLinePainter zigzagLinePainter;
   @Getter private final EdgePainter edgePainter;
@@ -15,11 +15,17 @@ public class PainterFactory {
 
   public PainterFactory(Canvas canvas, CoordinateTransformer transformer) {
     this.canvas = canvas;
-    this.transformer = transformer;
-    this.circlePainter = new CirclePainter(this.canvas, this.transformer);
-    this.zigzagLinePainter = new ZigzagLinePainter(this.canvas, this.transformer);
-    this.edgePainter = new EdgePainter(this.canvas, this.transformer);
-    this.linePainter = new LinePainter(this.canvas, this.transformer);
+    this.coordinateTransformer = transformer;
+    this.circlePainter = new CirclePainter(this.canvas, this.coordinateTransformer);
+    this.zigzagLinePainter = new ZigzagLinePainter(this.canvas, this.coordinateTransformer);
+    this.edgePainter = new EdgePainter(this.canvas, this.coordinateTransformer);
+    this.linePainter = new LinePainter(this.canvas, this.coordinateTransformer);
+  }
+
+  // For testing purpose.
+  public static PainterFactory getTestingPainterFactory() {
+    Canvas canvas = new Canvas(1, 1);
+    return new PainterFactory(canvas, new CoordinateTransformer(canvas, 1.0));
   }
 
   public GraphicsContext getGraphicsContext() {

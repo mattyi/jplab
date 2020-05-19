@@ -65,9 +65,9 @@ public class ApplicationConfigTest {
                 ApplicationConfig.ComponentConfig.KinematicModelConfig.builder()
                     .type(KinematicModel.Type.SPRING_MODEL)
                     .kinematicModelSpec("stiffness", 80.0)
-                    .kinematicModelSpec("original_length", 90.0)
-                    .kinematicModelSpec("component_a", "circ")
-                    .kinematicModelSpec("component_b", "wall")
+                    .kinematicModelSpec("unstretched_length", 90.0)
+                    .kinematicModelSpec("model_u", "circ")
+                    .kinematicModelSpec("model_v", "wall")
                     .build())
             .shape(
                 ApplicationConfig.ComponentConfig.ShapeConfig.builder()

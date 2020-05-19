@@ -30,9 +30,9 @@ assembly:
   kinematic_model:
     type: SPRING_MODEL
     stiffness: 80.0
-    original_length: 90.0
-    component_a: circ
-    component_b: wall
+    unstretched_length: 90.0
+    model_u: circ
+    model_v: wall
   shape:
     type: ZIGZAG_LINE
     width: 15.0

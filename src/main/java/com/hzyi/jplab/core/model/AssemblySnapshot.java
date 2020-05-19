@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
-import com.hzyi.jplab.core.model.kinematic.ConnectingModel;
+import com.hzyi.jplab.core.model.kinematic.Connector;
 import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.RigidBody;
@@ -71,10 +71,10 @@ public class AssemblySnapshot {
   }
 
   /** Returns an immutable copy of all the connectors in the assembly. */
-  public List<ConnectingModel> getConnectors() {
+  public List<Connector> getConnectors() {
     return kinematicModels.values().stream()
         .filter(KinematicModel::isConnector)
-        .map(m -> (ConnectingModel) m)
+        .map(m -> (Connector) m)
         .collect(Collectors.toList());
   }
 
@@ -130,12 +130,11 @@ public class AssemblySnapshot {
   }
 
   private void updateConnectors() {
-    for (ConnectingModel connector : getConnectors()) {
-      KinematicModel modelU = getKinematicModel(connector.connectingModelA().name());
-      KinematicModel modelV = getKinematicModel(connector.connectingModelB().name());
+    for (Connector connector : getConnectors()) {
+      KinematicModel modelU = getKinematicModel(connector.modelU().name());
+      KinematicModel modelV = getKinematicModel(connector.modelV().name());
       KinematicModel updatedConnector =
-          connector.merge(
-              ImmutableMap.of("connecting_model_a", modelU, "connecting_model_b", modelV));
+          connector.merge(ImmutableMap.of("model_u", modelU, "model_v", modelV));
       updateKinematicModel(updatedConnector);
     }
   }

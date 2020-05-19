@@ -36,8 +36,8 @@ assembly:
 - name: rod
   kinematic_model:
     type: ROD_MODEL
-    component_a: item
-    component_b: fix_point
+    model_u: item
+    model_v: fix_point
   shape:
     type: LINE
   appearance:
@@ -46,8 +46,8 @@ assembly:
 - name: rod2
   kinematic_model:
     type: ROD_MODEL
-    component_a: item
-    component_b: item2
+    model_u: item
+    model_v: item2
   shape:
     type: LINE
   appearance:

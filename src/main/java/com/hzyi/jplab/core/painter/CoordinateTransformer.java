@@ -10,7 +10,7 @@ public class CoordinateTransformer {
   private final Canvas canvas;
   private final double naturalRescaleRatio;
   private final CoordinateSystem natural = new CoordinateSystem(0, 0, 1, 0, 0, 1);
-  private static final CoordinateSystem absoluteNatural = new CoordinateSystem(0, 0, 1, 0, 0, 1);
+  private static final CoordinateSystem absolute = new CoordinateSystem(0, 0, 1, 0, 0, 1);
   private final CoordinateSystem screen = new CoordinateSystem(0, 0, 1, 0, 0, -1);
 
   public CoordinateTransformer(Canvas canvas, double ratio) {
@@ -34,8 +34,8 @@ public class CoordinateTransformer {
     return natural.ux(naturalRescaleRatio, 0).uy(0, naturalRescaleRatio);
   }
 
-  public static CoordinateSystem absoluteNatural() {
-    return absoluteNatural;
+  public static CoordinateSystem absolute() {
+    return absolute;
   }
 
   public CoordinateSystem screen() {

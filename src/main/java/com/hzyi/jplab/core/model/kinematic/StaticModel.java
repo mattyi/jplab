@@ -11,8 +11,10 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
+@ToString
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
