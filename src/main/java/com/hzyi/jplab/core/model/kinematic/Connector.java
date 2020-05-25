@@ -27,18 +27,23 @@ public abstract class Connector implements KinematicModel {
 
   /** The point where modelU is connected to this connector, in natural coordinate system. */
   public Coordinate pointU() {
-    return Coordinates.transform(
-        relativePointU(),
-        modelU().bodyCoordinateSystem(),
-        Application.getPainterFactory().getCoordinateTransformer().natural());
+
+    Coordinate pointU =
+        Coordinates.transform(
+            relativePointU(),
+            modelU().bodyCoordinateSystem(),
+            Application.getPainterFactory().getCoordinateTransformer().natural());
+    return pointU;
   }
 
   /** The point where modelV is connected to this connector, in natural coordinate system. */
   public Coordinate pointV() {
-    return Coordinates.transform(
-        relativePointV(),
-        modelV().bodyCoordinateSystem(),
-        Application.getPainterFactory().getCoordinateTransformer().natural());
+    Coordinate pointV =
+        Coordinates.transform(
+            relativePointV(),
+            modelV().bodyCoordinateSystem(),
+            Application.getPainterFactory().getCoordinateTransformer().natural());
+    return pointV;
   }
 
   /**
@@ -51,7 +56,7 @@ public abstract class Connector implements KinematicModel {
 
   /** The angle between the vector from pointU to pointV and x-axis in natural system. */
   public double theta() {
-    return Math.atan2(pointV().y() - pointV().y(), pointU().x() - pointU().x());
+    return Math.atan2(pointV().y() - pointU().y(), pointV().x() - pointU().x());
   }
 
   @Override

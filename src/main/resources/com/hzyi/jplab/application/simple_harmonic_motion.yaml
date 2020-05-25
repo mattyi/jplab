@@ -1,22 +1,20 @@
 name: Single Circle Application
 version: 1
-refresh_period: 0.02
+refresh_period: 0.1
 assembly:
 - name: circ
   kinematic_model:
     type: MASS_POINT
-    x: 10.0
+    x: 0.0
     "y": 0.0
-    vx: 5.0
-    vy: 1.0
-    mass: 1.0
+    mass: 100.0
   shape:
     type: CIRCLE
     radius: 5.0
 - name: wall
   kinematic_model:
     type: STATIC_MODEL
-    x: 2.0
+    x: 0.0
     "y": 100.0
   shape:
     type: EDGE
@@ -48,4 +46,4 @@ timeline:
 canvas:
   width: 400
   height: 400
-  natural_screen_ratio: 2.0
+  natural_screen_ratio: 1.0

@@ -5,17 +5,19 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Streams;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.Connector;
-import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
+import com.hzyi.jplab.core.model.kinematic.MultiplierProvider;
 import com.hzyi.jplab.core.model.kinematic.RigidBody;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.ToString;
 
 @ToString
@@ -87,30 +89,17 @@ public class AssemblySnapshot {
   }
 
   public DictionaryMatrix getCodependentMatrix(double timeStep) {
-    List<String> keys =
-        kinematicModels.values().stream()
-            .map(KinematicModel::codependentProperties)
-            .flatMap(List::stream)
-            .collect(ImmutableList.toImmutableList());
+    List<Constraint> constraints = constraints();
+    List<Property> properties = properties();
+    DictionaryMatrix matrix = new DictionaryMatrix(constraints(), properties());
 
-    DictionaryMatrix matrix = new DictionaryMatrix(keys);
-    for (KinematicModel model : kinematicModels.values()) {
-      for (Table.Cell<String, String, Double> cell :
-          model.codependentMultipliers(timeStep).cellSet()) {
-        String row = cell.getRowKey();
-        String col = cell.getColumnKey();
-        if (keys.contains(row) && (keys.contains(col) || col.equals(Property.constant()))) {
-          matrix.add(row, col, cell.getValue());
-        }
-      }
-    }
-
-    for (Field field : Application.getAssembly().getFields()) {
-      for (Table.Cell<String, String, Double> cell : field.codependentMultipliers().cellSet()) {
-        String row = cell.getRowKey();
-        String col = cell.getColumnKey();
-        if (keys.contains(row) && (keys.contains(col) || col.equals(Property.constant()))) {
-          matrix.add(row, col, cell.getValue());
+    for (MultiplierProvider mp : multiplierProviders()) {
+      for (Table.Cell<Constraint, Property, Double> cell :
+          mp.codependentMultipliers(timeStep).cellSet()) {
+        Constraint constraint = cell.getRowKey();
+        Property property = cell.getColumnKey();
+        if (constraints.contains(constraint) && (properties.contains(property))) {
+          matrix.add(constraint, property, cell.getValue());
         }
       }
     }
@@ -127,6 +116,27 @@ public class AssemblySnapshot {
     copy.updateConnectors();
     copy.makeImmutable();
     return copy;
+  }
+
+  private List<Constraint> constraints() {
+    return kinematicModels.values().stream()
+        .map(KinematicModel::constraints)
+        .flatMap(List::stream)
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  private List<Property> properties() {
+    return Streams.concat(
+            kinematicModels.values().stream().map(KinematicModel::properties).flatMap(List::stream),
+            Stream.of(Property.constant()))
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  private List<MultiplierProvider> multiplierProviders() {
+    return Streams.concat(
+            kinematicModels.values().stream().map(m -> (MultiplierProvider) m),
+            Application.getAssembly().getFields().stream().map(f -> (MultiplierProvider) f))
+        .collect(ImmutableList.toImmutableList());
   }
 
   private void updateConnectors() {

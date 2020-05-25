@@ -1,11 +1,15 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import static com.hzyi.jplab.core.model.Constraint.cof;
+import static com.hzyi.jplab.core.model.Property.constant;
+import static com.hzyi.jplab.core.model.Property.pof;
 import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 import static com.hzyi.jplab.core.util.UnpackHelper.checkPositivity;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
@@ -71,44 +75,55 @@ public class MassPoint extends RigidBody {
 
   public static MassPoint of(Map<String, ?> map) {
     MassPointBuilder builder = newBuilder();
-    UnpackHelper<MassPointBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
-    helper.unpack(
-        "mass", Double.class, MassPointBuilder::mass, checkExistence(), checkPositivity());
-
-    helper.unpack("x", Double.class, MassPointBuilder::x);
-    helper.unpack("y", Double.class, MassPointBuilder::y);
-    helper.unpack("vx", Double.class, MassPointBuilder::vx);
-    helper.unpack("vy", Double.class, MassPointBuilder::vy);
-    helper.unpack("ax", Double.class, MassPointBuilder::ax);
-    helper.unpack("ay", Double.class, MassPointBuilder::ay);
-    helper.unpack("name", String.class, MassPointBuilder::name, checkExistence());
-    return helper.getBuilder().build();
+    UnpackHelper<MassPointBuilder> h = UnpackHelper.of(builder, map, MassPoint.class);
+    h.unpack("mass", Double.class, MassPointBuilder::mass, checkExistence(), checkPositivity());
+    h.unpack("name", String.class, MassPointBuilder::name, checkExistence());
+    h.unpack("x", Double.class, MassPointBuilder::x);
+    h.unpack("y", Double.class, MassPointBuilder::y);
+    h.unpack("vx", Double.class, MassPointBuilder::vx);
+    h.unpack("vy", Double.class, MassPointBuilder::vy);
+    h.unpack("ax", Double.class, MassPointBuilder::ax);
+    h.unpack("ay", Double.class, MassPointBuilder::ay);
+    return h.getBuilder().build();
   }
 
   @Override
-  public List<String> codependentProperties() {
+  public List<Constraint> constraints() {
     return ImmutableList.of(
-        Property.format(this, "x"),
-        Property.format(this, "y"),
-        Property.format(this, "vx"),
-        Property.format(this, "vy"),
-        Property.format(this, "ax"),
-        Property.format(this, "ay"));
+        cof(this, "x-upwind"),
+        cof(this, "y-upwind"),
+        cof(this, "vx-upwind"),
+        cof(this, "vy-upwind"),
+        cof(this, "ax-upwind-balance"),
+        cof(this, "ay-upwind-balance"));
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers(double timeStep) {
-    return ImmutableTable.<String, String, Double>builder()
-        .put(Property.format(this, "x"), Property.format(this, "x"), 1.0)
-        .put(Property.format(this, "vx"), Property.format(this, "vx"), 1.0)
-        .put(Property.format(this, "y"), Property.format(this, "y"), 1.0)
-        .put(Property.format(this, "vy"), Property.format(this, "vy"), 1.0)
-        .put(Property.format(this, "x"), Property.constant(), -x() - vx() * timeStep)
-        .put(Property.format(this, "y"), Property.constant(), -y() - vy() * timeStep)
-        .put(Property.format(this, "vx"), Property.constant(), -vx() - ax() * timeStep)
-        .put(Property.format(this, "vy"), Property.constant(), -vy() - ay() * timeStep)
-        .put(Property.format(this, "ax"), Property.format(this, "ax"), -mass)
-        .put(Property.format(this, "ay"), Property.format(this, "ay"), -mass)
-        .build();
+  public List<Property> properties() {
+    return ImmutableList.of(
+        pof(this, "x"),
+        pof(this, "y"),
+        pof(this, "vx"),
+        pof(this, "vy"),
+        pof(this, "ax"),
+        pof(this, "ay"));
+  }
+
+  @Override
+  public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
+    Table<Constraint, Property, Double> answer =
+        ImmutableTable.<Constraint, Property, Double>builder()
+            .put(cof(this, "x-upwind"), pof(this, "x"), 1.0)
+            .put(cof(this, "y-upwind"), pof(this, "y"), 1.0)
+            .put(cof(this, "vx-upwind"), pof(this, "vx"), 1.0)
+            .put(cof(this, "vy-upwind"), pof(this, "vy"), 1.0)
+            .put(cof(this, "ax-upwind-balance"), pof(this, "ax"), -mass)
+            .put(cof(this, "ay-upwind-balance"), pof(this, "ay"), -mass)
+            .put(cof(this, "x-upwind"), constant(), -x() - vx() * timeStep)
+            .put(cof(this, "y-upwind"), constant(), -y() - vy() * timeStep)
+            .put(cof(this, "vx-upwind"), constant(), -vx() - ax() * timeStep)
+            .put(cof(this, "vy-upwind"), constant(), -vy() - ay() * timeStep)
+            .build();
+    return answer;
   }
 }

@@ -1,11 +1,12 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.Constraint;
+import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.CoordinateSystem;
 import java.util.List;
 import java.util.Map;
 
-public interface KinematicModel {
+public interface KinematicModel extends MultiplierProvider {
 
   String name();
 
@@ -17,9 +18,9 @@ public interface KinematicModel {
 
   KinematicModel merge(Map<String, ?> map);
 
-  List<String> codependentProperties();
+  List<Constraint> constraints();
 
-  Table<String, String, Double> codependentMultipliers(double timeStep);
+  List<Property> properties();
 
   public default boolean isConnector() {
     return type().isConnector();

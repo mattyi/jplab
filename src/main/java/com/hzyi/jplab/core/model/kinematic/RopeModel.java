@@ -3,6 +3,8 @@ package com.hzyi.jplab.core.model.kinematic;
 import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.Constraint;
+import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
@@ -42,12 +44,17 @@ public class RopeModel extends Connector {
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers(double timeStep) {
+  public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
     throw new UnsupportedOperationException("not needed yet");
   }
 
   @Override
-  public List<String> codependentProperties() {
+  public List<Constraint> constraints() {
+    throw new UnsupportedOperationException("not needed yet");
+  }
+
+  @Override
+  public List<Property> properties() {
     throw new UnsupportedOperationException("not needed yet");
   }
 
@@ -55,21 +62,23 @@ public class RopeModel extends Connector {
   public RopeModel merge(Map<String, ?> map) {
     RopeModelBuilder builder = toBuilder();
     UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
-    helper.unpack("model_u", SingleKinematicModel.class, RopeModelBuilder::modelU);
-    helper.unpack("model_v", SingleKinematicModel.class, RopeModelBuilder::modelV);
-    return helper.getBuilder().build();
+    return helper
+        .unpack("model_u", SingleKinematicModel.class, RopeModelBuilder::modelU, checkExistence())
+        .unpack("model_v", SingleKinematicModel.class, RopeModelBuilder::modelV, checkExistence())
+        .getBuilder()
+        .build();
   }
 
   public static RopeModel of(Map<String, ?> map) {
     RopeModelBuilder builder = newBuilder();
     UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
-    BiFunction<RopeModelBuilder, String, RopeModelBuilder> extractorU =
+    BiFunction<RopeModelBuilder, String, RopeModelBuilder> collectorU =
         Connector.connectedModelExtractor(map, "Rope", "model_u");
-    BiFunction<RopeModelBuilder, String, RopeModelBuilder> extractorV =
+    BiFunction<RopeModelBuilder, String, RopeModelBuilder> collectorV =
         Connector.connectedModelExtractor(map, "Rope", "model_u");
-    helper.unpack("model_u", String.class, extractorU, checkExistence());
-    helper.unpack("model_v", String.class, extractorV, checkExistence());
     helper.unpack("name", String.class, RopeModelBuilder::name, checkExistence());
+    helper.unpack("model_u", String.class, collectorU, checkExistence());
+    helper.unpack("model_v", String.class, collectorV, checkExistence());
     helper.unpack("relative_point_ux", Double.class, RopeModelBuilder::relativePointUX);
     helper.unpack("relative_point_uy", Double.class, RopeModelBuilder::relativePointUY);
     helper.unpack("relative_point_vx", Double.class, RopeModelBuilder::relativePointVX);

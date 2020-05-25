@@ -1,10 +1,6 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import com.google.common.collect.Table;
-
-public interface Field {
+public interface Field extends MultiplierProvider {
 
   String name();
-
-  Table<String, String, Double> codependentMultipliers();
 }

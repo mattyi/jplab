@@ -86,42 +86,52 @@ public class AssemblySnapshotTest {
   public void testToMatrix() {
     Application.init(null, Assembly.getInstance(), null, painterFactory, null, 1.0);
     DictionaryMatrix matrix = snapshot.getCodependentMatrix(1.0);
-    assertThat(matrix.getRow("mass.ax"))
+    assertThat(matrix.getRow(Constraint.parse("mass.ax-upwind-balance")))
         .containsExactly(
-            "mass.x",
+            Property.parse("mass.x"),
             0.0,
-            "mass.y",
+            Property.parse("mass.y"),
             0.0,
-            "mass.vx",
+            Property.parse("mass.vx"),
             0.0,
-            "mass.vy",
+            Property.parse("mass.vy"),
             0.0,
-            "mass.ax",
+            Property.parse("mass.ax"),
             -1.0,
-            "mass.ay",
+            Property.parse("mass.ay"),
             0.0,
-            "_constant",
+            Property.constant(),
             1.0);
-    assertThat(matrix.getRow("mass.ay"))
+    assertThat(matrix.getRow(Constraint.parse("mass.ay-upwind-balance")))
         .containsExactly(
-            "mass.x",
+            Property.parse("mass.x"),
             0.0,
-            "mass.y",
+            Property.parse("mass.y"),
             0.0,
-            "mass.vx",
+            Property.parse("mass.vx"),
             0.0,
-            "mass.vy",
+            Property.parse("mass.vy"),
             0.0,
-            "mass.ax",
+            Property.parse("mass.ax"),
             0.0,
-            "mass.ay",
+            Property.parse("mass.ay"),
             -1.0,
-            "_constant",
+            Property.constant(),
             0.0);
-    Map<String, Double> answer = matrix.solve();
+    Map<Property, Double> answer = matrix.getMapSolution();
     assertThat(answer)
         .containsExactly(
-            "mass.x", 0.0, "mass.y", 0.0, "mass.vx", 0.0, "mass.vy", 0.0, "mass.ax", 1.0, "mass.ay",
+            Property.parse("mass.x"),
+            0.0,
+            Property.parse("mass.y"),
+            0.0,
+            Property.parse("mass.vx"),
+            0.0,
+            Property.parse("mass.vy"),
+            0.0,
+            Property.parse("mass.ax"),
+            1.0,
+            Property.parse("mass.ay"),
             -0.0);
     Application.reset();
   }
