@@ -4,6 +4,8 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.Constraint;
+import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Collections;
 import java.util.List;
@@ -76,12 +78,17 @@ public class StaticModel extends SingleKinematicModel {
   }
 
   @Override
-  public List<String> codependentProperties() {
+  public List<Constraint> constraints() {
     return Collections.emptyList();
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers(double timeStep) {
+  public List<Property> properties() {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.of();
   }
 }

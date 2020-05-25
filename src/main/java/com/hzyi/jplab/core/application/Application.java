@@ -44,6 +44,7 @@ public class Application extends javafx.application.Application {
     Application.timeline = timeline;
     Application.refreshPeriod = refreshPeriod;
     Application.isInitialized = true;
+    System.out.println("Application is initialized");
   }
 
   public static void reset() {
@@ -77,10 +78,6 @@ public class Application extends javafx.application.Application {
 
           @Override
           public void run() {
-            // if (!finished) {
-            //   throw new IllegalStateException("race condition!");
-            //   System.exit(1);
-            // }
             AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
             assembly.paint(snapshot);
             nextRefreshThreshold += refreshPeriod;

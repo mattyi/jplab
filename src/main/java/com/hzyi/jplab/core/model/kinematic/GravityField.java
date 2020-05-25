@@ -1,9 +1,13 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import static com.hzyi.jplab.core.model.Constraint.cof;
+import static com.hzyi.jplab.core.model.Property.constant;
+
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Map;
@@ -34,12 +38,13 @@ public class GravityField implements Field {
     return helper.getBuilder().build();
   }
 
-  public Table<String, String, Double> codependentMultipliers() {
+  @Override
+  public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
     Assembly assembly = Application.getAssembly();
-    ImmutableTable.Builder<String, String, Double> builder = ImmutableTable.builder();
+    ImmutableTable.Builder<Constraint, Property, Double> builder = ImmutableTable.builder();
     for (RigidBody rigidBody : assembly.getInitialAssemblySnapshot().getRigidBodies()) {
-      builder.put(Property.format(rigidBody, "ax"), Property.constant(), gx * rigidBody.mass());
-      builder.put(Property.format(rigidBody, "ay"), Property.constant(), gy * rigidBody.mass());
+      builder.put(cof(rigidBody, "ax-upwind-balance"), constant(), gx * rigidBody.mass());
+      builder.put(cof(rigidBody, "ay-upwind-balance"), Property.constant(), gy * rigidBody.mass());
       // TODO: support rotation
     }
     return builder.build();

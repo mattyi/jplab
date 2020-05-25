@@ -1,11 +1,14 @@
 package com.hzyi.jplab.core.model.kinematic;
 
 import static com.hzyi.jplab.core.application.exceptions.Prechecks.checkFeature;
+import static com.hzyi.jplab.core.model.Constraint.cof;
+import static com.hzyi.jplab.core.model.Property.pof;
 import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.UnpackHelper;
@@ -45,46 +48,37 @@ public class RodModel extends Connector {
   }
 
   @Override
-  public Table<String, String, Double> codependentMultipliers(double timeStep) {
-    return ImmutableTable.<String, String, Double>builder()
+  public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
+    return ImmutableTable.<Constraint, Property, Double>builder()
+        .put(cof(modelU, "vx"), pof(this, "impulse"), impulse(modelU, timeStep) * Math.cos(theta()))
+        .put(cof(modelU, "vy"), pof(this, "impulse"), impulse(modelU, timeStep) * Math.sin(theta()))
         .put(
-            Property.format(modelU, "vx"),
-            Property.format(this, "force"),
-            impulse(modelU, timeStep) * Math.cos(theta()))
+            cof(modelV, "vx"), pof(this, "impulse"), impulse(modelV, timeStep) * -Math.cos(theta()))
         .put(
-            Property.format(modelU, "vy"),
-            Property.format(this, "force"),
-            impulse(modelU, timeStep) * Math.sin(theta()))
-        .put(
-            Property.format(modelV, "vx"),
-            Property.format(this, "force"),
-            impulse(modelV, timeStep) * -Math.cos(theta()))
-        .put(
-            Property.format(modelV, "vy"),
-            Property.format(this, "force"),
-            impulse(modelV, timeStep) * -Math.sin(theta()))
-        .put(Property.format(this, "force"), Property.format(modelU, "vx"), Math.cos(theta()))
-        .put(Property.format(this, "force"), Property.format(modelU, "vy"), Math.sin(theta()))
-        // This assumes a connected model either is static or exposes unknown ax, ay fields, which
-        // may be problematic in the future
-        .put(Property.format(this, "force"), Property.format(modelV, "vx"), -Math.cos(theta()))
-        .put(Property.format(this, "force"), Property.format(modelV, "vy"), -Math.sin(theta()))
-        .put(Property.format(modelU, "ax"), Property.format(this, "force2"), Math.cos(theta()))
-        .put(Property.format(modelU, "ay"), Property.format(this, "force2"), Math.sin(theta()))
-        .put(Property.format(modelV, "ax"), Property.format(this, "force2"), -Math.cos(theta()))
-        .put(Property.format(modelV, "ay"), Property.format(this, "force2"), -Math.sin(theta()))
-        .put(Property.format(this, "force2"), Property.format(modelU, "ax"), Math.cos(theta()))
-        .put(Property.format(this, "force2"), Property.format(modelU, "ay"), Math.sin(theta()))
-        // This assumes a connected model either is static or exposes unknown ax, ay fields, which
-        // may be problematic in the future
-        .put(Property.format(this, "force2"), Property.format(modelV, "ax"), -Math.cos(theta()))
-        .put(Property.format(this, "force2"), Property.format(modelV, "ay"), -Math.sin(theta()))
+            cof(modelV, "vy"), pof(this, "impulse"), impulse(modelV, timeStep) * -Math.sin(theta()))
+        .put(cof(this, "vr-upwind-balance"), pof(modelU, "vx"), Math.cos(theta()))
+        .put(cof(this, "vr-upwind-balance"), pof(modelU, "vy"), Math.sin(theta()))
+        .put(cof(this, "vr-upwind-balance"), pof(modelV, "vx"), -Math.cos(theta()))
+        .put(cof(this, "vr-upwind-balance"), pof(modelV, "vy"), -Math.sin(theta()))
+        .put(cof(modelU, "ax"), pof(this, "force"), Math.cos(theta()))
+        .put(cof(modelU, "ay"), pof(this, "force"), Math.sin(theta()))
+        .put(cof(modelV, "ax"), pof(this, "force"), -Math.cos(theta()))
+        .put(cof(modelV, "ay"), pof(this, "force"), -Math.sin(theta()))
+        .put(cof(this, "ar-upwind-balance"), pof(modelU, "ax"), Math.cos(theta()))
+        .put(cof(this, "ar-upwind-balance"), pof(modelU, "ay"), Math.sin(theta()))
+        .put(cof(this, "ar-upwind-balance"), pof(modelV, "ax"), -Math.cos(theta()))
+        .put(cof(this, "ar-upwind-balances"), pof(modelV, "ay"), -Math.sin(theta()))
         .build();
   }
 
   @Override
-  public List<String> codependentProperties() {
-    return ImmutableList.of(Property.format(this, "force"), Property.format(this, "force2"));
+  public List<Constraint> constraints() {
+    return ImmutableList.of(cof(this, "ar-upwind-balance"), cof(this, "vr-upwind-balance"));
+  }
+
+  @Override
+  public List<Property> properties() {
+    return ImmutableList.of(pof(this, "impulse"), pof(this, "force"));
   }
 
   @Override
@@ -99,12 +93,12 @@ public class RodModel extends Connector {
   public static RodModel of(Map<String, ?> map) {
     RodModelBuilder builder = newBuilder();
     UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
-    BiFunction<RodModelBuilder, String, RodModelBuilder> extractorU =
+    BiFunction<RodModelBuilder, String, RodModelBuilder> collectorU =
         Connector.connectedModelExtractor(map, "Rod", "model_u");
-    BiFunction<RodModelBuilder, String, RodModelBuilder> extractorV =
-        Connector.connectedModelExtractor(map, "Rod", "model_u");
-    helper.unpack("model_u", String.class, extractorU, checkExistence());
-    helper.unpack("model_v", String.class, extractorV, checkExistence());
+    BiFunction<RodModelBuilder, String, RodModelBuilder> collectorV =
+        Connector.connectedModelExtractor(map, "Rod", "model_v");
+    helper.unpack("model_u", String.class, collectorU, checkExistence());
+    helper.unpack("model_v", String.class, collectorV, checkExistence());
     helper.unpack("name", String.class, RodModelBuilder::name, checkExistence());
     helper.unpack("relative_point_ux", Double.class, RodModelBuilder::relativePointUX);
     helper.unpack("relative_point_uy", Double.class, RodModelBuilder::relativePointUY);
