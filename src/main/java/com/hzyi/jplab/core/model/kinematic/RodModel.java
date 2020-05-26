@@ -50,24 +50,34 @@ public class RodModel extends Connector {
   @Override
   public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.<Constraint, Property, Double>builder()
-        .put(cof(modelU, "vx"), pof(this, "impulse"), impulse(modelU, timeStep) * Math.cos(theta()))
-        .put(cof(modelU, "vy"), pof(this, "impulse"), impulse(modelU, timeStep) * Math.sin(theta()))
         .put(
-            cof(modelV, "vx"), pof(this, "impulse"), impulse(modelV, timeStep) * -Math.cos(theta()))
+            cof(modelU, "vx-upwind"),
+            pof(this, "impulse"),
+            impulse(modelU, timeStep) * Math.cos(theta()))
         .put(
-            cof(modelV, "vy"), pof(this, "impulse"), impulse(modelV, timeStep) * -Math.sin(theta()))
+            cof(modelU, "vy-upwind"),
+            pof(this, "impulse"),
+            impulse(modelU, timeStep) * Math.sin(theta()))
+        .put(
+            cof(modelV, "vx-upwind"),
+            pof(this, "impulse"),
+            impulse(modelV, timeStep) * -Math.cos(theta()))
+        .put(
+            cof(modelV, "vy-upwind"),
+            pof(this, "impulse"),
+            impulse(modelV, timeStep) * -Math.sin(theta()))
         .put(cof(this, "vr-upwind-balance"), pof(modelU, "vx"), Math.cos(theta()))
         .put(cof(this, "vr-upwind-balance"), pof(modelU, "vy"), Math.sin(theta()))
         .put(cof(this, "vr-upwind-balance"), pof(modelV, "vx"), -Math.cos(theta()))
         .put(cof(this, "vr-upwind-balance"), pof(modelV, "vy"), -Math.sin(theta()))
-        .put(cof(modelU, "ax"), pof(this, "force"), Math.cos(theta()))
-        .put(cof(modelU, "ay"), pof(this, "force"), Math.sin(theta()))
-        .put(cof(modelV, "ax"), pof(this, "force"), -Math.cos(theta()))
-        .put(cof(modelV, "ay"), pof(this, "force"), -Math.sin(theta()))
+        .put(cof(modelU, "ax-upwind-balance"), pof(this, "force"), Math.cos(theta()))
+        .put(cof(modelU, "ay-upwind-balance"), pof(this, "force"), Math.sin(theta()))
+        .put(cof(modelV, "ax-upwind-balance"), pof(this, "force"), -Math.cos(theta()))
+        .put(cof(modelV, "ay-upwind-balance"), pof(this, "force"), -Math.sin(theta()))
         .put(cof(this, "ar-upwind-balance"), pof(modelU, "ax"), Math.cos(theta()))
         .put(cof(this, "ar-upwind-balance"), pof(modelU, "ay"), Math.sin(theta()))
         .put(cof(this, "ar-upwind-balance"), pof(modelV, "ax"), -Math.cos(theta()))
-        .put(cof(this, "ar-upwind-balances"), pof(modelV, "ay"), -Math.sin(theta()))
+        .put(cof(this, "ar-upwind-balance"), pof(modelV, "ay"), -Math.sin(theta()))
         .build();
   }
 

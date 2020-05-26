@@ -14,8 +14,6 @@ import lombok.ToString;
 @ToString
 public class Assembly {
 
-  private static final Assembly INSTANCE = new Assembly();
-
   private final Map<String, Component> components = new HashMap<>();
   private final Map<String, Field> fields = new HashMap<>();
   private final AssemblySnapshot initialAssemblySnapshot = AssemblySnapshot.empty();
@@ -24,7 +22,7 @@ public class Assembly {
   private Assembly() {}
 
   public static Assembly getInstance() {
-    return INSTANCE;
+    return new Assembly();
   }
 
   /**
