@@ -1,48 +1,47 @@
-name: Single Circle Application
+name: Single Rod
 version: 1
-refresh_period: 0.1
+refresh_period: 0.005
 assembly:
-- name: circ
+- name: item
   kinematic_model:
     type: MASS_POINT
-    x: 0.0
+    x: 80.0
     "y": 0.0
-    mass: 100.0
+    mass: 1.0
   shape:
     type: CIRCLE
-    radius: 5.0
-- name: wall
+    radius: 10.0
+  appearance:
+    style: STROKE
+- name: fix_point
   kinematic_model:
     type: STATIC_MODEL
     x: 0.0
     "y": 100.0
+    theta: 1.57
   shape:
     type: EDGE
     length: 40.0
     inner_line_count: 4
     inner_line_height: 10.0
   appearance:
-    color: RED
+    color: BLACK
     line_width: 1.0
-- name: spring
+- name: rod
   kinematic_model:
-    type: SPRING_MODEL
-    stiffness: 20.0
-    unstretched_length: 100.0
-    model_u: circ
-    model_v: wall
+    type: ROD_MODEL
+    model_u: item
+    model_v: fix_point
   shape:
-    type: ZIGZAG_LINE
-    width: 5.0
-    zigzag_count: 15
+    type: LINE
   appearance:
     color: BLUE
-    line_width: 3.0
+    line_width: 2.0
 fields:
 - type: GRAVITY
 timeline:
   type: NUMERIC
-  time_step: 0.001
+  time_step: 0.0005
 canvas:
   width: 400
   height: 400
