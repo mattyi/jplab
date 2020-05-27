@@ -27,8 +27,8 @@ public class EdgePainter extends JavaFxPainter<StaticModel, Edge> {
     for (int i = 1; i <= edge.innerLineCount(); i++) {
       start.x(i * (endBX - endAX) / (edge.innerLineCount() + 1) + endAX);
       start.y(i * (endBY - endAY) / (edge.innerLineCount() + 1) + endAY);
-      end.x(start.x() + edge.innerLineHeight() * Math.cos(edge.innerLineAngle()));
-      end.y(start.y() + edge.innerLineHeight() * Math.sin(edge.innerLineAngle()));
+      end.x(start.x() + edge.innerLineHeight() * -Math.sin(edge.innerLineAngle() + theta));
+      end.y(start.y() + edge.innerLineHeight() * -Math.cos(edge.innerLineAngle() + theta));
       drawLine(start, end, appearance);
     }
   }
