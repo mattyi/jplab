@@ -12,6 +12,7 @@ public class PainterFactory {
   @Getter private final ZigzagLinePainter zigzagLinePainter;
   @Getter private final EdgePainter edgePainter;
   @Getter private final LinePainter linePainter;
+  @Getter private final CatenaryPainter catenaryPainter;
 
   public PainterFactory(Canvas canvas, CoordinateTransformer transformer) {
     this.canvas = canvas;
@@ -20,6 +21,7 @@ public class PainterFactory {
     this.zigzagLinePainter = new ZigzagLinePainter(this.canvas, this.coordinateTransformer);
     this.edgePainter = new EdgePainter(this.canvas, this.coordinateTransformer);
     this.linePainter = new LinePainter(this.canvas, this.coordinateTransformer);
+    this.catenaryPainter = new CatenaryPainter(this.canvas, this.coordinateTransformer);
   }
 
   // For testing purpose.

@@ -16,9 +16,14 @@ import lombok.Getter;
 
 public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
 
-  private static final double ERROR = 0.001;
-  private static final int MAX_ITERATION = 20;
-  private static final int INTERPOLATION_POINT_COUNT = 10;
+  // If set to true, CatenaryPainter will use the nearest approximation of a and o0 if
+  // the maximum number of iteration is reached. Otherwise CatenaryPainter will throw
+  // IllegalStateException.
+  private static final boolean USE_NEAREST_APPX_AT_MAX_ITER = true;
+  private static final double ERROR = 0.1;
+  private static final int MAX_ITERATION_A = 20;
+  private static final int MAX_ITERATION_X0 = 120;
+  private static final int INTERPOLATION_POINT_COUNT = 20;
 
   private static final Map<String, Double> A_CACHE = new HashMap<String, Double>();
   private static final Map<String, Double> X_CACHE = new HashMap<String, Double>();
@@ -35,10 +40,11 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
     Coordinate pointU = model.pointU();
     Coordinate pointV = model.pointV();
     double length = Coordinates.distance(pointU, pointV);
-    if (length > model.length()) {
+    if (model.isStretched()) {
       drawLine(pointU, pointV, appearance);
+    } else {
+      drawCatenary(pointU, pointV, model, appearance);
     }
-    drawCatenary(pointU, pointV, model, appearance);
   }
 
   private void drawCatenary(
@@ -77,20 +83,26 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
     double higher = a0 * 2.0;
     int i = 0;
     while (rhs.apply(lower) < lhs) {
-      checkState(i < MAX_ITERATION, "reached max iteration: %d", i);
+      if (i >= MAX_ITERATION_A) {
+        return nearestAppxOrThrow(lower);
+      }
       higher = lower;
       lower /= 2.0;
       i++;
     }
     while (rhs.apply(higher) > lhs) {
-      checkState(i < MAX_ITERATION, "reached max iteration: %d", i);
+      if (i >= MAX_ITERATION_A) {
+        return nearestAppxOrThrow(higher);
+      }
       lower = higher;
       higher *= 2;
       i++;
     }
     double mid = (lower + higher) / 2;
     while (Math.abs(rhs.apply(mid) - lhs) > ERROR) {
-      checkState(i < MAX_ITERATION, "reached max iteration: %d", i);
+      if (i >= MAX_ITERATION_A) {
+        return nearestAppxOrThrow(mid);
+      }
       if (rhs.apply(mid) > lhs) {
         lower = mid;
       } else {
@@ -106,6 +118,12 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
 
   @VisibleForTesting
   static Coordinate o0(Coordinate pointU, Coordinate pointV, String name, double a) {
+    double x0 = x0(pointU, pointV, name, a);
+    double y0 = pointU.y() - catenary(a).apply(pointU.x() - x0);
+    return new Coordinate(x0, y0);
+  }
+
+  private static double x0(Coordinate pointU, Coordinate pointV, String name, double a) {
     // first, use a binary search to calculate x0 as x0 satisfies:
     // y1 - y2 = catenary(x1 - x0) - catenary(x2 - x0) (monotonic increasing)
     // where catenary is the curve function of the catenary.
@@ -120,20 +138,29 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
     double higher = x0 + (pointV.x() - pointU.x()) / 2;
     int i = 0;
     while (rhs.apply(lower) > lhs) {
-      checkState(i < MAX_ITERATION, "reached max iteration: %d", i);
+      if (i >= MAX_ITERATION_X0) {
+        // return nearestAppxOrThrow(lower);
+        checkState(false);
+      }
       higher = lower;
       lower -= (x0 - lower);
       i++;
     }
     while (rhs.apply(higher) < lhs) {
-      checkState(i < MAX_ITERATION, "reached max iteration: %d", i);
+      if (i >= MAX_ITERATION_X0) {
+        // return nearestAppxOrThrow(higher);
+        checkState(false);
+      }
       lower = higher;
       higher += (higher - x0);
       i++;
     }
     double mid = (lower + higher) / 2;
     while (Math.abs(rhs.apply(mid) - lhs) > ERROR) {
-      checkState(i < MAX_ITERATION, "reached max iteration: %d", i);
+      if (i == MAX_ITERATION_X0) {
+        // return nearestAppxOrThrow(mid);
+        checkState(false);
+      }
       if (rhs.apply(mid) < lhs) {
         lower = mid;
       } else {
@@ -144,8 +171,14 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
     }
     X_CACHE.put(name, mid);
     lastIterationCountForO0 = i;
-    double y0 = pointU.y() - catenary(a).apply(pointU.x() - mid);
-    return new Coordinate(mid, y0);
+    return mid;
+  }
+
+  private static double nearestAppxOrThrow(double appx) {
+    if (USE_NEAREST_APPX_AT_MAX_ITER) {
+      return appx;
+    }
+    throw new IllegalStateException(String.format("max iteration reached: %d", MAX_ITERATION_A));
   }
 
   private static Function<Double, Double> rhs(final double h) {

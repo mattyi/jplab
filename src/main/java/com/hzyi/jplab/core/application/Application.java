@@ -73,7 +73,6 @@ public class Application extends javafx.application.Application {
 
     TimerTask task =
         new TimerTask() {
-
           private double nextRefreshThreshold = 0;
 
           @Override

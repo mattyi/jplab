@@ -36,10 +36,27 @@ public class Edge implements Shape {
     EdgeBuilder builder = newBuilder();
     UnpackHelper<EdgeBuilder> helper = UnpackHelper.of(builder, map, Edge.class);
     return helper
-        .unpackRequiredPositive("length", Double.class, EdgeBuilder::length)
-        .unpackPositive("inner_line_angle", Double.class, EdgeBuilder::innerLineAngle)
-        .unpackPositive("inner_line_count", Integer.class, EdgeBuilder::innerLineCount)
-        .unpackPositive("inner_line_height", Double.class, EdgeBuilder::innerLineHeight)
+        .unpack(
+            "length",
+            Double.class,
+            EdgeBuilder::length,
+            UnpackHelper.checkExistence(),
+            UnpackHelper.checkPositivity())
+        .unpack(
+            "inner_line_angle",
+            Double.class,
+            EdgeBuilder::innerLineAngle,
+            UnpackHelper.checkPositivity())
+        .unpack(
+            "inner_line_count",
+            Integer.class,
+            EdgeBuilder::innerLineCount,
+            UnpackHelper.checkPositivity())
+        .unpack(
+            "inner_line_height",
+            Double.class,
+            EdgeBuilder::innerLineHeight,
+            UnpackHelper.checkPositivity())
         .getBuilder()
         .build();
   }

@@ -28,7 +28,8 @@ public class CatenaryPainterTest {
         new Object[] {"in-between-right-lower", Coordinate.of(-1.0, 1.5), Coordinate.of(1, 1), 3.0},
         new Object[] {"in-between-moved-x", Coordinate.of(0.0, 1.5), Coordinate.of(1, 1), 3.0},
         new Object[] {"to-the-left", Coordinate.of(1.0, 1.0), Coordinate.of(2.0, 2.0), 1.5},
-        new Object[] {"to-the-right", Coordinate.of(1.0, 2.0), Coordinate.of(2.0, 1.0), 1.5});
+        new Object[] {"to-the-right", Coordinate.of(1.0, 2.0), Coordinate.of(2.0, 1.0), 1.5},
+        new Object[] {"larger-scale", Coordinate.of(0.0, 100.0), Coordinate.of(80.0, 0.0), 300.0});
   }
 
   @Test

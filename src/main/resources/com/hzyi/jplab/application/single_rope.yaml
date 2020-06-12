@@ -1,0 +1,50 @@
+name: Single Rod
+version: 1
+refresh_period: 0.1
+assembly:
+- name: item
+  kinematic_model:
+    type: MASS_POINT
+    x: 80.0
+    "y": 80.0
+    mass: 1.0
+    vy: 65.0
+  shape:
+    type: CIRCLE
+    radius: 10.0
+  appearance:
+    style: STROKE
+- name: fix_point
+  kinematic_model:
+    type: STATIC_MODEL
+    x: 0.0
+    "y": 100.0
+    theta: 1.57
+  shape:
+    type: EDGE
+    length: 40.0
+    inner_line_count: 4
+    inner_line_height: 10.0
+  appearance:
+    color: BLACK
+    line_width: 1.0
+- name: rope
+  kinematic_model:
+    type: ROPE_MODEL
+    model_u: item
+    model_v: fix_point
+    length: 105.0
+  shape:
+    type: CATENARY
+  appearance:
+    color: BLUE
+    line_width: 2.0
+fields:
+- type: GRAVITY
+timeline:
+  type: NUMERIC
+  time_step: 0.1
+canvas:
+  width: 400
+  height: 400
+  natural_screen_ratio: 1.0

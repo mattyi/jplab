@@ -40,20 +40,6 @@ public class UnpackHelper<BuilderT> {
     return unpack(property, expectedType, collector, new ThrowingPredicate[0]);
   }
 
-  public <PropertyT> UnpackHelper<BuilderT> unpackRequiredPositive(
-      String property,
-      Class<PropertyT> expectedType,
-      BiFunction<BuilderT, PropertyT, BuilderT> collector) {
-    return unpack(property, expectedType, collector, checkExistence(), checkPositivity());
-  }
-
-  public <PropertyT> UnpackHelper<BuilderT> unpackPositive(
-      String property,
-      Class<PropertyT> expectedType,
-      BiFunction<BuilderT, PropertyT, BuilderT> collector) {
-    return unpack(property, expectedType, collector, checkPositivity());
-  }
-
   public <PropertyT> UnpackHelper<BuilderT> unpack(
       String property,
       Class<PropertyT> expectedType,

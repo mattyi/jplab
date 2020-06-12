@@ -14,15 +14,18 @@ import com.hzyi.jplab.core.model.kinematic.GravityField;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.RodModel;
+import com.hzyi.jplab.core.model.kinematic.RopeModel;
 import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.Catenary;
 import com.hzyi.jplab.core.model.shape.Circle;
 import com.hzyi.jplab.core.model.shape.Edge;
 import com.hzyi.jplab.core.model.shape.Line;
 import com.hzyi.jplab.core.model.shape.Shape;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
+import com.hzyi.jplab.core.painter.CatenaryPainter;
 import com.hzyi.jplab.core.painter.CirclePainter;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.EdgePainter;
@@ -120,6 +123,14 @@ public class ApplicationFactory {
         && kinematicModelType == KinematicModel.Type.ROD_MODEL) {
       return new InstantiatingComponent<Connector, Line, LinePainter>(
           name, (Connector) model, (Line) shape, painterFactory.getLinePainter(), appearance);
+    } else if (shapeType == Shape.Type.CATENARY
+        && kinematicModelType == KinematicModel.Type.ROPE_MODEL) {
+      return new InstantiatingComponent<RopeModel, Catenary, CatenaryPainter>(
+          name,
+          (RopeModel) model,
+          (Catenary) shape,
+          painterFactory.getCatenaryPainter(),
+          appearance);
     }
     checkArgument(
         false,
@@ -139,6 +150,8 @@ public class ApplicationFactory {
         return Edge.unpack(shapeConfig.getShapeSpecs());
       case LINE:
         return Line.unpack(shapeConfig.getShapeSpecs());
+      case CATENARY:
+        return Catenary.unpack(shapeConfig.getShapeSpecs());
       default:
         checkArgument(false, "unsupported shape type: %s", shapeConfig.getType());
     }
@@ -162,6 +175,9 @@ public class ApplicationFactory {
       case ROD_MODEL:
         specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
         return RodModel.of(specs);
+      case ROPE_MODEL:
+        specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
+        return RopeModel.of(specs);
       default:
         checkArgument(false, "unsupported kinematic model type: %s", config.getType());
     }
