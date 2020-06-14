@@ -22,7 +22,12 @@ public class Circle implements Shape {
   public static Circle unpack(Map<String, ?> map) {
     CircleBuilder builder = newBuilder();
     UnpackHelper<CircleBuilder> helper = UnpackHelper.of(builder, map, Circle.class);
-    helper.unpackRequiredPositive("radius", Double.class, CircleBuilder::radius);
+    helper.unpack(
+        "radius",
+        Double.class,
+        CircleBuilder::radius,
+        UnpackHelper.checkExistence(),
+        UnpackHelper.checkPositivity());
     return helper.getBuilder().build();
   }
 }

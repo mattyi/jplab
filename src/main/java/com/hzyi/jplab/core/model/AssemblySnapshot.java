@@ -92,7 +92,6 @@ public class AssemblySnapshot {
     List<Constraint> constraints = constraints();
     List<Property> properties = properties();
     DictionaryMatrix matrix = new DictionaryMatrix(constraints(), properties());
-
     for (MultiplierProvider mp : multiplierProviders()) {
       for (Table.Cell<Constraint, Property, Double> cell :
           mp.codependentMultipliers(timeStep).cellSet()) {

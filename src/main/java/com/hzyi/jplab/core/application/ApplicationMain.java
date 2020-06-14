@@ -55,6 +55,7 @@ public class ApplicationMain {
             "invalid number; please select a valid number between 0 and " + (options.size() - 1));
       } else {
         run(options.get(num).getFileName().toString());
+        break;
       }
     }
   }
