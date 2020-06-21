@@ -1,13 +1,13 @@
 name: Single Rod
 version: 1
-refresh_period: 0.1
+refresh_period: 0.05
 assembly:
 - name: item
   kinematic_model:
     type: MASS_POINT
-    x: 80.0
+    x: -80.0
     "y": 80.0
-    mass: 1.0
+    mass: 5.0
     vy: 65.0
   shape:
     type: CIRCLE
@@ -43,7 +43,7 @@ fields:
 - type: GRAVITY
 timeline:
   type: NUMERIC
-  time_step: 0.1
+  time_step: 0.01
 canvas:
   width: 400
   height: 400

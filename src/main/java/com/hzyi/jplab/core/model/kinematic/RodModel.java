@@ -30,6 +30,7 @@ public class RodModel extends Connector {
   private double relativePointUY;
   private double relativePointVX;
   private double relativePointVY;
+  @Getter private double force;
   @Getter private SingleKinematicModel modelU;
   @Getter private SingleKinematicModel modelV;
 
@@ -97,6 +98,7 @@ public class RodModel extends Connector {
     UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
     helper.unpack("model_u", SingleKinematicModel.class, RodModelBuilder::modelU);
     helper.unpack("model_v", SingleKinematicModel.class, RodModelBuilder::modelV);
+    helper.unpack("force", Double.class, RodModelBuilder::force);
     return helper.getBuilder().build();
   }
 

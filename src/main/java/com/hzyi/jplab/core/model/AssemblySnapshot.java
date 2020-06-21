@@ -12,6 +12,8 @@ import com.hzyi.jplab.core.model.kinematic.Connector;
 import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.MultiplierProvider;
 import com.hzyi.jplab.core.model.kinematic.RigidBody;
+import com.hzyi.jplab.core.model.kinematic.VerifierProvider;
+import com.hzyi.jplab.core.timeline.Verifier;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import java.util.HashMap;
 import java.util.List;
@@ -103,6 +105,14 @@ public class AssemblySnapshot {
       }
     }
     return matrix;
+  }
+
+  public List<Verifier> getVerifiers() {
+    return kinematicModels.values().stream()
+        .filter(p -> p instanceof VerifierProvider)
+        .map(p -> (VerifierProvider) p)
+        .flatMap(p -> p.verifiers().stream())
+        .collect(ImmutableList.toImmutableList());
   }
 
   public AssemblySnapshot merge(Table<String, String, Double> table) {

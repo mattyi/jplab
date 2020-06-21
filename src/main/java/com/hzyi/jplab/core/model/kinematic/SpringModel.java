@@ -110,7 +110,8 @@ public class SpringModel extends Connector {
         .build();
   }
 
-  private double force() {
+  @Override
+  public double force() {
     return (length() - unstretchedLength) * stiffness;
   }
 

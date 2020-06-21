@@ -7,8 +7,11 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
+import com.hzyi.jplab.core.timeline.AlwaysPassVerifier;
+import com.hzyi.jplab.core.timeline.Verifier;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
@@ -24,10 +27,82 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 @ToString
-public class RopeModel extends Connector {
+public class RopeModel extends Connector implements VerifierProvider {
 
   private static final double STRETCH_LOWER_BOUNDARY = 0.995;
-  private static final double STRETCH_UPPER_BOUNDARY = 1.005;
+  private static final double STRETCH_UPPER_BOUNDARY = 1.1;
+
+  private static class StretchedVerifier implements Verifier {
+
+    private String name;
+
+    public StretchedVerifier(String name) {
+      this.name = name;
+    }
+
+    @Override
+    public boolean verify(AssemblySnapshot start, AssemblySnapshot finish) {
+      RopeModel rope = (RopeModel) (finish.getKinematicModel(this.name));
+      return rope.impulse < 0;
+    }
+
+    @Override
+    public AssemblySnapshot onStart(AssemblySnapshot snapshot) {
+      snapshot = snapshot.copy();
+      RopeModel rope = (RopeModel) (snapshot.getKinematicModel(this.name));
+      rope = rope.toBuilder().isStretched(false).build();
+      snapshot.updateKinematicModel(rope);
+      return snapshot;
+    }
+
+    @Override
+    public AssemblySnapshot onFinish(AssemblySnapshot snapshot) {
+      return snapshot;
+    }
+
+    @Override
+    public Verifier newVerifier() {
+      // TODO: An UnstretchedVerifier should be returned, but for now the verification
+      // has some flakiness when a rope goes from stretched to unstretched and thus
+      // turning it off temporarily.
+      return AlwaysPassVerifier.instance();
+    }
+  }
+
+  private static class UnstretchedVerifier implements Verifier {
+
+    private String name;
+
+    public UnstretchedVerifier(String name) {
+      this.name = name;
+    }
+
+    @Override
+    public boolean verify(AssemblySnapshot start, AssemblySnapshot finish) {
+      RopeModel fr = (RopeModel) (finish.getKinematicModel(this.name));
+      RopeModel sr = (RopeModel) (start.getKinematicModel(this.name));
+      return fr.distance() < STRETCH_LOWER_BOUNDARY * fr.length() || fr.distance() < sr.distance();
+    }
+
+    @Override
+    public AssemblySnapshot onStart(AssemblySnapshot snapshot) {
+      snapshot = snapshot.copy();
+      RopeModel rope = (RopeModel) (snapshot.getKinematicModel(this.name));
+      rope = rope.toBuilder().isStretched(true).build();
+      snapshot.updateKinematicModel(rope);
+      return snapshot;
+    }
+
+    @Override
+    public AssemblySnapshot onFinish(AssemblySnapshot snapshot) {
+      return snapshot;
+    }
+
+    @Override
+    public Verifier newVerifier() {
+      return new StretchedVerifier(this.name);
+    }
+  }
 
   @Getter private String name;
   @Getter private double length;
@@ -35,7 +110,9 @@ public class RopeModel extends Connector {
   private double relativePointUY;
   private double relativePointVX;
   private double relativePointVY;
-  @Builder.Default private double force = 0;
+  @Getter private boolean isStretched;
+  @Getter private double force;
+  @Getter private double impulse;
   @Getter private final SingleKinematicModel modelU;
   @Getter private final SingleKinematicModel modelV;
 
@@ -93,7 +170,10 @@ public class RopeModel extends Connector {
           .put(cof(this, "ar-upwind-balance"), pof(modelV, "ay"), -Math.sin(theta()))
           .build();
     }
-    return ImmutableTable.of(cof(this, "no-force"), pof(this, "force"), 1.0);
+    return ImmutableTable.<Constraint, Property, Double>builder()
+        .put(cof(this, "no-force"), pof(this, "force"), 1.0)
+        .put(cof(this, "no-impulse"), pof(this, "impulse"), 1.0)
+        .build();
   }
 
   @Override
@@ -101,15 +181,12 @@ public class RopeModel extends Connector {
     if (isStretched()) {
       return ImmutableList.of(cof(this, "ar-upwind-balance"), cof(this, "vr-upwind-balance"));
     }
-    return ImmutableList.of(cof(this, "no-force"));
+    return ImmutableList.of(cof(this, "no-force"), cof(this, "no-impulse"));
   }
 
   @Override
   public List<Property> properties() {
-    if (isStretched()) {
-      return ImmutableList.of(pof(this, "force"), pof(this, "impulse"));
-    }
-    return ImmutableList.of(pof(this, "force"));
+    return ImmutableList.of(pof(this, "force"), pof(this, "impulse"));
   }
 
   @Override
@@ -119,8 +196,15 @@ public class RopeModel extends Connector {
         .unpack("model_u", SingleKinematicModel.class, RopeModelBuilder::modelU)
         .unpack("model_v", SingleKinematicModel.class, RopeModelBuilder::modelV)
         .unpack("force", Double.class, RopeModelBuilder::force)
+        .unpack("impulse", Double.class, RopeModelBuilder::impulse)
         .getBuilder()
         .build();
+  }
+
+  @Override
+  public List<Verifier> verifiers() {
+    return ImmutableList.of(
+        isStretched ? new StretchedVerifier(this.name) : new UnstretchedVerifier(this.name));
   }
 
   public static RopeModel of(Map<String, ?> map) {
@@ -138,23 +222,8 @@ public class RopeModel extends Connector {
     helper.unpack("relative_point_vx", Double.class, RopeModelBuilder::relativePointVX);
     helper.unpack("relative_point_vy", Double.class, RopeModelBuilder::relativePointVY);
     helper.unpack("length", Double.class, RopeModelBuilder::length, checkExistence());
+    helper.unpack("is_stretched", Boolean.class, RopeModelBuilder::isStretched);
     return helper.getBuilder().build();
-  }
-
-  public boolean isStretched() {
-    // Preconditions.checkState(
-    //     length * STRETCH_UPPER_BOUNDARY > distance(),
-    //     "Rope %s is over stretched. Probably lower time step. pointU: %s, pointV: %s, length %s",
-    //     name,
-    //     pointU(),
-    //     pointV(),
-    //     distance(),
-    //     length,
-    //     distance() * STRETCH_UPPER_BOUNDARY);
-    if (force <= 0) {
-      return false;
-    }
-    return length * STRETCH_LOWER_BOUNDARY < distance();
   }
 
   private double distance() {
