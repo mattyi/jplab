@@ -11,8 +11,8 @@ public class NumericTimeline implements Timeline {
 
   private final AssemblySnapshot initialAssemblySnapshot;
   @Getter private final double timeStep;
-  private double timestamp;
-  private AssemblySnapshot latestAssemblySnapshot;
+  @Getter private double timestamp;
+  @Getter private AssemblySnapshot latestAssemblySnapshot;
 
   public NumericTimeline(AssemblySnapshot initialAssemblySnapshot) {
     this(initialAssemblySnapshot, 0.02);
@@ -26,19 +26,18 @@ public class NumericTimeline implements Timeline {
 
   @Override
   public void advance(double timeStep) {
-    DictionaryMatrix matrix = latestAssemblySnapshot.getCodependentMatrix(timeStep);
-    latestAssemblySnapshot = latestAssemblySnapshot.merge(matrix.getTableSolution());
+    Transaction txn = new Transaction();
+    for (Verifier v : latestAssemblySnapshot.getVerifiers()) {
+      txn.withVerifier(v);
+    }
+    latestAssemblySnapshot =
+        txn.run(
+            latestAssemblySnapshot,
+            s -> {
+              DictionaryMatrix matrix = s.getCodependentMatrix(timeStep);
+              return s.merge(matrix.getTableSolution());
+            });
     this.timestamp += timeStep;
-  }
-
-  @Override
-  public AssemblySnapshot getLatestAssemblySnapshot() {
-    return latestAssemblySnapshot;
-  }
-
-  @Override
-  public double getTimestamp() {
-    return timestamp;
   }
 
   @Override

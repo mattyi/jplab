@@ -59,6 +59,12 @@ public abstract class Connector implements KinematicModel {
     return Math.atan2(pointV().y() - pointU().y(), pointV().x() - pointU().x());
   }
 
+  /**
+   * The force that the connect has on components connected to it. Push forces are negative and pull
+   * forces are positive.
+   */
+  public abstract double force();
+
   @Override
   public CoordinateSystem bodyCoordinateSystem() {
     throw new UnsupportedOperationException("not needed yet");
