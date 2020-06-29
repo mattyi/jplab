@@ -71,4 +71,5 @@ timeline:
 canvas:
   width: 400
   height: 400
-  natural_screen_ratio: 1.0
+  natural_screen_ratio: 3.0
+

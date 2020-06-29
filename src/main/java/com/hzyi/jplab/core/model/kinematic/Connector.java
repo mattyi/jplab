@@ -27,7 +27,6 @@ public abstract class Connector implements KinematicModel {
 
   /** The point where modelU is connected to this connector, in natural coordinate system. */
   public Coordinate pointU() {
-
     Coordinate pointU =
         Coordinates.transform(
             relativePointU(),

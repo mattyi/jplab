@@ -137,7 +137,6 @@ public class RopeModel extends Connector implements VerifierProvider {
 
   @Override
   public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
-    System.out.printf("is stretched: %s, force: %f\n", isStretched(), force);
     if (isStretched()) {
       return ImmutableTable.<Constraint, Property, Double>builder()
           .put(

@@ -40,14 +40,14 @@ public class JavaFxPainter {
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
     radius = coordinateTransformer.toScreen(radius);
-    canvas.getGraphicsContext2D().strokeOval(upperLeft.x(), upperLeft.y(), radius, radius);
+    canvas.getGraphicsContext2D().strokeOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
   }
 
   private void fillCircle(Coordinate center, double radius) {
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
     radius = coordinateTransformer.toScreen(radius);
-    canvas.getGraphicsContext2D().fillOval(upperLeft.x(), upperLeft.y(), radius, radius);
+    canvas.getGraphicsContext2D().fillOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
   }
 
   private void applyAppearance(Appearance appearance) {

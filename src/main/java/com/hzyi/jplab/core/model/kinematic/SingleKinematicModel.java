@@ -1,5 +1,6 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.util.CoordinateSystem;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,7 @@ public abstract class SingleKinematicModel implements KinematicModel {
 
   @Override
   public CoordinateSystem bodyCoordinateSystem() {
-    return new CoordinateSystem(x(), y(), 1, 0, 0, 1);
+    return Application.getCoordinateTransformer().getBodyCoordinateSystem(x(), y());
   }
 
   @Override

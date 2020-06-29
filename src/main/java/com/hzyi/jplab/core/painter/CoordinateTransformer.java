@@ -87,6 +87,14 @@ public class CoordinateTransformer {
   }
 
   /**
+   * Returns the body coordinate system relative to the absolute coordinate system.
+   */
+  public CoordinateSystem getBodyCoordinateSystem(double x, double y) {
+    return new CoordinateSystem(
+        x * naturalZoomScale, y * naturalZoomScale, naturalZoomScale, 0, 0, naturalZoomScale);
+  }
+
+  /**
    * Returns the length of a vector in the screen coordinate system given its length in the natual
    * coordinate sytem.
    */
