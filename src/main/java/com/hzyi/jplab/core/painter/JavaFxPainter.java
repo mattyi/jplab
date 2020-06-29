@@ -1,40 +1,22 @@
 package com.hzyi.jplab.core.painter;
 
-import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
-import com.hzyi.jplab.core.model.shape.Shape;
 import com.hzyi.jplab.core.util.Coordinate;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @AllArgsConstructor
-public abstract class JavaFxPainter<K extends KinematicModel, S extends Shape>
-    implements Painter<K, S> {
+public class JavaFxPainter {
 
   private Canvas canvas;
-
-  @Getter(AccessLevel.PROTECTED)
   private CoordinateTransformer coordinateTransformer;
 
-  protected GraphicsContext getGraphicsContext() {
-    return canvas.getGraphicsContext2D();
-  }
-
-  protected void drawLine(Coordinate from, Coordinate to) {
-    from = coordinateTransformer.toScreen(from);
-    to = coordinateTransformer.toScreen(to);
-    getGraphicsContext().strokeLine(from.x(), from.y(), to.x(), to.y());
-  }
-
-  protected void drawLine(Coordinate from, Coordinate to, Appearance appearance) {
+  public void drawLine(Coordinate from, Coordinate to, Appearance appearance) {
     applyAppearance(appearance);
     drawLine(from, to);
   }
 
-  protected void drawCircle(Coordinate center, double radius, Appearance appearance) {
+  public void drawCircle(Coordinate center, double radius, Appearance appearance) {
     applyAppearance(appearance);
     switch (appearance.getStyle()) {
       case STROKE:
@@ -48,22 +30,30 @@ public abstract class JavaFxPainter<K extends KinematicModel, S extends Shape>
     }
   }
 
+  private void drawLine(Coordinate from, Coordinate to) {
+    from = coordinateTransformer.toScreen(from);
+    to = coordinateTransformer.toScreen(to);
+    canvas.getGraphicsContext2D().strokeLine(from.x(), from.y(), to.x(), to.y());
+  }
+
   private void strokeCircle(Coordinate center, double radius) {
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
-    getGraphicsContext().strokeOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
+    radius = coordinateTransformer.toScreen(radius);
+    canvas.getGraphicsContext2D().strokeOval(upperLeft.x(), upperLeft.y(), radius, radius);
   }
 
   private void fillCircle(Coordinate center, double radius) {
     Coordinate upperLeft = new Coordinate(center.x() - radius, center.y() + radius);
     upperLeft = coordinateTransformer.toScreen(upperLeft);
-    getGraphicsContext().fillOval(upperLeft.x(), upperLeft.y(), 2 * radius, 2 * radius);
+    radius = coordinateTransformer.toScreen(radius);
+    canvas.getGraphicsContext2D().fillOval(upperLeft.x(), upperLeft.y(), radius, radius);
   }
 
   private void applyAppearance(Appearance appearance) {
-    getGraphicsContext().setFill(toJavaFxColor(appearance.getColor()));
-    getGraphicsContext().setStroke(toJavaFxColor(appearance.getColor()));
-    getGraphicsContext().setLineWidth(appearance.getLineWidth());
+    canvas.getGraphicsContext2D().setFill(toJavaFxColor(appearance.getColor()));
+    canvas.getGraphicsContext2D().setStroke(toJavaFxColor(appearance.getColor()));
+    canvas.getGraphicsContext2D().setLineWidth(appearance.getLineWidth());
   }
 
   private static javafx.scene.paint.Color toJavaFxColor(Appearance.Color color) {

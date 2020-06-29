@@ -5,12 +5,13 @@ import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
-import javafx.scene.canvas.Canvas;
 
-public class ZigzagLinePainter extends JavaFxPainter<Connector, ZigzagLine> {
+public class ZigzagLinePainter implements Painter<Connector, ZigzagLine> {
 
-  ZigzagLinePainter(Canvas canvas, CoordinateTransformer transformer) {
-    super(canvas, transformer);
+  private final JavaFxPainter painter;
+
+  ZigzagLinePainter(JavaFxPainter painter) {
+    this.painter = painter;
   }
 
   @Override
@@ -29,12 +30,12 @@ public class ZigzagLinePainter extends JavaFxPainter<Connector, ZigzagLine> {
         getZigzagBoundaryPoint(
             pointU, line.width() / 2, model.theta(), zigzagLength / 2, clockwise);
     for (int i = 0; i <= line.zigzagCount(); i++) {
-      drawLine(previous, next, appearance);
+      painter.drawLine(previous, next, appearance);
       previous = next;
       clockwise = !clockwise;
       next = getZigzagBoundaryPoint(previous, line.width(), model.theta(), zigzagLength, clockwise);
     }
-    drawLine(previous, pointV, appearance);
+    painter.drawLine(previous, pointV, appearance);
   }
 
   private static Coordinate getZigzagBoundaryPoint(

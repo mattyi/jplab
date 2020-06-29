@@ -1,7 +1,6 @@
 package com.hzyi.jplab.core.painter;
 
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import lombok.Getter;
 
 public class PainterFactory {
@@ -15,13 +14,13 @@ public class PainterFactory {
   @Getter private final CatenaryPainter catenaryPainter;
 
   public PainterFactory(Canvas canvas, CoordinateTransformer transformer) {
+    JavaFxPainter javaFxPainter = new JavaFxPainter(canvas, transformer);
     this.canvas = canvas;
-    this.coordinateTransformer = transformer;
-    this.circlePainter = new CirclePainter(this.canvas, this.coordinateTransformer);
-    this.zigzagLinePainter = new ZigzagLinePainter(this.canvas, this.coordinateTransformer);
-    this.edgePainter = new EdgePainter(this.canvas, this.coordinateTransformer);
-    this.linePainter = new LinePainter(this.canvas, this.coordinateTransformer);
-    this.catenaryPainter = new CatenaryPainter(this.canvas, this.coordinateTransformer);
+    this.circlePainter = new CirclePainter(javaFxPainter);
+    this.zigzagLinePainter = new ZigzagLinePainter(javaFxPainter);
+    this.edgePainter = new EdgePainter(javaFxPainter);
+    this.linePainter = new LinePainter(javaFxPainter);
+    this.catenaryPainter = new CatenaryPainter(javaFxPainter);
   }
 
   // For testing purpose.
@@ -30,13 +29,9 @@ public class PainterFactory {
     return new PainterFactory(canvas, new CoordinateTransformer(canvas, 1.0));
   }
 
-  public GraphicsContext getGraphicsContext() {
-    return canvas.getGraphicsContext2D();
-  }
-
   public void clearCanvas() {
-    double canvasWidth = canvas.getWidth();
-    double canvasHeight = canvas.getHeight();
-    getGraphicsContext().clearRect(0, 0, canvasWidth, canvasHeight);
+    double width = canvas.getWidth();
+    double height = canvas.getHeight();
+    canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
   }
 }

@@ -4,16 +4,17 @@ import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Circle;
 import com.hzyi.jplab.core.util.Coordinate;
-import javafx.scene.canvas.Canvas;
 
-public class CirclePainter extends JavaFxPainter<SingleKinematicModel, Circle> {
+public class CirclePainter implements Painter<SingleKinematicModel, Circle> {
 
-  CirclePainter(Canvas canvas, CoordinateTransformer transformer) {
-    super(canvas, transformer);
+  private final JavaFxPainter painter;
+
+  CirclePainter(JavaFxPainter painter) {
+    this.painter = painter;
   }
 
   @Override
   public void paint(Circle circle, SingleKinematicModel model, Appearance appearance) {
-    drawCircle(new Coordinate(model.x(), model.y()), circle.radius(), appearance);
+    painter.drawCircle(new Coordinate(model.x(), model.y()), circle.radius(), appearance);
   }
 }

@@ -4,11 +4,13 @@ import com.hzyi.jplab.core.model.kinematic.StaticModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Edge;
 import com.hzyi.jplab.core.util.Coordinate;
-import javafx.scene.canvas.Canvas;
 
-public class EdgePainter extends JavaFxPainter<StaticModel, Edge> {
-  EdgePainter(Canvas canvas, CoordinateTransformer transformer) {
-    super(canvas, transformer);
+public class EdgePainter implements Painter<StaticModel, Edge> {
+
+  private final JavaFxPainter painter;
+
+  EdgePainter(JavaFxPainter painter) {
+    this.painter = painter;
   }
 
   @Override
@@ -20,7 +22,7 @@ public class EdgePainter extends JavaFxPainter<StaticModel, Edge> {
     double endAY = y + edge.length() * Math.sin(theta + (Math.PI / 2.0)) / 2;
     double endBX = x * 2 - endAX;
     double endBY = y * 2 - endAY;
-    drawLine(new Coordinate(endAX, endAY), new Coordinate(endBX, endBY), appearance);
+    painter.drawLine(new Coordinate(endAX, endAY), new Coordinate(endBX, endBY), appearance);
 
     Coordinate start = new Coordinate(0, 0);
     Coordinate end = new Coordinate(0, 0);
@@ -29,7 +31,7 @@ public class EdgePainter extends JavaFxPainter<StaticModel, Edge> {
       start.y(i * (endBY - endAY) / (edge.innerLineCount() + 1) + endAY);
       end.x(start.x() + edge.innerLineHeight() * -Math.sin(edge.innerLineAngle() + theta));
       end.y(start.y() + edge.innerLineHeight() * -Math.cos(edge.innerLineAngle() + theta));
-      drawLine(start, end, appearance);
+      painter.drawLine(start, end, appearance);
     }
   }
 }

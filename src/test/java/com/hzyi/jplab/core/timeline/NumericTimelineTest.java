@@ -8,6 +8,7 @@ import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
+import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,14 @@ public class NumericTimelineTest {
   @Test
   public void testAdvanceTimeStep() {
     Application.init(
-        null, Assembly.getInstance(), null, PainterFactory.getTestingPainterFactory(), null, 1.0);
+        null,
+        Assembly.getInstance(),
+        null,
+        null,
+        CoordinateTransformer.getTestingCoordinateTransformer(),
+        PainterFactory.getTestingPainterFactory(),
+        null,
+        1.0);
     NumericTimeline timeline = new NumericTimeline(snapshot);
     timeline.advance(1);
     AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
