@@ -84,7 +84,15 @@ public class AssemblySnapshotTest {
 
   @Test
   public void testToMatrix() {
-    Application.init(null, Assembly.getInstance(), null, painterFactory, null, 1.0);
+    Application.init(
+        null,
+        Assembly.getInstance(),
+        null,
+        null,
+        CoordinateTransformer.getTestingCoordinateTransformer(),
+        painterFactory,
+        null,
+        1.0);
     DictionaryMatrix matrix = snapshot.getCodependentMatrix(1.0);
     assertThat(matrix.getRow(Constraint.parse("mass.ax-upwind-balance")))
         .containsExactly(

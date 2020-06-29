@@ -45,11 +45,20 @@ public class ApplicationFactory {
   public static void newApp(ApplicationConfig config) {
     String name = config.getName();
     Controller controller = null;
-    PainterFactory painterFactory = createPainterFactory(config.getCanvas());
+    Canvas canvas = createCanvas(config.getCanvas());
+    CoordinateTransformer transformer = createCoordinateTransformer(canvas, config.getCanvas());
+    PainterFactory painterFactory = createPainterFactory(canvas, transformer);
     Assembly assembly = createAssembly(config.getAssembly(), config.getFields(), painterFactory);
     Timeline timeline = createTimeline(assembly.getInitialAssemblySnapshot(), config.getTimeline());
     Application.init(
-        name, assembly, controller, painterFactory, timeline, config.getRefreshPeriod());
+        name,
+        assembly,
+        controller,
+        canvas,
+        transformer,
+        painterFactory,
+        timeline,
+        config.getRefreshPeriod());
   }
 
   private static Timeline createTimeline(
@@ -64,10 +73,18 @@ public class ApplicationFactory {
     return null;
   }
 
-  private static PainterFactory createPainterFactory(ApplicationConfig.CanvasConfig canvasConfig) {
-    Canvas canvas = new Canvas(canvasConfig.getWidth(), canvasConfig.getHeight());
-    double ratio = canvasConfig.getNaturalScreenRatio();
-    return new PainterFactory(canvas, new CoordinateTransformer(canvas, ratio));
+  private static Canvas createCanvas(ApplicationConfig.CanvasConfig canvasConfig) {
+    return new Canvas(canvasConfig.getWidth(), canvasConfig.getHeight());
+  }
+
+  private static CoordinateTransformer createCoordinateTransformer(
+      Canvas canvas, ApplicationConfig.CanvasConfig canvasConfig) {
+    return new CoordinateTransformer(canvas, canvasConfig.getNaturalScreenRatio());
+  }
+
+  private static PainterFactory createPainterFactory(
+      Canvas canvas, CoordinateTransformer transformer) {
+    return new PainterFactory(canvas, transformer);
   }
 
   private static Assembly createAssembly(

@@ -5,10 +5,12 @@ import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.timeline.Timeline;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
 import lombok.Getter;
 
@@ -20,6 +22,8 @@ public class Application extends javafx.application.Application {
   @Getter private static Timeline timeline;
   @Getter private static PainterFactory painterFactory;
   @Getter private static double refreshPeriod;
+  @Getter private static Canvas canvas;
+  @Getter private static CoordinateTransformer coordinateTransformer;
 
   private static boolean isInitialized;
 
@@ -31,6 +35,8 @@ public class Application extends javafx.application.Application {
       String name,
       Assembly assembly,
       Controller controller,
+      Canvas canvas,
+      CoordinateTransformer transformer,
       PainterFactory painterFactory,
       Timeline timeline,
       double refreshPeriod) {
@@ -40,11 +46,12 @@ public class Application extends javafx.application.Application {
     Application.name = name;
     Application.assembly = assembly;
     Application.controller = controller;
+    Application.canvas = canvas;
+    Application.coordinateTransformer = transformer;
     Application.painterFactory = painterFactory;
     Application.timeline = timeline;
     Application.refreshPeriod = refreshPeriod;
     Application.isInitialized = true;
-    System.out.println("Application is initialized");
   }
 
   public static void reset() {
@@ -68,7 +75,7 @@ public class Application extends javafx.application.Application {
             primaryStage,
             Application.getName(),
             Application.getController(),
-            Application.getPainterFactory());
+            Application.getCanvas());
     primaryStage.show();
 
     TimerTask task =

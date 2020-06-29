@@ -32,7 +32,7 @@ public abstract class Connector implements KinematicModel {
         Coordinates.transform(
             relativePointU(),
             modelU().bodyCoordinateSystem(),
-            Application.getPainterFactory().getCoordinateTransformer().natural());
+            Application.getCoordinateTransformer().natural());
     return pointU;
   }
 
@@ -42,7 +42,7 @@ public abstract class Connector implements KinematicModel {
         Coordinates.transform(
             relativePointV(),
             modelV().bodyCoordinateSystem(),
-            Application.getPainterFactory().getCoordinateTransformer().natural());
+            Application.getCoordinateTransformer().natural());
     return pointV;
   }
 

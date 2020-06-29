@@ -1,7 +1,6 @@
 package com.hzyi.jplab.core.application.ui;
 
 import com.hzyi.jplab.core.controller.Controller;
-import com.hzyi.jplab.core.painter.PainterFactory;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -21,7 +20,7 @@ public final class PrimaryStageFactory {
   }
 
   public static Stage initPrimaryStage(
-      Stage primaryStage, String name, Controller controller, PainterFactory painterFactory) {
+      Stage primaryStage, String name, Controller controller, Canvas canvas) {
     GridPane grid = new GridPane();
     ColumnConstraints column1 = new ColumnConstraints();
     column1.setPercentWidth(60);
@@ -44,17 +43,13 @@ public final class PrimaryStageFactory {
 
     grid.add(applicationNameText, 0, 0);
     Pane canvasPane = new Pane();
-    Canvas canvas = painterFactory.getCanvas();
     canvasPane.getChildren().add(canvas);
     grid.add(canvasPane, 0, 1, 1, 2);
     grid.add(controllerPane, 1, 0, 1, 2);
     canvas.widthProperty().bind(canvasPane.widthProperty());
     canvas.heightProperty().bind(canvasPane.heightProperty());
     canvas.getGraphicsContext2D().setFill(Color.GREEN);
-    canvas
-        .getGraphicsContext2D()
-        .fillRect(
-            0, 0, painterFactory.getCanvas().getWidth(), painterFactory.getCanvas().getHeight());
+    canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     grid.add(new Text("text"), 1, 2, 1, 1);
 
     Scene scene = new Scene(grid, 800, 800);

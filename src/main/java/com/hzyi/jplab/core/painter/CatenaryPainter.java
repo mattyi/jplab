@@ -11,10 +11,9 @@ import com.hzyi.jplab.core.util.Coordinates;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javafx.scene.canvas.Canvas;
 import lombok.Getter;
 
-public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
+public class CatenaryPainter implements Painter<RopeModel, Catenary> {
 
   // If set to true, CatenaryPainter will use the nearest approximation of a and o0 if
   // the maximum number of iteration is reached. Otherwise CatenaryPainter will throw
@@ -31,8 +30,10 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
   @Getter private static int lastIterationCountForA; // For testing purpose
   @Getter private static int lastIterationCountForO0; // For testing purpose
 
-  CatenaryPainter(Canvas canvas, CoordinateTransformer transformer) {
-    super(canvas, transformer);
+  private final JavaFxPainter painter;
+
+  CatenaryPainter(JavaFxPainter painter) {
+    this.painter = painter;
   }
 
   @Override
@@ -41,7 +42,7 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
     Coordinate pointV = model.pointV();
     double length = Coordinates.distance(pointU, pointV);
     if (model.isStretched()) {
-      drawLine(pointU, pointV, appearance);
+      painter.drawLine(pointU, pointV, appearance);
     } else {
       drawCatenary(pointU, pointV, model, appearance);
     }
@@ -61,7 +62,7 @@ public class CatenaryPainter extends JavaFxPainter<RopeModel, Catenary> {
     for (int i = 1; i <= INTERPOLATION_POINT_COUNT; i++) {
       double x = x1 + (double) i * (x2 - x1) / (double) INTERPOLATION_POINT_COUNT;
       Coordinate to = new Coordinate(x, catenary(a, o0).apply(x));
-      drawLine(from, to, appearance);
+      painter.drawLine(from, to, appearance);
       from = to;
     }
   }
