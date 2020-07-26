@@ -4,8 +4,10 @@ import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
+@ToString
 @Builder(builderMethodName = "newBuilder")
 public class Edge implements Shape {
 
@@ -32,7 +34,7 @@ public class Edge implements Shape {
     return Shape.Type.EDGE;
   }
 
-  public static final Edge unpack(Map<String, ?> map) {
+  public static final Edge of(Map<String, ?> map) {
     EdgeBuilder builder = newBuilder();
     UnpackHelper<EdgeBuilder> helper = UnpackHelper.of(builder, map, Edge.class);
     return helper

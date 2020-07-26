@@ -1,58 +1,41 @@
 name: Two Rods
 version: 1
 refresh_period: 0.005
-assembly:
+kinematic_models:
 - name: item
-  kinematic_model:
-    type: MASS_POINT
-    x: 80.0
-    "y": 80.0
-    mass: 1.0
-  shape:
-    type: CIRCLE
-    radius: 5.0
+  type: MASS_POINT
+  x: 80.0
+  "y": 80.0
+  mass: 1.0
+  radius: 5.0
 - name: item2
-  kinematic_model:
-    type: MASS_POINT
-    x: 80.0
-    "y": 20.0
-    mass: 2000.0
-  shape:
-    type: CIRCLE
-    radius: 5.0
+  type: MASS_POINT
+  x: 80.0
+  "y": 20.0
+  mass: 2000.0
+  radius: 5.0
 - name: fix_point
-  kinematic_model:
-    type: STATIC_MODEL
-    x: 0.0
-    "y": 100.0
-  shape:
-    type: EDGE
-    length: 40.0
-    inner_line_count: 4
-    inner_line_height: 10.0
-  appearance:
-    color: RED
-    line_width: 1.0
+  type: STATIC_MODEL
+  x: 0.0
+  "y": 100.0
+  length: 40.0
+  inner_line_count: 4
+  inner_line_height: 10.0
+  color: RED
+  line_width: 1.0
+connectors:
 - name: rod
-  kinematic_model:
-    type: ROD_MODEL
-    model_u: item
-    model_v: fix_point
-  shape:
-    type: LINE
-  appearance:
-    color: BLUE
-    line_width: 3.0
+  type: ROD_MODEL
+  model_u: item
+  model_v: fix_point
+  color: BLUE
+  line_width: 3.0
 - name: rod2
-  kinematic_model:
-    type: ROD_MODEL
-    model_u: item
-    model_v: item2
-  shape:
-    type: LINE
-  appearance:
-    color: BLUE
-    line_width: 3.0
+  type: ROD_MODEL
+  model_u: item
+  model_v: item2
+  color: BLUE
+  line_width: 3.0
 fields:
 - type: GRAVITY
 timeline:

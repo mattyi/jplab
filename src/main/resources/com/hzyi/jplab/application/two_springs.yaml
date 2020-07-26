@@ -1,75 +1,57 @@
 name: Single Circle Application
 version: 1
 refresh_period: 0.1
-assembly:
+kinematic_models:
 - name: item
-  kinematic_model:
-    type: MASS_POINT
-    x: 20.0
-    "y": 0.0
-    mass: 10.0
-  shape:
-    type: CIRCLE
-    radius: 5.0
+  type: MASS_POINT
+  x: 20.0
+  "y": 0.0
+  mass: 10.0
+  radius: 5.0
 - name: left_wall
-  kinematic_model:
-    type: STATIC_MODEL
-    x: -100.0
-    "y": 0.0
-    theta: 0.0
-  shape:
-    type: EDGE
-    length: 40.0
-    inner_line_count: 4
-    inner_line_height: 10.0
-  appearance:
-    color: BLACK
-    line_width: 1.0
+  type: STATIC_MODEL
+  x: -100.0
+  "y": 0.0
+  theta: 0.0
+  length: 40.0
+  inner_line_count: 4
+  inner_line_height: 10.0
+  color: BLACK
+  line_width: 1.0
 - name: right_wall
-  kinematic_model:
-    type: STATIC_MODEL
-    x: 100.0
-    "y": 0.0
-    theta: 3.1415926
-  shape:
-    type: EDGE
-    length: 40.0
-    inner_line_count: 4
-    inner_line_height: 10.0
-  appearance:
-    color: BLACK
-    line_width: 1.0
+  type: STATIC_MODEL
+  x: 100.0
+  "y": 0.0
+  theta: 3.1415926
+  length: 40.0
+  inner_line_count: 4
+  inner_line_height: 10.0
+  color: BLACK
+  line_width: 1.0
+connectors:
 - name: left_spring
-  kinematic_model:
-    type: SPRING_MODEL
-    stiffness: 20.0
-    unstretched_length: 10.0
-    model_u: item
-    model_v: left_wall
-  shape:
-    type: ZIGZAG_LINE
-    width: 5.0
-    zigzag_count: 15
-  appearance:
-    color: BLUE
+  type: SPRING_MODEL
+  stiffness: 20.0
+  unstretched_length: 10.0
+  model_u: item
+  model_v: left_wall
+  width: 5.0
+  zigzag_count: 15
+  color: BLUE
 - name: right_spring
-  kinematic_model:
-    type: SPRING_MODEL
-    stiffness: 20.0
-    unstretched_length: 10.0
-    model_u: item
-    model_v: right_wall
-  shape:
-    type: ZIGZAG_LINE
-    width: 5.0
-    zigzag_count: 15
-  appearance:
-    color: BLUE
+  type: SPRING_MODEL
+  stiffness: 20.0
+  unstretched_length: 10.0
+  model_u: item
+  model_v: right_wall
+  width: 5.0
+  zigzag_count: 15
+  color: BLUE
 timeline:
   type: NUMERIC
   time_step: 0.001
 canvas:
   width: 400
   height: 400
-  natural_screen_ratio: 3.0
+  natural_screen_ratio: 1.0
 

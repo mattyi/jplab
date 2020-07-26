@@ -1,6 +1,6 @@
 package com.hzyi.jplab.core.timeline;
 
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
 
 /** An AlwaysPassVerifier's verification will always pass. */
 public class AlwaysPassVerifier implements Verifier {
@@ -13,15 +13,15 @@ public class AlwaysPassVerifier implements Verifier {
 
   private AlwaysPassVerifier() {}
 
-  public boolean verify(AssemblySnapshot start, AssemblySnapshot finish) {
+  public boolean verify(Assembly start, Assembly finish) {
     return true;
   }
 
-  public AssemblySnapshot onStart(AssemblySnapshot snapshot) {
+  public Assembly onStart(Assembly snapshot) {
     throw new IllegalStateException("AlwaysPassVerifier: onStart should never be called.");
   }
 
-  public AssemblySnapshot onFinish(AssemblySnapshot snapshot) {
+  public Assembly onFinish(Assembly snapshot) {
     throw new IllegalStateException("AlwaysPassVerifier: onFinish should never be called.");
   }
 

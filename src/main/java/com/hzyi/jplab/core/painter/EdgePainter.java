@@ -1,11 +1,10 @@
 package com.hzyi.jplab.core.painter;
 
-import com.hzyi.jplab.core.model.kinematic.StaticModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Edge;
 import com.hzyi.jplab.core.util.Coordinate;
 
-public class EdgePainter implements Painter<StaticModel, Edge> {
+public class EdgePainter {
 
   private final JavaFxPainter painter;
 
@@ -13,11 +12,7 @@ public class EdgePainter implements Painter<StaticModel, Edge> {
     this.painter = painter;
   }
 
-  @Override
-  public void paint(Edge edge, StaticModel model, Appearance appearance) {
-    double x = model.x();
-    double y = model.y();
-    double theta = model.theta();
+  public void paint(double x, double y, double theta, Edge edge, Appearance appearance) {
     double endAX = x + edge.length() * Math.cos(theta + (Math.PI / 2.0)) / 2;
     double endAY = y + edge.length() * Math.sin(theta + (Math.PI / 2.0)) / 2;
     double endBX = x * 2 - endAX;

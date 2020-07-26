@@ -1,11 +1,17 @@
 package com.hzyi.jplab.core.model.kinematic;
 
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.model.Component;
+import com.hzyi.jplab.core.model.shape.Paintable;
 import com.hzyi.jplab.core.util.CoordinateSystem;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class SingleKinematicModel implements KinematicModel {
+/** A SingleKinematicModel is a single kinematic model that can move or rotate. */
+public abstract class SingleKinematicModel
+    implements Paintable, Component, PropertyProvider, MultiplierProvider, ConstraintProvider {
+
+  public abstract SingleKinematicModel.Type type();
 
   public abstract double x();
 
@@ -25,7 +31,6 @@ public abstract class SingleKinematicModel implements KinematicModel {
 
   public abstract double alpha();
 
-  @Override
   public CoordinateSystem bodyCoordinateSystem() {
     return Application.getCoordinateTransformer().getBodyCoordinateSystem(x(), y());
   }
@@ -48,4 +53,13 @@ public abstract class SingleKinematicModel implements KinematicModel {
 
   @Override
   public abstract SingleKinematicModel merge(Map<String, ?> map);
+
+  public boolean isRigidBody() {
+    return this instanceof RigidBody;
+  }
+
+  public static enum Type {
+    MASS_POINT,
+    STATIC_MODEL
+  }
 }

@@ -1,6 +1,5 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import static com.hzyi.jplab.core.application.exceptions.Prechecks.checkFeature;
 import static com.hzyi.jplab.core.model.Constraint.cof;
 import static com.hzyi.jplab.core.model.Property.pof;
 import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
@@ -8,8 +7,11 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
+import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.Line;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
@@ -18,35 +20,27 @@ import java.util.function.BiFunction;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/** A RodModel is a rigid rod. It can have push and pull tensions, but cannot have deformation. */
+@ToString
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class RodModel extends Connector {
 
-  @Getter private String name;
-  private double relativePointUX;
-  private double relativePointUY;
-  private double relativePointVX;
-  private double relativePointVY;
-  @Getter private double force;
+  @Getter private final String name;
+  @Getter private final Connector.Type type = Connector.Type.ROD_MODEL;
+
+  @Getter private final Coordinate relativePointU;
+  @Getter private final Coordinate relativePointV;
+  @Getter private final double force;
   @Getter private SingleKinematicModel modelU;
   @Getter private SingleKinematicModel modelV;
 
-  public final KinematicModel.Type type() {
-    return KinematicModel.Type.ROPE_MODEL;
-  }
-
-  @Override
-  public Coordinate relativePointU() {
-    return new Coordinate(relativePointUX, relativePointUY);
-  }
-
-  @Override
-  public Coordinate relativePointV() {
-    return new Coordinate(relativePointVX, relativePointVY);
-  }
+  @Getter private final Line shape;
+  @Getter private final Appearance appearance;
 
   @Override
   public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
@@ -109,19 +103,34 @@ public class RodModel extends Connector {
         Connector.connectedModelExtractor(map, "Rod", "model_u");
     BiFunction<RodModelBuilder, String, RodModelBuilder> collectorV =
         Connector.connectedModelExtractor(map, "Rod", "model_v");
+
+    helper.unpack("name", String.class, RodModelBuilder::name, checkExistence());
     helper.unpack("model_u", String.class, collectorU, checkExistence());
     helper.unpack("model_v", String.class, collectorV, checkExistence());
-    helper.unpack("name", String.class, RodModelBuilder::name, checkExistence());
-    helper.unpack("relative_point_ux", Double.class, RodModelBuilder::relativePointUX);
-    helper.unpack("relative_point_uy", Double.class, RodModelBuilder::relativePointUY);
-    helper.unpack("relative_point_vx", Double.class, RodModelBuilder::relativePointVX);
-    helper.unpack("relative_point_vy", Double.class, RodModelBuilder::relativePointVY);
-    RodModel rod = helper.getBuilder().build();
-    checkFeature(rod.modelU().vx() == 0.0, "unimplemented: modelU is not static initially");
-    checkFeature(rod.modelU().vy() == 0.0, "unimplemented: modelU is not static initially");
-    checkFeature(rod.modelV().ax() == 0.0, "unimplemented: modelV is not static initially");
-    checkFeature(rod.modelV().ay() == 0.0, "unimplemented: modelV is not static initially");
+
+    helper.unpack(
+        "relative_point_ux",
+        Double.class,
+        "relative_point_uy",
+        Double.class,
+        Connector.coordinateExtractor(RodModelBuilder::relativePointU));
+    helper.unpack(
+        "relative_point_vx",
+        Double.class,
+        "relative_point_vy",
+        Double.class,
+        Connector.coordinateExtractor(RodModelBuilder::relativePointV));
+
+    Line shape = Line.of(map);
+    Appearance appearance = Appearance.of(map);
+
+    RodModel rod = helper.getBuilder().shape(shape).appearance(appearance).build();
     return rod;
+  }
+
+  @Override
+  public void paint() {
+    Application.getPainterFactory().getLinePainter().paint(pointU(), pointV(), shape, appearance);
   }
 
   private static double impulse(SingleKinematicModel model, double timeStep) {

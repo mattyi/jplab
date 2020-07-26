@@ -1,7 +1,6 @@
 package com.hzyi.jplab.core.model;
 
 import com.google.common.base.Preconditions;
-import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -23,11 +22,11 @@ public class Property {
     }
   }
 
-  public Property(KinematicModel model, String property) {
+  public Property(Component model, String property) {
     this(model.name(), property);
   }
 
-  public static Property pof(KinematicModel model, String property) {
+  public static Property pof(Component model, String property) {
     return new Property(model, property);
   }
 
@@ -46,8 +45,8 @@ public class Property {
     return new Property(model, property);
   }
 
-  public static String format(KinematicModel model, String property) {
-    return new Property(model, property).toString();
+  public static String format(Component component, String property) {
+    return new Property(component, property).toString();
   }
 
   public static Property constant() {

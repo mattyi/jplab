@@ -3,7 +3,9 @@ package com.hzyi.jplab.core.model.shape;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Builder(builderMethodName = "newBuilder")
 public class Appearance {
 
@@ -27,14 +29,14 @@ public class Appearance {
   @Getter private double lineWidth;
 
   public static Appearance of() {
-    return newBuilder().color(Color.RED).style(Style.FILL).lineWidth(1).build();
+    return newDefaultBuilder().build();
   }
 
-  public static AppearanceBuilder newDefaultBuilder() {
+  private static AppearanceBuilder newDefaultBuilder() {
     return newBuilder().color(Color.RED).style(Style.FILL).lineWidth(1);
   }
 
-  public static Appearance unpack(Map<String, ?> map) {
+  public static Appearance of(Map<String, ?> map) {
     AppearanceBuilder builder = newDefaultBuilder();
     if (map.containsKey("color")) {
       builder.color(Color.valueOf(((String) map.get("color")).toUpperCase()));

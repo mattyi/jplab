@@ -1,11 +1,10 @@
 package com.hzyi.jplab.core.painter;
 
-import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.Circle;
 import com.hzyi.jplab.core.util.Coordinate;
 
-public class CirclePainter implements Painter<SingleKinematicModel, Circle> {
+public class CirclePainter {
 
   private final JavaFxPainter painter;
 
@@ -13,8 +12,7 @@ public class CirclePainter implements Painter<SingleKinematicModel, Circle> {
     this.painter = painter;
   }
 
-  @Override
-  public void paint(Circle circle, SingleKinematicModel model, Appearance appearance) {
-    painter.drawCircle(new Coordinate(model.x(), model.y()), circle.radius(), appearance);
+  public void paint(Coordinate location, Circle circle, Appearance appearance) {
+    painter.drawCircle(location, circle.radius(), appearance);
   }
 }

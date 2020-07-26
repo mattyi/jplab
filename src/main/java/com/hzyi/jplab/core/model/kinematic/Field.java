@@ -1,6 +1,6 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-public interface Field extends MultiplierProvider {
+import com.hzyi.jplab.core.model.Component;
 
-  String name();
-}
+/** A Field is a physical field. */
+public interface Field extends Component {}

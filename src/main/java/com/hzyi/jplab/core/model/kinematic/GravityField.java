@@ -16,10 +16,11 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/** A GravityField is gravity field. It applies to all RigidBody components. */
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 @ToString
-public class GravityField implements Field {
+public class GravityField implements Field, MultiplierProvider {
 
   private static final String NAME = "gravity_field";
 
@@ -40,9 +41,9 @@ public class GravityField implements Field {
 
   @Override
   public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
-    Assembly assembly = Application.getAssembly();
+    Assembly assembly = Application.getInitialAssembly();
     ImmutableTable.Builder<Constraint, Property, Double> builder = ImmutableTable.builder();
-    for (RigidBody rigidBody : assembly.getInitialAssemblySnapshot().getRigidBodies()) {
+    for (RigidBody rigidBody : assembly.getRigidBodies()) {
       builder.put(cof(rigidBody, "ax-upwind-balance"), constant(), gx * rigidBody.mass());
       builder.put(cof(rigidBody, "ay-upwind-balance"), Property.constant(), gy * rigidBody.mass());
       // TODO: support rotation

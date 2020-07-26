@@ -86,9 +86,7 @@ public class CoordinateTransformer {
     return Coordinates.transform(screen, screen(), natural());
   }
 
-  /**
-   * Returns the body coordinate system relative to the absolute coordinate system.
-   */
+  /** Returns the body coordinate system relative to the absolute coordinate system. */
   public CoordinateSystem getBodyCoordinateSystem(double x, double y) {
     return new CoordinateSystem(
         x * naturalZoomScale, y * naturalZoomScale, naturalZoomScale, 0, 0, naturalZoomScale);

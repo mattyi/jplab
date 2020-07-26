@@ -1,17 +1,27 @@
 package com.hzyi.jplab.core.model.kinematic;
 
+import com.google.common.base.MoreObjects;
 import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.application.exceptions.Prechecks;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
+import com.hzyi.jplab.core.model.Component;
+import com.hzyi.jplab.core.model.shape.Paintable;
 import com.hzyi.jplab.core.util.Coordinate;
-import com.hzyi.jplab.core.util.CoordinateSystem;
 import com.hzyi.jplab.core.util.Coordinates;
+import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
 /** A connector is a kinematic model that connects two single kinematic models. */
-public abstract class Connector implements KinematicModel {
+public abstract class Connector
+    implements Component, ConstraintProvider, MultiplierProvider, PropertyProvider, Paintable {
+
+  public static enum Type {
+    SPRING_MODEL,
+    ROPE_MODEL,
+    ROD_MODEL
+  }
 
   /** The first connected model. */
   public abstract SingleKinematicModel modelU();
@@ -65,11 +75,6 @@ public abstract class Connector implements KinematicModel {
   public abstract double force();
 
   @Override
-  public CoordinateSystem bodyCoordinateSystem() {
-    throw new UnsupportedOperationException("not needed yet");
-  }
-
-  @Override
   public Map<String, Object> pack() {
     Map<String, Object> answer = new HashMap<>();
     answer.put("model_u", modelU());
@@ -79,20 +84,24 @@ public abstract class Connector implements KinematicModel {
 
   /**
    * A helper interface for unpacking connected models for subclasses of Connector. Builder classes
-   * of a concrete connector has to implement this class in order to use connectedModelExtractor.
+   * of a concrete connector has to implement this class in order to use custom extractors.
    */
   protected static interface ConnectorBuilder<B> {
     B modelU(SingleKinematicModel model);
 
     B modelV(SingleKinematicModel model);
+
+    B relativePointU(Coordinate pointU);
+
+    B relativePointV(Coordinate pointV);
   }
 
   /**
    * Creates a helper function used by an unpacker to unpack connected model from a map into the
    * builder of a concrete connector. The function created first looks up the name of the connected
    * model keyed by `model_u` or `model_v`, and then looks up the connected model in the assembly
-   * snapshot by the name. This assumes the map contains a `_assembly_snapshot` and either `model_u`
-   * or `model_v`, otherwise a MissingRequiredPropertyException will be thrown at executing the
+   * snapshot by the name. This assumes the map contains a `_assembly` and either `model_u` or
+   * `model_v`, otherwise a MissingRequiredPropertyException will be thrown at executing the
    * function. The builder class must implement ConnectorBuilder too.
    */
   protected static <B extends ConnectorBuilder<B>> BiFunction<B, String, B> connectedModelExtractor(
@@ -101,9 +110,9 @@ public abstract class Connector implements KinematicModel {
         new BiFunction<B, String, B>() {
           @Override
           public B apply(B builder, String propertyValue) {
-            AssemblySnapshot snapshot =
-                Prechecks.checkPropertyExists(map, entity, "_assembly_snapshot");
-            KinematicModel model = snapshot.getKinematicModel(propertyValue);
+            Assembly assembly = Prechecks.checkPropertyExists(map, entity, "_assembly");
+            SingleKinematicModel model =
+                (SingleKinematicModel) assembly.getComponent(propertyValue);
             Prechecks.checkPropertyExists(model, entity, property);
             Prechecks.checkPropertyValue(
                 model instanceof SingleKinematicModel,
@@ -121,5 +130,14 @@ public abstract class Connector implements KinematicModel {
           }
         };
     return extractor;
+  }
+
+  protected static <B extends ConnectorBuilder<B>>
+      UnpackHelper.BiCollector<B, Double, Double> coordinateExtractor(
+          BiFunction<B, Coordinate, B> collector) {
+    return (builder, x, y) ->
+        collector.apply(
+            builder,
+            new Coordinate(MoreObjects.firstNonNull(x, 0.0), MoreObjects.firstNonNull(y, 0.0)));
   }
 }

@@ -1,12 +1,12 @@
 package com.hzyi.jplab.core.timeline;
 
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
 
 /** A timeline is used to report the kinematic state of the assembly at any given time. */
 public interface Timeline {
 
-  /** Returns the latest AssemblySnapshot. */
-  AssemblySnapshot getLatestAssemblySnapshot();
+  /** Returns the latest Assembly. */
+  Assembly getLatestAssembly();
 
   /** Moves the timeline forward for a period of time. */
   void advance(double timeStep);

@@ -1,12 +1,11 @@
 package com.hzyi.jplab.core.painter;
 
-import com.hzyi.jplab.core.model.kinematic.Connector;
 import com.hzyi.jplab.core.model.shape.Appearance;
 import com.hzyi.jplab.core.model.shape.ZigzagLine;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.Coordinates;
 
-public class ZigzagLinePainter implements Painter<Connector, ZigzagLine> {
+public class ZigzagLinePainter {
 
   private final JavaFxPainter painter;
 
@@ -14,10 +13,8 @@ public class ZigzagLinePainter implements Painter<Connector, ZigzagLine> {
     this.painter = painter;
   }
 
-  @Override
-  public void paint(ZigzagLine line, Connector model, Appearance appearance) {
-    Coordinate pointU = model.pointU();
-    Coordinate pointV = model.pointV();
+  public void paint(
+      Coordinate pointU, Coordinate pointV, double theta, ZigzagLine line, Appearance appearance) {
     double x = pointU.x();
     double y = pointU.y();
     double length = Coordinates.distance(pointU, pointV);
@@ -27,13 +24,12 @@ public class ZigzagLinePainter implements Painter<Connector, ZigzagLine> {
 
     // the first zigzag only takes up half the length
     Coordinate next =
-        getZigzagBoundaryPoint(
-            pointU, line.width() / 2, model.theta(), zigzagLength / 2, clockwise);
+        getZigzagBoundaryPoint(pointU, line.width() / 2, theta, zigzagLength / 2, clockwise);
     for (int i = 0; i <= line.zigzagCount(); i++) {
       painter.drawLine(previous, next, appearance);
       previous = next;
       clockwise = !clockwise;
-      next = getZigzagBoundaryPoint(previous, line.width(), model.theta(), zigzagLength, clockwise);
+      next = getZigzagBoundaryPoint(previous, line.width(), theta, zigzagLength, clockwise);
     }
     painter.drawLine(previous, pointV, appearance);
   }

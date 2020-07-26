@@ -39,8 +39,8 @@ public class ApplicationMain {
       ApplicationConfig config = mapper.readValue(in, ApplicationConfig.class);
       Application.load(config);
       Application.run();
-    } catch (Exception e) {
-      System.out.println(e);
+    } catch (IOException e) {
+      System.out.println(String.format("Unable to start the application: %s", e));
     }
   }
 

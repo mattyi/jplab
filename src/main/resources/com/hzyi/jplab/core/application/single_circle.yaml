@@ -1,47 +1,38 @@
-name: Single Circle Application
+name: Test Application
 version: 1
 refresh_period: 0.02
-assembly:
+kinematic_models:
 - name: circ
-  kinematic_model:
-    type: MASS_POINT
-    x: 20.0
-    "y": 0.0
-    vx: 0.0
-    vy: 0.0
-    mass: 10.0
-  shape:
-    type: CIRCLE
-    radius: 20.0
+  type: MASS_POINT
+  x: 20.0
+  "y": 0.0
+  vx: 0.0
+  vy: 0.0
+  mass: 10.0
+  radius: 20.0
 - name: wall
-  kinematic_model:
-    type: STATIC_MODEL
-    x: 20.0
-    "y": 100.0
-  shape:
-    type: EDGE
-    length: 40.0
-    inner_line_count: 4
-    inner_line_height: 10.0
-  appearance:
-    color: RED
-    line_width: 1.0
+  type: STATIC_MODEL
+  x: 20.0
+  "y": 100.0
+  length: 40.0
+  inner_line_count: 4
+  inner_line_height: 10.0
+  color: RED
+  line_width: 1.0
+connectors:
 - name: spring
-  kinematic_model:
-    type: SPRING_MODEL
-    stiffness: 80.0
-    unstretched_length: 90.0
-    model_u: circ
-    model_v: wall
-  shape:
-    type: ZIGZAG_LINE
-    width: 15.0
-    zigzag_count: 10
-  appearance:
-    color: BLUE
-    line_width: 3.0
+  type: SPRING_MODEL
+  stiffness: 80.0
+  unstretched_length: 90.0
+  model_u: circ
+  model_v: wall
+  width: 15.0
+  zigzag_count: 10
+  color: BLUE
+  line_width: 3.0
 fields:
-- type: GRAVITY
+- name: gravity_field
+  type: GRAVITY
   gx: 3.5
 timeline:
   type: NUMERIC

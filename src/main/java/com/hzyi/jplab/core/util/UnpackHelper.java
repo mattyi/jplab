@@ -3,6 +3,9 @@ package com.hzyi.jplab.core.util;
 import com.hzyi.jplab.core.application.exceptions.IllegalPropertyTypeException;
 import com.hzyi.jplab.core.application.exceptions.IllegalPropertyValueException;
 import com.hzyi.jplab.core.application.exceptions.MissingRequiredPropertyException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import lombok.AllArgsConstructor;
@@ -27,41 +30,112 @@ public class UnpackHelper<BuilderT> {
         String property, PropertyT value, Class<PropertyT> expectedType, Class<?> destinationType);
   }
 
+  /** An interface for collecting two values from the map. */
+  @FunctionalInterface
+  public interface BiCollector<BuilderT, PropertyT1, PropertyT2> {
+    public BuilderT apply(BuilderT builder, PropertyT1 p1, PropertyT2 p2);
+  }
+
   /** Creates an UnpackHelper. */
   public static <BuilderT> UnpackHelper<BuilderT> of(
       BuilderT builder, Map<String, ?> source, Class<?> destinationType) {
     return new UnpackHelper(builder, source, destinationType);
   }
 
-  public <PropertyT> UnpackHelper<BuilderT> unpack(
-      String property,
-      Class<PropertyT> expectedType,
-      BiFunction<BuilderT, PropertyT, BuilderT> collector) {
-    return unpack(property, expectedType, collector, new ThrowingPredicate[0]);
+  /** Unpacks a property from a map and return it. */
+  public <PropertyT> PropertyT unpack(
+      String property, Class<PropertyT> expectedType, ThrowingPredicate<PropertyT, ?>... checkers) {
+    return unpack(property, expectedType, Arrays.asList(checkers));
   }
 
-  public <PropertyT> UnpackHelper<BuilderT> unpack(
+  /** Unpacks a property from a map and collects it into the target object. */
+  public <PropertyT> PropertyT unpack(
       String property,
       Class<PropertyT> expectedType,
-      BiFunction<BuilderT, PropertyT, BuilderT> collector,
-      ThrowingPredicate<PropertyT, ?>... checkers) {
-
+      List<ThrowingPredicate<PropertyT, ?>> checkers) {
     Object value = source.get(property);
     if (value != null && !expectedType.isInstance(value)) {
       throw new IllegalPropertyTypeException(
           property, value.getClass().getName(), expectedType.getName());
     }
-
     PropertyT valueT = (PropertyT) value;
     for (ThrowingPredicate<PropertyT, ?> checker : checkers) {
       if (!checker.test(valueT)) {
         throw checker.getException(property, valueT, expectedType, destinationType);
       }
     }
+    return (PropertyT) value;
+  }
 
-    if (valueT != null) {
-      collector.apply(builder, valueT);
+  public Double unpack(String property, ThrowingPredicate<Double, ?>... checkers) {
+    return unpack(property, Arrays.asList(checkers));
+  }
+
+  public Double unpack(String property, List<ThrowingPredicate<Double, ?>> checkers) {
+    Object value = source.get(property);
+    if (value != null && !(value instanceof Double)) {
+      throw new IllegalPropertyTypeException(
+          property, value.getClass().getName(), Double.class.getName());
     }
+    Double valueT = (Double) value;
+    for (ThrowingPredicate<Double, ?> checker : checkers) {
+      if (!checker.test(valueT)) {
+        throw checker.getException(property, valueT, Double.class, destinationType);
+      }
+    }
+    return (Double) value;
+  }
+
+  /** Unpacks a property from a map and collects it into the target object. */
+  public <PropertyT> UnpackHelper<BuilderT> unpack(
+      String property,
+      Class<PropertyT> expectedType,
+      BiFunction<BuilderT, PropertyT, BuilderT> collector,
+      ThrowingPredicate<PropertyT, ?>... checkers) {
+    PropertyT value = unpack(property, expectedType, checkers);
+    if (value != null) {
+      collector.apply(builder, value);
+    }
+    return this;
+  }
+
+  /** Unpacks a property from a map and collects it into the target object. */
+  public UnpackHelper<BuilderT> unpack(
+      String property,
+      BiFunction<BuilderT, Double, BuilderT> collector,
+      ThrowingPredicate<Double, ?>... checkers) {
+    Double value = unpack(property, checkers);
+    if (value != null) {
+      collector.apply(builder, value);
+    }
+    return this;
+  }
+
+  /** Unpacks two properties from a map and collects them into the target object. */
+  public <PropertyT1, PropertyT2> UnpackHelper<BuilderT> unpack(
+      String p1,
+      Class<PropertyT1> type1,
+      String p2,
+      Class<PropertyT2> type2,
+      BiCollector<BuilderT, PropertyT1, PropertyT2> collector) {
+
+    return unpack(
+        p1, type1, p2, type2, collector, Collections.emptyList(), Collections.emptyList());
+  }
+
+  /** Unpacks two properties from a map and collects them into the target object. */
+  public <PropertyT1, PropertyT2> UnpackHelper<BuilderT> unpack(
+      String p1,
+      Class<PropertyT1> type1,
+      String p2,
+      Class<PropertyT2> type2,
+      BiCollector<BuilderT, PropertyT1, PropertyT2> collector,
+      List<ThrowingPredicate<PropertyT1, ?>> checkers1,
+      List<ThrowingPredicate<PropertyT2, ?>> checkers2) {
+
+    PropertyT1 value1 = unpack(p1, type1, checkers1);
+    PropertyT2 value2 = unpack(p2, type2, checkers2);
+    collector.apply(builder, value1, value2);
     return this;
   }
 

@@ -7,8 +7,10 @@ import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
+@ToString
 @Builder(builderMethodName = "newBuilder")
 public class ZigzagLine implements Shape {
 
@@ -24,7 +26,7 @@ public class ZigzagLine implements Shape {
     return Shape.Type.ZIGZAG_LINE;
   }
 
-  public static ZigzagLine unpack(Map<String, ?> map) {
+  public static ZigzagLine of(Map<String, ?> map) {
     ZigzagLineBuilder builder = newBuilder();
     UnpackHelper<ZigzagLineBuilder> u = UnpackHelper.of(builder, map, ZigzagLine.class);
     u.unpack("width", Double.class, ZigzagLineBuilder::width, checkExistence(), checkPositivity());

@@ -1,25 +1,20 @@
 package com.hzyi.jplab.core.timeline;
 
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
 import java.util.function.BiFunction;
 
 public class AnalyticTimeline implements Timeline {
 
   private static final double DEFAULT_TIMESTEP = 0.02;
 
-  private final AssemblySnapshot initialAssemblySnapshot;
-  private final BiFunction<AssemblySnapshot, Double, AssemblySnapshot> function;
+  private final Assembly initialAssembly;
+  private final BiFunction<Assembly, Double, Assembly> function;
   private double latestTimestamp = 0.0;
 
   public AnalyticTimeline(
-      AssemblySnapshot initialAssemblySnapshot,
-      BiFunction<AssemblySnapshot, Double, AssemblySnapshot> function) {
-    this.initialAssemblySnapshot = initialAssemblySnapshot;
+      Assembly initialAssembly, BiFunction<Assembly, Double, Assembly> function) {
+    this.initialAssembly = initialAssembly;
     this.function = function;
-  }
-
-  public AssemblySnapshot getAssemblySnapshot(double timestamp) {
-    return function.apply(initialAssemblySnapshot, timestamp);
   }
 
   @Override
@@ -43,7 +38,7 @@ public class AnalyticTimeline implements Timeline {
   }
 
   @Override
-  public AssemblySnapshot getLatestAssemblySnapshot() {
-    return function.apply(initialAssemblySnapshot, latestTimestamp);
+  public Assembly getLatestAssembly() {
+    return function.apply(initialAssembly, latestTimestamp);
   }
 }

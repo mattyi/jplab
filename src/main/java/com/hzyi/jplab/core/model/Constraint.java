@@ -1,7 +1,6 @@
 package com.hzyi.jplab.core.model;
 
 import com.google.common.base.Preconditions;
-import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -19,12 +18,12 @@ public class Constraint {
         !this.constraint.isEmpty(), "internal: constraint can't be an empty string");
   }
 
-  public Constraint(KinematicModel model, String constraint) {
-    this(model.name(), constraint);
+  public Constraint(Component component, String constraint) {
+    this(component.name(), constraint);
   }
 
-  public static Constraint cof(KinematicModel model, String constraint) {
-    return new Constraint(model, constraint);
+  public static Constraint cof(Component component, String constraint) {
+    return new Constraint(component, constraint);
   }
 
   public static Constraint cof(String fullName) {
@@ -39,8 +38,8 @@ public class Constraint {
     return new Constraint(model, constraint);
   }
 
-  public static String format(KinematicModel model, String constraint) {
-    return new Constraint(model, constraint).toString();
+  public static String format(Component component, String constraint) {
+    return new Constraint(component, constraint).toString();
   }
 
   public String toString() {

@@ -18,12 +18,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class AssemblySnapshotTest {
+public class AssemblyTest {
 
   private MassPoint massPoint;
   private SpringModel springModel;
   private StaticModel staticModel;
-  private AssemblySnapshot snapshot;
+  private Assembly assembly;
   private PainterFactory painterFactory;
 
   @Before
@@ -38,12 +38,12 @@ public class AssemblySnapshotTest {
             .modelU(massPoint)
             .modelV(staticModel)
             .build();
-    snapshot =
-        AssemblySnapshot.empty()
-            .withKinematicModel(massPoint)
-            .withKinematicModel(staticModel)
-            .withKinematicModel(springModel);
-    snapshot.makeImmutable();
+    assembly =
+        Assembly.empty()
+            .withComponent(massPoint)
+            .withComponent(staticModel)
+            .withComponent(springModel);
+    assembly.makeImmutable();
     Canvas canvas = new Canvas(1, 1);
     painterFactory = new PainterFactory(canvas, new CoordinateTransformer(canvas, 1));
   }
@@ -69,31 +69,31 @@ public class AssemblySnapshotTest {
 
   @Test
   public void testUnpack() {
-    snapshot =
-        snapshot.merge(
+    assembly =
+        assembly.merge(
             ImmutableTable.<String, String, Double>builder()
                 .put("mass", "x", -10.0)
                 .put("mass", "ax", 5.0)
                 .build());
     MassPoint newMassPoint = massPoint.toBuilder().x(-10.0).ax(5.0).build();
     SpringModel newSpring = springModel.toBuilder().modelU(newMassPoint).build();
-    assertThat((MassPoint) snapshot.getKinematicModel("mass")).isEqualTo(newMassPoint);
-    assertThat((StaticModel) snapshot.getKinematicModel("wall")).isEqualTo(staticModel);
-    assertThat((SpringModel) snapshot.getKinematicModel("spring")).isEqualTo(newSpring);
+    assertThat((MassPoint) assembly.getKinematicModel("mass")).isEqualTo(newMassPoint);
+    assertThat((StaticModel) assembly.getKinematicModel("wall")).isEqualTo(staticModel);
+    assertThat((SpringModel) assembly.getConnector("spring")).isEqualTo(newSpring);
   }
 
   @Test
   public void testToMatrix() {
     Application.init(
         null,
-        Assembly.getInstance(),
+        assembly,
         null,
         null,
         CoordinateTransformer.getTestingCoordinateTransformer(),
         painterFactory,
         null,
         1.0);
-    DictionaryMatrix matrix = snapshot.getCodependentMatrix(1.0);
+    DictionaryMatrix matrix = assembly.getCodependentMatrix(1.0);
     assertThat(matrix.getRow(Constraint.parse("mass.ax-upwind-balance")))
         .containsExactly(
             Property.parse("mass.x"),

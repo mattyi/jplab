@@ -9,8 +9,12 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkPositivity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
+import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.Circle;
+import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
 import java.util.Map;
@@ -20,71 +24,65 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/**
+ * A MassPoint is a component that has mass but not moment of inertia. A MassPoint can move
+ * horizontally or vertically, but cannot rotate.
+ */
 @EqualsAndHashCode
 @ToString
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class MassPoint extends RigidBody {
 
-  @Getter private String name;
-  @Getter private double x;
-  @Getter private double y;
-  @Getter private double vx;
-  @Getter private double vy;
-  @Getter private double ax;
-  @Getter private double ay;
-  @Getter private double mass;
+  @Getter private final String name;
+  @Getter private final SingleKinematicModel.Type type = SingleKinematicModel.Type.MASS_POINT;
 
-  @Override
-  public final KinematicModel.Type type() {
-    return KinematicModel.Type.MASS_POINT;
-  }
+  @Getter private final double x;
+  @Getter private final double y;
+  @Getter private final double vx;
+  @Getter private final double vy;
+  @Getter private final double ax;
+  @Getter private final double ay;
+  @Getter private final double mass;
+  @Getter private final double theta = 0.0;
+  @Getter private final double omega = 0.0;
+  @Getter private final double alpha = 0.0;
+  @Getter private final double momentOfInertia = Double.POSITIVE_INFINITY;
 
-  @Override
-  public final double theta() {
-    return 0;
-  }
-
-  @Override
-  public final double omega() {
-    return 0;
-  }
-
-  @Override
-  public final double alpha() {
-    return 0;
-  }
-
-  @Override
-  public final double momentOfInertia() {
-    return Double.POSITIVE_INFINITY;
-  }
+  @Getter private final Circle shape;
+  @Getter private final Appearance appearance;
 
   @Override
   public MassPoint merge(Map<String, ?> map) {
     MassPointBuilder builder = toBuilder();
     UnpackHelper<MassPointBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
-    helper.unpack("x", Double.class, MassPointBuilder::x);
-    helper.unpack("y", Double.class, MassPointBuilder::y);
-    helper.unpack("vx", Double.class, MassPointBuilder::vx);
-    helper.unpack("vy", Double.class, MassPointBuilder::vy);
-    helper.unpack("ax", Double.class, MassPointBuilder::ax);
-    helper.unpack("ay", Double.class, MassPointBuilder::ay);
+    helper.unpack("x", MassPointBuilder::x);
+    helper.unpack("y", MassPointBuilder::y);
+    helper.unpack("vx", MassPointBuilder::vx);
+    helper.unpack("vy", MassPointBuilder::vy);
+    helper.unpack("ax", MassPointBuilder::ax);
+    helper.unpack("ay", MassPointBuilder::ay);
     return helper.getBuilder().build();
   }
 
   public static MassPoint of(Map<String, ?> map) {
     MassPointBuilder builder = newBuilder();
     UnpackHelper<MassPointBuilder> h = UnpackHelper.of(builder, map, MassPoint.class);
-    h.unpack("mass", Double.class, MassPointBuilder::mass, checkExistence(), checkPositivity());
     h.unpack("name", String.class, MassPointBuilder::name, checkExistence());
-    h.unpack("x", Double.class, MassPointBuilder::x);
-    h.unpack("y", Double.class, MassPointBuilder::y);
-    h.unpack("vx", Double.class, MassPointBuilder::vx);
-    h.unpack("vy", Double.class, MassPointBuilder::vy);
-    h.unpack("ax", Double.class, MassPointBuilder::ax);
-    h.unpack("ay", Double.class, MassPointBuilder::ay);
-    return h.getBuilder().build();
+
+    h.unpack("mass", MassPointBuilder::mass, checkExistence(), checkPositivity());
+    h.unpack("x", MassPointBuilder::x);
+    h.unpack("y", MassPointBuilder::y);
+    h.unpack("vx", MassPointBuilder::vx);
+    h.unpack("vy", MassPointBuilder::vy);
+    h.unpack("ax", MassPointBuilder::ax);
+    h.unpack("ay", MassPointBuilder::ay);
+
+    // TODO: supporting more shapes
+    Circle shape = Circle.of(map);
+    Appearance appearance = Appearance.of(map);
+
+    return h.getBuilder().shape(shape).appearance(appearance).build();
   }
 
   @Override
@@ -125,5 +123,12 @@ public class MassPoint extends RigidBody {
             .put(cof(this, "vy-upwind"), constant(), -vy() - ay() * timeStep)
             .build();
     return answer;
+  }
+
+  @Override
+  public void paint() {
+    Application.getPainterFactory()
+        .getCirclePainter()
+        .paint(new Coordinate(x, y), shape, appearance);
   }
 }

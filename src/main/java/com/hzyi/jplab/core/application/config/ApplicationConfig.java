@@ -26,10 +26,13 @@ public class ApplicationConfig {
   /* The refresh period of the animation in seconds. */
   private double refreshPeriod = 0.02;
 
-  /* The Assembly config, described in a list of components. */
-  private List<ComponentConfig> assembly = new ArrayList<>();
+  /* The kinematic model configs. */
+  private List<KinematicModelConfig> kinematicModels = new ArrayList<>();
 
-  /* The field configs, to be merged with assembly into AssemblyConfig. */
+  /* The connector configs. */
+  private List<ConnectorConfig> connectors = new ArrayList<>();
+
+  /* The field configs. */
   private List<FieldConfig> fields = new ArrayList<>();
 
   /* The timeline config. */
@@ -42,61 +45,39 @@ public class ApplicationConfig {
   @Builder
   @Data
   @NoArgsConstructor
-  public static class ComponentConfig {
+  public static class KinematicModelConfig {
 
-    /* The name of the component. */
     private String name;
 
-    /* The initial kinematic model spec of this component. */
-    private KinematicModelConfig kinematicModel;
+    /* The type of this kinematic model. Supported values are MASS_POINT and STATIC_MODEL. */
+    private com.hzyi.jplab.core.model.kinematic.SingleKinematicModel.Type type;
 
-    /* The shape of this component. */
-    private ShapeConfig shape;
-
-    /* The appearnce of this component. Including configs such as color and filling style. */
-    private Map<String, Object> appearance = new HashMap<>();
-
-    /* Extra details of the component. */
-    @Singular private Map<String, Object> componentSpecs = new HashMap<>();
-
-    @AllArgsConstructor
-    @Builder
-    @Data
-    @NoArgsConstructor
-    public static class KinematicModelConfig {
-
-      /* The type of this kinematic model. Supported values are SPRING_MODEL, MASS_POINT and STATIC_MODEL. */
-      private com.hzyi.jplab.core.model.kinematic.KinematicModel.Type type;
-
-      /* Extra details of the kinematic model. */
-      @Singular private Map<String, Object> kinematicModelSpecs = new HashMap<>();
-
-      @JsonAnySetter
-      public void setAnyProperty(String key, Object value) {
-        kinematicModelSpecs.put(key, value);
-      }
-    }
-
-    @AllArgsConstructor
-    @Builder
-    @Data
-    @NoArgsConstructor
-    public static class ShapeConfig {
-      /* The type of the shape. Supported values are CIRCLE, ZIGZAG_LINE and EDGE. */
-      private com.hzyi.jplab.core.model.shape.Shape.Type type;
-
-      /* Extra details of the shape. */
-      @Singular private Map<String, Object> shapeSpecs = new HashMap<>();
-
-      @JsonAnySetter
-      public void setAnyProperty(String key, Object value) {
-        shapeSpecs.put(key, value);
-      }
-    }
+    /* Extra details of the kinematic model. */
+    @Singular private Map<String, Object> kinematicModelSpecs = new HashMap<>();
 
     @JsonAnySetter
     public void setAnyProperty(String key, Object value) {
-      componentSpecs.put(key, value);
+      kinematicModelSpecs.put(key, value);
+    }
+  }
+
+  @AllArgsConstructor
+  @Builder
+  @Data
+  @NoArgsConstructor
+  public static class ConnectorConfig {
+
+    private String name;
+
+    /* The type of this kinematic model. Supported values are SPRING_MODEL, MASS_POINT and STATIC_MODEL. */
+    private com.hzyi.jplab.core.model.kinematic.Connector.Type type;
+
+    /* Extra details of the kinematic model. */
+    @Singular private Map<String, Object> connectorSpecs = new HashMap<>();
+
+    @JsonAnySetter
+    public void setAnyProperty(String key, Object value) {
+      connectorSpecs.put(key, value);
     }
   }
 
@@ -105,6 +86,8 @@ public class ApplicationConfig {
   @Data
   @NoArgsConstructor
   public static class FieldConfig {
+
+    private String name;
 
     /* The type of the physical field. Supported values include GRAVITY. */
     private Type type;

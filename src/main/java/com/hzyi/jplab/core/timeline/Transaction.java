@@ -1,7 +1,7 @@
 package com.hzyi.jplab.core.timeline;
 
 import com.google.common.base.Preconditions;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
 import java.util.function.Function;
 
 public class Transaction {
@@ -20,10 +20,9 @@ public class Transaction {
 
   private Verifier verifier;
 
-  AssemblySnapshot run(
-      AssemblySnapshot snapshot, Function<AssemblySnapshot, AssemblySnapshot> runner) {
+  Assembly run(Assembly snapshot, Function<Assembly, Assembly> runner) {
     once.run();
-    AssemblySnapshot finishing = runner.apply(snapshot);
+    Assembly finishing = runner.apply(snapshot);
     if (verifier == null) {
       return finishing;
     }

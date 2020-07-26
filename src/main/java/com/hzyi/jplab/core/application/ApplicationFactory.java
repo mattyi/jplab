@@ -5,33 +5,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
-import com.hzyi.jplab.core.model.Component;
-import com.hzyi.jplab.core.model.InstantiatingComponent;
 import com.hzyi.jplab.core.model.kinematic.Connector;
 import com.hzyi.jplab.core.model.kinematic.Field;
 import com.hzyi.jplab.core.model.kinematic.GravityField;
-import com.hzyi.jplab.core.model.kinematic.KinematicModel;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.RodModel;
 import com.hzyi.jplab.core.model.kinematic.RopeModel;
 import com.hzyi.jplab.core.model.kinematic.SingleKinematicModel;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
-import com.hzyi.jplab.core.model.shape.Appearance;
-import com.hzyi.jplab.core.model.shape.Catenary;
-import com.hzyi.jplab.core.model.shape.Circle;
-import com.hzyi.jplab.core.model.shape.Edge;
-import com.hzyi.jplab.core.model.shape.Line;
-import com.hzyi.jplab.core.model.shape.Shape;
-import com.hzyi.jplab.core.model.shape.ZigzagLine;
-import com.hzyi.jplab.core.painter.CatenaryPainter;
-import com.hzyi.jplab.core.painter.CirclePainter;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
-import com.hzyi.jplab.core.painter.EdgePainter;
-import com.hzyi.jplab.core.painter.LinePainter;
 import com.hzyi.jplab.core.painter.PainterFactory;
-import com.hzyi.jplab.core.painter.ZigzagLinePainter;
 import com.hzyi.jplab.core.timeline.NumericTimeline;
 import com.hzyi.jplab.core.timeline.Timeline;
 import java.util.List;
@@ -48,11 +32,16 @@ public class ApplicationFactory {
     Canvas canvas = createCanvas(config.getCanvas());
     CoordinateTransformer transformer = createCoordinateTransformer(canvas, config.getCanvas());
     PainterFactory painterFactory = createPainterFactory(canvas, transformer);
-    Assembly assembly = createAssembly(config.getAssembly(), config.getFields(), painterFactory);
-    Timeline timeline = createTimeline(assembly.getInitialAssemblySnapshot(), config.getTimeline());
+    Assembly initialAssembly =
+        createInitialAssembly(
+            config.getKinematicModels(),
+            config.getConnectors(),
+            config.getFields(),
+            painterFactory);
+    Timeline timeline = createTimeline(initialAssembly, config.getTimeline());
     Application.init(
         name,
-        assembly,
+        initialAssembly,
         controller,
         canvas,
         transformer,
@@ -62,11 +51,11 @@ public class ApplicationFactory {
   }
 
   private static Timeline createTimeline(
-      AssemblySnapshot initialSnapshot, ApplicationConfig.TimelineConfig timelineConfig) {
+      Assembly initialAssembly, ApplicationConfig.TimelineConfig timelineConfig) {
     switch (timelineConfig.getType()) {
       case NUMERIC:
         return new NumericTimeline(
-            initialSnapshot, (Double) timelineConfig.getTimelineSpecs().get("time_step"));
+            initialAssembly, (Double) timelineConfig.getTimelineSpecs().get("time_step"));
       case FIXED:
         throw new UnsupportedOperationException("fixed timeline not implemented.");
     }
@@ -87,116 +76,56 @@ public class ApplicationFactory {
     return new PainterFactory(canvas, transformer);
   }
 
-  private static Assembly createAssembly(
-      List<ApplicationConfig.ComponentConfig> componentConfigs,
+  private static Assembly createInitialAssembly(
+      List<ApplicationConfig.KinematicModelConfig> kinematicModelConfigs,
+      List<ApplicationConfig.ConnectorConfig> connectorConfigs,
       List<ApplicationConfig.FieldConfig> fieldConfigs,
       PainterFactory painterFactory) {
-    Assembly assembly = Assembly.getInstance();
-    for (ApplicationConfig.ComponentConfig config : componentConfigs) {
-      if (config.getKinematicModel().getType().isSingleModel()) {
-        assembly.withComponent(createComponent(config, painterFactory, assembly));
-      }
+    Assembly assembly = Assembly.empty();
+    for (ApplicationConfig.KinematicModelConfig config : kinematicModelConfigs) {
+      assembly.withComponent(createKinematicModel(config));
     }
-    for (ApplicationConfig.ComponentConfig config : componentConfigs) {
-      if (config.getKinematicModel().getType().isConnector()) {
-        assembly.withComponent(createComponent(config, painterFactory, assembly));
-      }
+    for (ApplicationConfig.ConnectorConfig config : connectorConfigs) {
+      assembly.withComponent(createConnector(config, assembly));
     }
 
     for (ApplicationConfig.FieldConfig config : fieldConfigs) {
-      assembly.withField(createField(config));
+      assembly.withComponent(createField(config));
     }
     return assembly;
   }
 
-  private static Component createComponent(
-      ApplicationConfig.ComponentConfig componentConfig,
-      PainterFactory painterFactory,
-      Assembly assembly) {
-    Shape shape = createShape(componentConfig.getShape());
-    String name = componentConfig.getName();
-    KinematicModel model =
-        createKinematicModel(componentConfig.getKinematicModel(), name, assembly);
-    Appearance appearance = Appearance.unpack(componentConfig.getAppearance());
-    Shape.Type shapeType = componentConfig.getShape().getType();
-    KinematicModel.Type kinematicModelType = componentConfig.getKinematicModel().getType();
-
-    if (shapeType == Shape.Type.CIRCLE && kinematicModelType == KinematicModel.Type.MASS_POINT) {
-      return new InstantiatingComponent<SingleKinematicModel, Circle, CirclePainter>(
-          name, (MassPoint) model, (Circle) shape, painterFactory.getCirclePainter(), appearance);
-    } else if (shapeType == Shape.Type.EDGE
-        && kinematicModelType == KinematicModel.Type.STATIC_MODEL) {
-      return new InstantiatingComponent<StaticModel, Edge, EdgePainter>(
-          name, (StaticModel) model, (Edge) shape, painterFactory.getEdgePainter(), appearance);
-    } else if (shapeType == Shape.Type.ZIGZAG_LINE
-        && kinematicModelType == KinematicModel.Type.SPRING_MODEL) {
-      return new InstantiatingComponent<Connector, ZigzagLine, ZigzagLinePainter>(
-          name,
-          (Connector) model,
-          (ZigzagLine) shape,
-          painterFactory.getZigzagLinePainter(),
-          appearance);
-    } else if (shapeType == Shape.Type.LINE
-        && kinematicModelType == KinematicModel.Type.ROD_MODEL) {
-      return new InstantiatingComponent<Connector, Line, LinePainter>(
-          name, (Connector) model, (Line) shape, painterFactory.getLinePainter(), appearance);
-    } else if (shapeType == Shape.Type.CATENARY
-        && kinematicModelType == KinematicModel.Type.ROPE_MODEL) {
-      return new InstantiatingComponent<RopeModel, Catenary, CatenaryPainter>(
-          name,
-          (RopeModel) model,
-          (Catenary) shape,
-          painterFactory.getCatenaryPainter(),
-          appearance);
-    }
-    checkArgument(
-        false,
-        "unsupported combination of shape and kinematic model: %s, %s",
-        shapeType,
-        kinematicModelType);
-    return null;
-  }
-
-  public static Shape createShape(ApplicationConfig.ComponentConfig.ShapeConfig shapeConfig) {
-    switch (shapeConfig.getType()) {
-      case CIRCLE:
-        return Circle.unpack(shapeConfig.getShapeSpecs());
-      case ZIGZAG_LINE:
-        return ZigzagLine.unpack(shapeConfig.getShapeSpecs());
-      case EDGE:
-        return Edge.unpack(shapeConfig.getShapeSpecs());
-      case LINE:
-        return Line.unpack(shapeConfig.getShapeSpecs());
-      case CATENARY:
-        return Catenary.unpack(shapeConfig.getShapeSpecs());
-      default:
-        checkArgument(false, "unsupported shape type: %s", shapeConfig.getType());
-    }
-    return null;
-  }
-
-  private static KinematicModel createKinematicModel(
-      ApplicationConfig.ComponentConfig.KinematicModelConfig config,
-      String componentName,
-      Assembly assembly) {
+  private static SingleKinematicModel createKinematicModel(
+      ApplicationConfig.KinematicModelConfig config) {
     Map<String, Object> specs = config.getKinematicModelSpecs();
-    specs.put("name", componentName);
+    specs.put("name", config.getName());
     switch (config.getType()) {
       case MASS_POINT:
         return MassPoint.of(specs);
       case STATIC_MODEL:
         return StaticModel.of(specs);
-      case SPRING_MODEL:
-        specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
-        return SpringModel.of(specs);
-      case ROD_MODEL:
-        specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
-        return RodModel.of(specs);
-      case ROPE_MODEL:
-        specs.put("_assembly_snapshot", assembly.getInitialAssemblySnapshot());
-        return RopeModel.of(specs);
       default:
         checkArgument(false, "unsupported kinematic model type: %s", config.getType());
+    }
+    return null;
+  }
+
+  private static Connector createConnector(
+      ApplicationConfig.ConnectorConfig config, Assembly assembly) {
+    Map<String, Object> specs = config.getConnectorSpecs();
+    specs.put("name", config.getName());
+    switch (config.getType()) {
+      case SPRING_MODEL:
+        specs.put("_assembly", assembly);
+        return SpringModel.of(specs);
+      case ROD_MODEL:
+        specs.put("_assembly", assembly);
+        return RodModel.of(specs);
+      case ROPE_MODEL:
+        specs.put("_assembly", assembly);
+        return RopeModel.of(specs);
+      default:
+        checkArgument(false, "unsupported connector type: %s", config.getType());
     }
     return null;
   }

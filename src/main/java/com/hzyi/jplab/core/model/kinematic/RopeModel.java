@@ -7,22 +7,25 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
+import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.Catenary;
 import com.hzyi.jplab.core.timeline.AlwaysPassVerifier;
 import com.hzyi.jplab.core.timeline.Verifier;
 import com.hzyi.jplab.core.util.Coordinate;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/** A RopeModel is a rigid rope. It can have pushing tensions only, and cannot have deformation. */
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
@@ -41,22 +44,22 @@ public class RopeModel extends Connector implements VerifierProvider {
     }
 
     @Override
-    public boolean verify(AssemblySnapshot start, AssemblySnapshot finish) {
-      RopeModel rope = (RopeModel) (finish.getKinematicModel(this.name));
+    public boolean verify(Assembly start, Assembly finish) {
+      RopeModel rope = (RopeModel) (finish.getConnector(this.name));
       return rope.impulse < 0;
     }
 
     @Override
-    public AssemblySnapshot onStart(AssemblySnapshot snapshot) {
+    public Assembly onStart(Assembly snapshot) {
       snapshot = snapshot.copy();
-      RopeModel rope = (RopeModel) (snapshot.getKinematicModel(this.name));
+      RopeModel rope = (RopeModel) (snapshot.getConnector(this.name));
       rope = rope.toBuilder().isStretched(false).build();
-      snapshot.updateKinematicModel(rope);
+      snapshot.updateComponent(rope);
       return snapshot;
     }
 
     @Override
-    public AssemblySnapshot onFinish(AssemblySnapshot snapshot) {
+    public Assembly onFinish(Assembly snapshot) {
       return snapshot;
     }
 
@@ -78,23 +81,23 @@ public class RopeModel extends Connector implements VerifierProvider {
     }
 
     @Override
-    public boolean verify(AssemblySnapshot start, AssemblySnapshot finish) {
-      RopeModel fr = (RopeModel) (finish.getKinematicModel(this.name));
-      RopeModel sr = (RopeModel) (start.getKinematicModel(this.name));
+    public boolean verify(Assembly start, Assembly finish) {
+      RopeModel fr = (RopeModel) (finish.getConnector(this.name));
+      RopeModel sr = (RopeModel) (start.getConnector(this.name));
       return fr.distance() < STRETCH_LOWER_BOUNDARY * fr.length() || fr.distance() < sr.distance();
     }
 
     @Override
-    public AssemblySnapshot onStart(AssemblySnapshot snapshot) {
+    public Assembly onStart(Assembly snapshot) {
       snapshot = snapshot.copy();
-      RopeModel rope = (RopeModel) (snapshot.getKinematicModel(this.name));
+      RopeModel rope = (RopeModel) (snapshot.getConnector(this.name));
       rope = rope.toBuilder().isStretched(true).build();
-      snapshot.updateKinematicModel(rope);
+      snapshot.updateComponent(rope);
       return snapshot;
     }
 
     @Override
-    public AssemblySnapshot onFinish(AssemblySnapshot snapshot) {
+    public Assembly onFinish(Assembly snapshot) {
       return snapshot;
     }
 
@@ -104,32 +107,22 @@ public class RopeModel extends Connector implements VerifierProvider {
     }
   }
 
-  @Getter private String name;
-  @Getter private double length;
-  private double relativePointUX;
-  private double relativePointUY;
-  private double relativePointVX;
-  private double relativePointVY;
-  @Getter private boolean isStretched;
-  @Getter private double force;
-  @Getter private double impulse;
+  @Getter private final String name;
+  @Getter private final Connector.Type type = Connector.Type.ROPE_MODEL;
+
+  private final double length;
+  @Getter private final Coordinate relativePointU;
+  @Getter private final Coordinate relativePointV;
+  @Getter private final boolean isStretched;
+  @Getter private final double force;
+  @Getter private final double impulse;
   @Getter private final SingleKinematicModel modelU;
   @Getter private final SingleKinematicModel modelV;
 
-  public final KinematicModel.Type type() {
-    return KinematicModel.Type.ROPE_MODEL;
-  }
+  @Getter private final Catenary shape;
+  @Getter private final Appearance appearance;
 
-  @Override
-  public Coordinate relativePointU() {
-    return new Coordinate(relativePointUX, relativePointUY);
-  }
-
-  @Override
-  public Coordinate relativePointV() {
-    return new Coordinate(relativePointVX, relativePointVY);
-  }
-
+  // lombok doesn't override the method in parent class
   @Override
   public double length() {
     return length;
@@ -209,20 +202,40 @@ public class RopeModel extends Connector implements VerifierProvider {
   public static RopeModel of(Map<String, ?> map) {
     RopeModelBuilder builder = newBuilder();
     UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
-    BiFunction<RopeModelBuilder, String, RopeModelBuilder> collectorU =
-        Connector.connectedModelExtractor(map, "Rope", "model_u");
-    BiFunction<RopeModelBuilder, String, RopeModelBuilder> collectorV =
-        Connector.connectedModelExtractor(map, "Rope", "model_v");
+
     helper.unpack("name", String.class, RopeModelBuilder::name, checkExistence());
-    helper.unpack("model_u", String.class, collectorU, checkExistence());
-    helper.unpack("model_v", String.class, collectorV, checkExistence());
-    helper.unpack("relative_point_ux", Double.class, RopeModelBuilder::relativePointUX);
-    helper.unpack("relative_point_uy", Double.class, RopeModelBuilder::relativePointUY);
-    helper.unpack("relative_point_vx", Double.class, RopeModelBuilder::relativePointVX);
-    helper.unpack("relative_point_vy", Double.class, RopeModelBuilder::relativePointVY);
+    helper.unpack(
+        "model_u",
+        String.class,
+        Connector.connectedModelExtractor(map, "Rope", "model_u"),
+        checkExistence());
+    helper.unpack(
+        "model_v",
+        String.class,
+        Connector.connectedModelExtractor(map, "Rope", "model_v"),
+        checkExistence());
+    helper.unpack(
+        "relative_point_ux",
+        Double.class,
+        "relative_point_uy",
+        Double.class,
+        Connector.coordinateExtractor(RopeModelBuilder::relativePointU));
+    helper.unpack(
+        "relative_point_vx",
+        Double.class,
+        "relative_point_vy",
+        Double.class,
+        Connector.coordinateExtractor(RopeModelBuilder::relativePointV));
     helper.unpack("length", Double.class, RopeModelBuilder::length, checkExistence());
     helper.unpack("is_stretched", Boolean.class, RopeModelBuilder::isStretched);
     return helper.getBuilder().build();
+  }
+
+  public void paint() {
+
+    Application.getPainterFactory()
+        .getCatenaryPainter()
+        .paint(relativePointU, relativePointV, name, length, isStretched, appearance);
   }
 
   private double distance() {

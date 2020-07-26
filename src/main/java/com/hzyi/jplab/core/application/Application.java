@@ -4,7 +4,6 @@ import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.timeline.Timeline;
@@ -17,7 +16,7 @@ import lombok.Getter;
 public class Application extends javafx.application.Application {
 
   @Getter private static String name;
-  @Getter private static Assembly assembly;
+  @Getter private static Assembly initialAssembly;
   @Getter private static Controller controller;
   @Getter private static Timeline timeline;
   @Getter private static PainterFactory painterFactory;
@@ -33,7 +32,7 @@ public class Application extends javafx.application.Application {
 
   public static void init(
       String name,
-      Assembly assembly,
+      Assembly initialAssembly,
       Controller controller,
       Canvas canvas,
       CoordinateTransformer transformer,
@@ -44,7 +43,7 @@ public class Application extends javafx.application.Application {
       throw new IllegalStateException("application initialized twice");
     }
     Application.name = name;
-    Application.assembly = assembly;
+    Application.initialAssembly = initialAssembly;
     Application.controller = controller;
     Application.canvas = canvas;
     Application.coordinateTransformer = transformer;
@@ -56,7 +55,7 @@ public class Application extends javafx.application.Application {
 
   public static void reset() {
     Application.name = null;
-    Application.assembly = null;
+    Application.initialAssembly = null;
     Application.controller = null;
     Application.painterFactory = null;
     Application.timeline = null;
@@ -84,8 +83,7 @@ public class Application extends javafx.application.Application {
 
           @Override
           public void run() {
-            AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
-            assembly.paint(snapshot);
+            timeline.getLatestAssembly().paint();
             nextRefreshThreshold += refreshPeriod;
             while (timeline.getTimestamp() < nextRefreshThreshold) {
               timeline.advance();

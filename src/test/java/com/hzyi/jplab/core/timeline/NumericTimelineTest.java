@@ -4,7 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.Assembly;
-import com.hzyi.jplab.core.model.AssemblySnapshot;
 import com.hzyi.jplab.core.model.kinematic.MassPoint;
 import com.hzyi.jplab.core.model.kinematic.SpringModel;
 import com.hzyi.jplab.core.model.kinematic.StaticModel;
@@ -21,7 +20,7 @@ public class NumericTimelineTest {
   private MassPoint massPoint;
   private SpringModel springModel;
   private StaticModel staticModel;
-  private AssemblySnapshot snapshot;
+  private Assembly assembly;
 
   @Before
   public void setUp() {
@@ -35,35 +34,35 @@ public class NumericTimelineTest {
             .modelU(massPoint)
             .modelV(staticModel)
             .build();
-    snapshot =
-        AssemblySnapshot.empty()
-            .withKinematicModel(massPoint)
-            .withKinematicModel(staticModel)
-            .withKinematicModel(springModel);
-    snapshot.makeImmutable();
+    assembly =
+        Assembly.empty()
+            .withComponent(massPoint)
+            .withComponent(staticModel)
+            .withComponent(springModel);
+    assembly.makeImmutable();
   }
 
   @Test
   public void testAdvanceTimeStep() {
     Application.init(
         null,
-        Assembly.getInstance(),
+        assembly,
         null,
         null,
         CoordinateTransformer.getTestingCoordinateTransformer(),
         PainterFactory.getTestingPainterFactory(),
         null,
         1.0);
-    NumericTimeline timeline = new NumericTimeline(snapshot);
+    NumericTimeline timeline = new NumericTimeline(assembly);
     timeline.advance(1);
-    AssemblySnapshot snapshot = timeline.getLatestAssemblySnapshot();
-    MassPoint newMassPoint = (MassPoint) snapshot.getKinematicModel("mass");
+    Assembly assembly = timeline.getLatestAssembly();
+    MassPoint newMassPoint = (MassPoint) assembly.getComponent("mass");
     assertThat(newMassPoint.x()).isEqualTo(1.0);
     assertThat(newMassPoint.y()).isEqualTo(0.0);
-    StaticModel newStaticModel = (StaticModel) snapshot.getKinematicModel("wall");
+    StaticModel newStaticModel = (StaticModel) assembly.getComponent("wall");
     assertThat(newStaticModel.x()).isEqualTo(2.0);
     assertThat(newStaticModel.y()).isEqualTo(0.0);
-    SpringModel newSpring = (SpringModel) snapshot.getKinematicModel("spring");
+    SpringModel newSpring = (SpringModel) assembly.getComponent("spring");
     assertThat(newSpring.modelU()).isEqualTo(newMassPoint);
     assertThat(newSpring.modelV()).isEqualTo(newStaticModel);
     Application.reset();

@@ -3,17 +3,14 @@ package com.hzyi.jplab.core.painter;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.hzyi.jplab.core.model.kinematic.RopeModel;
 import com.hzyi.jplab.core.model.shape.Appearance;
-import com.hzyi.jplab.core.model.shape.Catenary;
 import com.hzyi.jplab.core.util.Coordinate;
-import com.hzyi.jplab.core.util.Coordinates;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import lombok.Getter;
 
-public class CatenaryPainter implements Painter<RopeModel, Catenary> {
+public class CatenaryPainter {
 
   // If set to true, CatenaryPainter will use the nearest approximation of a and o0 if
   // the maximum number of iteration is reached. Otherwise CatenaryPainter will throw
@@ -36,26 +33,23 @@ public class CatenaryPainter implements Painter<RopeModel, Catenary> {
     this.painter = painter;
   }
 
-  @Override
-  public void paint(Catenary catenary, RopeModel model, Appearance appearance) {
-    Coordinate pointU = model.pointU();
-    Coordinate pointV = model.pointV();
-    double length = Coordinates.distance(pointU, pointV);
-    if (model.isStretched()) {
-      painter.drawLine(pointU, pointV, appearance);
-    } else {
-      drawCatenary(pointU, pointV, model, appearance);
-    }
-  }
-
-  private void drawCatenary(
-      Coordinate pointU, Coordinate pointV, RopeModel model, Appearance appearance) {
+  public void paint(
+      Coordinate pointU,
+      Coordinate pointV,
+      String name,
+      double length,
+      boolean isStretched,
+      Appearance appearance) {
     if (pointU.x() > pointV.x()) {
-      drawCatenary(pointV, pointU, model, appearance);
+      paint(pointV, pointU, name, length, isStretched, appearance);
       return;
     }
-    double a = a(pointU, pointV, model.length(), model.name());
-    Coordinate o0 = o0(pointU, pointV, model.name(), a);
+    if (isStretched) {
+      painter.drawLine(pointU, pointV, appearance);
+      return;
+    }
+    double a = a(pointU, pointV, length, name);
+    Coordinate o0 = o0(pointU, pointV, name, a);
     Coordinate from = pointU;
     double x1 = pointU.x();
     double x2 = pointV.x();

@@ -1,13 +1,13 @@
 package com.hzyi.jplab.core.timeline;
 
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
 
 public interface Verifier {
-  boolean verify(AssemblySnapshot start, AssemblySnapshot finish);
+  boolean verify(Assembly start, Assembly finish);
 
-  AssemblySnapshot onStart(AssemblySnapshot snapshot);
+  Assembly onStart(Assembly snapshot);
 
-  AssemblySnapshot onFinish(AssemblySnapshot snapshot);
+  Assembly onFinish(Assembly snapshot);
 
   Verifier newVerifier();
 }

@@ -4,8 +4,11 @@ import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
+import com.hzyi.jplab.core.model.shape.Appearance;
+import com.hzyi.jplab.core.model.shape.Edge;
 import com.hzyi.jplab.core.util.UnpackHelper;
 import java.util.Collections;
 import java.util.List;
@@ -16,51 +19,28 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/** A StaticModel is a kinematic model that is fixed to a point. */
 @ToString
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(builderMethodName = "newBuilder", toBuilder = true)
 public class StaticModel extends SingleKinematicModel {
 
-  @Getter private String name;
+  @Getter private final String name;
+  @Getter private final SingleKinematicModel.Type type = SingleKinematicModel.Type.STATIC_MODEL;
+
   @Getter private final double x;
   @Getter private final double y;
   @Getter private final double theta;
+  @Getter private final double vx = 0.0;
+  @Getter private final double vy = 0.0;
+  @Getter private final double ax = 0.0;
+  @Getter private final double ay = 0.0;
+  @Getter private final double alpha = 0.0;
+  @Getter private final double omega = 0.0;
 
-  @Override
-  public final KinematicModel.Type type() {
-    return KinematicModel.Type.STATIC_MODEL;
-  }
-
-  @Override
-  public final double vx() {
-    return 0;
-  }
-
-  @Override
-  public final double vy() {
-    return 0;
-  }
-
-  @Override
-  public final double omega() {
-    return 0;
-  }
-
-  @Override
-  public final double ax() {
-    return 0;
-  }
-
-  @Override
-  public final double ay() {
-    return 0;
-  }
-
-  @Override
-  public final double alpha() {
-    return 0;
-  }
+  @Getter private final Edge shape;
+  @Getter private final Appearance appearance;
 
   @Override
   public StaticModel merge(Map<String, ?> map) {
@@ -74,7 +54,10 @@ public class StaticModel extends SingleKinematicModel {
     helper.unpack("y", Double.class, StaticModelBuilder::y);
     helper.unpack("theta", Double.class, StaticModelBuilder::theta);
     helper.unpack("name", String.class, StaticModelBuilder::name, checkExistence());
-    return helper.getBuilder().build();
+
+    Edge shape = Edge.of(map);
+    Appearance appearance = Appearance.of(map);
+    return helper.getBuilder().shape(shape).appearance(appearance).build();
   }
 
   @Override
@@ -90,5 +73,10 @@ public class StaticModel extends SingleKinematicModel {
   @Override
   public Table<Constraint, Property, Double> codependentMultipliers(double timeStep) {
     return ImmutableTable.of();
+  }
+
+  @Override
+  public void paint() {
+    Application.getPainterFactory().getEdgePainter().paint(x, y, theta, shape, appearance);
   }
 }

@@ -1,38 +1,38 @@
 package com.hzyi.jplab.core.timeline;
 
-import com.hzyi.jplab.core.model.AssemblySnapshot;
+import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.util.DictionaryMatrix;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-/** A timeline that updates AssemblySnapshot through numeric calculations. */
+/** A timeline that updates Assembly through numeric calculations. */
 @EqualsAndHashCode
 public class NumericTimeline implements Timeline {
 
-  private final AssemblySnapshot initialAssemblySnapshot;
+  private final Assembly initialAssembly;
   @Getter private final double timeStep;
   @Getter private double timestamp;
-  @Getter private AssemblySnapshot latestAssemblySnapshot;
+  @Getter private Assembly latestAssembly;
 
-  public NumericTimeline(AssemblySnapshot initialAssemblySnapshot) {
-    this(initialAssemblySnapshot, 0.02);
+  public NumericTimeline(Assembly initialAssembly) {
+    this(initialAssembly, 0.02);
   }
 
-  public NumericTimeline(AssemblySnapshot initialAssemblySnapshot, double timeStep) {
-    this.initialAssemblySnapshot = initialAssemblySnapshot;
-    this.latestAssemblySnapshot = initialAssemblySnapshot;
+  public NumericTimeline(Assembly initialAssembly, double timeStep) {
+    this.initialAssembly = initialAssembly;
+    this.latestAssembly = initialAssembly;
     this.timeStep = timeStep;
   }
 
   @Override
   public void advance(double timeStep) {
     Transaction txn = new Transaction();
-    for (Verifier v : latestAssemblySnapshot.getVerifiers()) {
+    for (Verifier v : latestAssembly.getVerifiers()) {
       txn.withVerifier(v);
     }
-    latestAssemblySnapshot =
+    latestAssembly =
         txn.run(
-            latestAssemblySnapshot,
+            latestAssembly,
             s -> {
               DictionaryMatrix matrix = s.getCodependentMatrix(timeStep);
               return s.merge(matrix.getTableSolution());
