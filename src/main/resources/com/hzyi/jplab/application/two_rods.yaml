@@ -21,21 +21,24 @@ kinematic_models:
   length: 40.0
   inner_line_count: 4
   inner_line_height: 10.0
-  color: RED
-  line_width: 1.0
+  appearance:
+    color: RED
+    line_width: 1.0
 connectors:
 - name: rod
   type: ROD_MODEL
   model_u: item
   model_v: fix_point
-  color: BLUE
+  appearance:
+    color: BLUE
   line_width: 3.0
 - name: rod2
   type: ROD_MODEL
   model_u: item
   model_v: item2
-  color: BLUE
-  line_width: 3.0
+  appearance:
+    color: BLUE
+    line_width: 3.0
 fields:
 - type: GRAVITY
 timeline:

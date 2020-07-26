@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.model.shape.Appearance;
@@ -33,8 +34,8 @@ public class RodModel extends Connector {
   @Getter private final String name;
   @Getter private final Connector.Type type = Connector.Type.ROD_MODEL;
 
-  @Getter private final Coordinate relativePointU;
-  @Getter private final Coordinate relativePointV;
+  @Getter @Builder.Default private final Coordinate relativePointU = new Coordinate(0, 0);
+  @Getter @Builder.Default private final Coordinate relativePointV = new Coordinate(0, 0);
   @Getter private final double force;
   @Getter private SingleKinematicModel modelU;
   @Getter private SingleKinematicModel modelV;
@@ -96,15 +97,17 @@ public class RodModel extends Connector {
     return helper.getBuilder().build();
   }
 
-  public static RodModel of(Map<String, ?> map) {
+  public static RodModel of(ApplicationConfig.ConnectorConfig config) {
     RodModelBuilder builder = newBuilder();
-    UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, map, RodModel.class);
+    builder.name(config.getName());
+    Map<String, Object> specs = config.getConnectorSpecs();
+    UnpackHelper<RodModelBuilder> helper = UnpackHelper.of(builder, specs, RodModel.class);
     BiFunction<RodModelBuilder, String, RodModelBuilder> collectorU =
-        Connector.connectedModelExtractor(map, "Rod", "model_u");
+        Connector.connectedModelExtractor(specs, "Rod", "model_u");
     BiFunction<RodModelBuilder, String, RodModelBuilder> collectorV =
-        Connector.connectedModelExtractor(map, "Rod", "model_v");
+        Connector.connectedModelExtractor(specs, "Rod", "model_v");
 
-    helper.unpack("name", String.class, RodModelBuilder::name, checkExistence());
+    builder.name(config.getName());
     helper.unpack("model_u", String.class, collectorU, checkExistence());
     helper.unpack("model_v", String.class, collectorV, checkExistence());
 
@@ -121,8 +124,8 @@ public class RodModel extends Connector {
         Double.class,
         Connector.coordinateExtractor(RodModelBuilder::relativePointV));
 
-    Line shape = Line.of(map);
-    Appearance appearance = Appearance.of(map);
+    Line shape = Line.of(specs);
+    Appearance appearance = Appearance.of(config.getAppearance());
 
     RodModel rod = helper.getBuilder().shape(shape).appearance(appearance).build();
     return rod;

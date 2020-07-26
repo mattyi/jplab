@@ -9,7 +9,8 @@ kinematic_models:
   mass: 5.0
   vy: 65.0
   radius: 10.0
-  style: STROKE
+  appearance:
+    style: STROKE
 - name: fix_point
   type: STATIC_MODEL
   x: 0.0
@@ -18,16 +19,18 @@ kinematic_models:
   length: 40.0
   inner_line_count: 4
   inner_line_height: 10.0
-  color: BLACK
-  line_width: 1.0
+  appearance:
+    color: BLACK
+    line_width: 1.0
 connectors:
 - name: rope
   type: ROPE_MODEL
   model_u: item
   model_v: fix_point
   length: 105.0
-  color: BLUE
-  line_width: 2.0
+  appearance:
+    color: BLUE
+    line_width: 2.0
 fields:
 - name: gravity_field
   type: GRAVITY

@@ -97,13 +97,11 @@ public class ApplicationFactory {
 
   private static SingleKinematicModel createKinematicModel(
       ApplicationConfig.KinematicModelConfig config) {
-    Map<String, Object> specs = config.getKinematicModelSpecs();
-    specs.put("name", config.getName());
     switch (config.getType()) {
       case MASS_POINT:
-        return MassPoint.of(specs);
+        return MassPoint.of(config);
       case STATIC_MODEL:
-        return StaticModel.of(specs);
+        return StaticModel.of(config);
       default:
         checkArgument(false, "unsupported kinematic model type: %s", config.getType());
     }
@@ -113,17 +111,14 @@ public class ApplicationFactory {
   private static Connector createConnector(
       ApplicationConfig.ConnectorConfig config, Assembly assembly) {
     Map<String, Object> specs = config.getConnectorSpecs();
-    specs.put("name", config.getName());
+    specs.put("_assembly", assembly);
     switch (config.getType()) {
       case SPRING_MODEL:
-        specs.put("_assembly", assembly);
-        return SpringModel.of(specs);
+        return SpringModel.of(config);
       case ROD_MODEL:
-        specs.put("_assembly", assembly);
-        return RodModel.of(specs);
+        return RodModel.of(config);
       case ROPE_MODEL:
-        specs.put("_assembly", assembly);
-        return RopeModel.of(specs);
+        return RopeModel.of(config);
       default:
         checkArgument(false, "unsupported connector type: %s", config.getType());
     }

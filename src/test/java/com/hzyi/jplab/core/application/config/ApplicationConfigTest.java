@@ -30,6 +30,7 @@ public class ApplicationConfigTest {
             .kinematicModelSpec("vy", 0.0)
             .kinematicModelSpec("mass", 10.0)
             .kinematicModelSpec("radius", 20.0)
+            .appearance(appearanceOf())
             .build();
     ApplicationConfig.KinematicModelConfig wall =
         ApplicationConfig.KinematicModelConfig.builder()
@@ -40,8 +41,7 @@ public class ApplicationConfigTest {
             .kinematicModelSpec("inner_line_count", 4)
             .kinematicModelSpec("inner_line_height", 10.0)
             .kinematicModelSpec("length", 40.0)
-            .kinematicModelSpec("color", "RED")
-            .kinematicModelSpec("line_width", 1.0)
+            .appearance(appearanceOf("color", "RED", "line_width", 1.0))
             .build();
 
     ApplicationConfig.ConnectorConfig spring =
@@ -54,8 +54,7 @@ public class ApplicationConfigTest {
             .connectorSpec("model_v", "wall")
             .connectorSpec("zigzag_count", 10)
             .connectorSpec("width", 15.0)
-            .connectorSpec("color", "BLUE")
-            .connectorSpec("line_width", 3.0)
+            .appearance(appearanceOf("color", "BLUE", "line_width", 3.0))
             .build();
 
     ApplicationConfig.FieldConfig field =

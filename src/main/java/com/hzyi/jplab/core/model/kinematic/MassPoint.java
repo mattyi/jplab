@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.model.shape.Appearance;
@@ -65,11 +66,11 @@ public class MassPoint extends RigidBody {
     return helper.getBuilder().build();
   }
 
-  public static MassPoint of(Map<String, ?> map) {
+  public static MassPoint of(ApplicationConfig.KinematicModelConfig config) {
     MassPointBuilder builder = newBuilder();
-    UnpackHelper<MassPointBuilder> h = UnpackHelper.of(builder, map, MassPoint.class);
-    h.unpack("name", String.class, MassPointBuilder::name, checkExistence());
-
+    Map<String, Object> specs = config.getKinematicModelSpecs();
+    UnpackHelper<MassPointBuilder> h = UnpackHelper.of(builder, specs, MassPoint.class);
+    builder.name(config.getName());
     h.unpack("mass", MassPointBuilder::mass, checkExistence(), checkPositivity());
     h.unpack("x", MassPointBuilder::x);
     h.unpack("y", MassPointBuilder::y);
@@ -79,8 +80,8 @@ public class MassPoint extends RigidBody {
     h.unpack("ay", MassPointBuilder::ay);
 
     // TODO: supporting more shapes
-    Circle shape = Circle.of(map);
-    Appearance appearance = Appearance.of(map);
+    Circle shape = Circle.of(specs);
+    Appearance appearance = Appearance.of(config.getAppearance());
 
     return h.getBuilder().shape(shape).appearance(appearance).build();
   }

@@ -1,10 +1,9 @@
 package com.hzyi.jplab.core.model.kinematic;
 
-import static com.hzyi.jplab.core.util.UnpackHelper.checkExistence;
-
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.model.shape.Appearance;
@@ -47,16 +46,16 @@ public class StaticModel extends SingleKinematicModel {
     return this;
   }
 
-  public static StaticModel of(Map<String, ?> map) {
+  public static StaticModel of(ApplicationConfig.KinematicModelConfig config) {
     StaticModelBuilder builder = newBuilder();
-    UnpackHelper<StaticModelBuilder> helper = UnpackHelper.of(builder, map, MassPoint.class);
+    builder.name(config.getName());
+    Map<String, Object> specs = config.getKinematicModelSpecs();
+    UnpackHelper<StaticModelBuilder> helper = UnpackHelper.of(builder, specs, StaticModel.class);
     helper.unpack("x", Double.class, StaticModelBuilder::x);
     helper.unpack("y", Double.class, StaticModelBuilder::y);
     helper.unpack("theta", Double.class, StaticModelBuilder::theta);
-    helper.unpack("name", String.class, StaticModelBuilder::name, checkExistence());
-
-    Edge shape = Edge.of(map);
-    Appearance appearance = Appearance.of(map);
+    Edge shape = Edge.of(specs);
+    Appearance appearance = Appearance.of(config.getAppearance());
     return helper.getBuilder().shape(shape).appearance(appearance).build();
   }
 

@@ -55,6 +55,8 @@ public class ApplicationConfig {
     /* Extra details of the kinematic model. */
     @Singular private Map<String, Object> kinematicModelSpecs = new HashMap<>();
 
+    private Map<String, Object> appearance = new HashMap<>();
+
     @JsonAnySetter
     public void setAnyProperty(String key, Object value) {
       kinematicModelSpecs.put(key, value);
@@ -71,6 +73,8 @@ public class ApplicationConfig {
 
     /* The type of this kinematic model. Supported values are SPRING_MODEL, MASS_POINT and STATIC_MODEL. */
     private com.hzyi.jplab.core.model.kinematic.Connector.Type type;
+
+    private Map<String, Object> appearance = new HashMap<>();;
 
     /* Extra details of the kinematic model. */
     @Singular private Map<String, Object> connectorSpecs = new HashMap<>();

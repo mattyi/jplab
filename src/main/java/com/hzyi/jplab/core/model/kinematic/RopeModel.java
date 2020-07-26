@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
@@ -111,8 +112,8 @@ public class RopeModel extends Connector implements VerifierProvider {
   @Getter private final Connector.Type type = Connector.Type.ROPE_MODEL;
 
   private final double length;
-  @Getter private final Coordinate relativePointU;
-  @Getter private final Coordinate relativePointV;
+  @Getter @Builder.Default private final Coordinate relativePointU = new Coordinate(0, 0);
+  @Getter @Builder.Default private final Coordinate relativePointV = new Coordinate(0, 0);
   @Getter private final boolean isStretched;
   @Getter private final double force;
   @Getter private final double impulse;
@@ -199,20 +200,20 @@ public class RopeModel extends Connector implements VerifierProvider {
         isStretched ? new StretchedVerifier(this.name) : new UnstretchedVerifier(this.name));
   }
 
-  public static RopeModel of(Map<String, ?> map) {
+  public static RopeModel of(ApplicationConfig.ConnectorConfig config) {
     RopeModelBuilder builder = newBuilder();
-    UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, map, RopeModel.class);
-
-    helper.unpack("name", String.class, RopeModelBuilder::name, checkExistence());
+    Map<String, Object> specs = config.getConnectorSpecs();
+    UnpackHelper<RopeModelBuilder> helper = UnpackHelper.of(builder, specs, RopeModel.class);
+    builder.name(config.getName());
     helper.unpack(
         "model_u",
         String.class,
-        Connector.connectedModelExtractor(map, "Rope", "model_u"),
+        Connector.connectedModelExtractor(specs, "Rope", "model_u"),
         checkExistence());
     helper.unpack(
         "model_v",
         String.class,
-        Connector.connectedModelExtractor(map, "Rope", "model_v"),
+        Connector.connectedModelExtractor(specs, "Rope", "model_v"),
         checkExistence());
     helper.unpack(
         "relative_point_ux",
@@ -228,7 +229,9 @@ public class RopeModel extends Connector implements VerifierProvider {
         Connector.coordinateExtractor(RopeModelBuilder::relativePointV));
     helper.unpack("length", Double.class, RopeModelBuilder::length, checkExistence());
     helper.unpack("is_stretched", Boolean.class, RopeModelBuilder::isStretched);
-    return helper.getBuilder().build();
+    Catenary shape = Catenary.of(specs);
+    Appearance appearance = Appearance.of(config.getAppearance());
+    return helper.getBuilder().shape(shape).appearance(appearance).build();
   }
 
   public void paint() {

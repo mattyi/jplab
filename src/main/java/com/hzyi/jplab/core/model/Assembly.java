@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
+import com.hzyi.jplab.core.application.Application;
 import com.hzyi.jplab.core.model.kinematic.Connector;
 import com.hzyi.jplab.core.model.kinematic.ConstraintProvider;
 import com.hzyi.jplab.core.model.kinematic.MultiplierProvider;
@@ -115,6 +116,10 @@ public class Assembly {
   }
 
   public void paint() {
+    Application.getCanvas()
+        .getGraphicsContext2D()
+        .clearRect(
+            0.0, 0.0, Application.getCanvas().getWidth(), Application.getCanvas().getHeight());
     components.values().stream()
         .filter(Components::isPaintable)
         .map(p -> (Paintable) p)

@@ -14,7 +14,8 @@ kinematic_models:
   "y": 20.0
   mass: 10.0
   radius: 5.0
-  color: YELLOW
+  appearance:
+    color: YELLOW
 - name: fix_point
   type: STATIC_MODEL
   x: 0.0
@@ -23,15 +24,17 @@ kinematic_models:
   inner_line_count: 4
   inner_line_height: 10.0
   theta: 1.57
-  color: BLACK
-  line_width: 1.0
+  appearance:
+    color: BLACK
+    line_width: 1.0
 connectors:
 - name: rod
   type: ROD_MODEL
   model_u: item
   model_v: fix_point
-  color: BLUE
-  line_width: 2.0
+  appearance:
+    color: BLUE
+    line_width: 2.0
 - name: spring
   type: SPRING_MODEL
   stiffness: 20.0
@@ -40,8 +43,9 @@ connectors:
   model_v: item2
   width: 5.0
   zigzag_count: 15
-  color: BLUE
-  line_width: 1.0
+  appearance:
+    color: BLUE
+    line_width: 1.0
 fields:
 - name: gravity_field
   type: GRAVITY

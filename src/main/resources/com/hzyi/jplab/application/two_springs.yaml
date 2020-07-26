@@ -16,8 +16,9 @@ kinematic_models:
   length: 40.0
   inner_line_count: 4
   inner_line_height: 10.0
-  color: BLACK
-  line_width: 1.0
+  appearance:
+    color: BLACK
+    line_width: 1.0
 - name: right_wall
   type: STATIC_MODEL
   x: 100.0
@@ -26,8 +27,9 @@ kinematic_models:
   length: 40.0
   inner_line_count: 4
   inner_line_height: 10.0
-  color: BLACK
-  line_width: 1.0
+  appearance:
+    color: BLACK
+    line_width: 1.0
 connectors:
 - name: left_spring
   type: SPRING_MODEL
@@ -37,7 +39,8 @@ connectors:
   model_v: left_wall
   width: 5.0
   zigzag_count: 15
-  color: BLUE
+  appearance:
+    color: BLUE
 - name: right_spring
   type: SPRING_MODEL
   stiffness: 20.0
@@ -45,8 +48,9 @@ connectors:
   model_u: item
   model_v: right_wall
   width: 5.0
-  zigzag_count: 15
-  color: BLUE
+  appearance:
+    zigzag_count: 15
+    color: BLUE
 timeline:
   type: NUMERIC
   time_step: 0.001

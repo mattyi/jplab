@@ -9,6 +9,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import com.hzyi.jplab.core.application.Application;
+import com.hzyi.jplab.core.application.config.ApplicationConfig;
 import com.hzyi.jplab.core.model.Constraint;
 import com.hzyi.jplab.core.model.Property;
 import com.hzyi.jplab.core.model.shape.Appearance;
@@ -55,16 +56,17 @@ public class SpringModel extends Connector {
     return h.getBuilder().build();
   }
 
-  public static SpringModel of(Map<String, ?> map) {
+  public static SpringModel of(ApplicationConfig.ConnectorConfig config) {
     SpringModelBuilder builder = newBuilder();
-    UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, map, SpringModel.class);
+    builder.name(config.getName());
+    Map<String, Object> specs = config.getConnectorSpecs();
+    UnpackHelper<SpringModelBuilder> helper = UnpackHelper.of(builder, specs, SpringModel.class);
     BiFunction<SpringModelBuilder, String, SpringModelBuilder> collectorU =
-        Connector.connectedModelExtractor(map, "Spring", "model_u");
+        Connector.connectedModelExtractor(specs, "Spring", "model_u");
     BiFunction<SpringModelBuilder, String, SpringModelBuilder> collectorV =
-        Connector.connectedModelExtractor(map, "Spring", "model_v");
+        Connector.connectedModelExtractor(specs, "Spring", "model_v");
     helper.unpack("model_u", String.class, collectorU, checkExistence());
     helper.unpack("model_v", String.class, collectorV, checkExistence());
-    helper.unpack("name", String.class, SpringModelBuilder::name, checkExistence());
     helper.unpack("unstretched_length", Double.class, checkExistence(), checkPositivity());
     helper.unpack("stiffness", SpringModelBuilder::stiffness, checkExistence(), checkPositivity());
 
@@ -73,8 +75,8 @@ public class SpringModel extends Connector {
     double vx = MoreObjects.firstNonNull(helper.unpack("relative_point_ux", Double.class), 0.0);
     double vy = MoreObjects.firstNonNull(helper.unpack("relative_point_uy", Double.class), 0.0);
 
-    ZigzagLine shape = ZigzagLine.of(map);
-    Appearance appearance = Appearance.of(map);
+    ZigzagLine shape = ZigzagLine.of(specs);
+    Appearance appearance = Appearance.of(config.getAppearance());
 
     return helper
         .getBuilder()
