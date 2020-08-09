@@ -1,14 +1,18 @@
 package com.hzyi.jplab.core.application;
 
 import com.hzyi.jplab.core.application.config.ApplicationConfig;
+import com.hzyi.jplab.core.application.exceptions.ResourceExhaustedException;
 import com.hzyi.jplab.core.application.ui.PrimaryStageFactory;
 import com.hzyi.jplab.core.controller.Controller;
 import com.hzyi.jplab.core.model.Assembly;
 import com.hzyi.jplab.core.painter.CoordinateTransformer;
 import com.hzyi.jplab.core.painter.PainterFactory;
 import com.hzyi.jplab.core.timeline.Timeline;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -76,9 +80,10 @@ public class Application extends javafx.application.Application {
             Application.getController(),
             Application.getCanvas());
     primaryStage.show();
+    ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
 
-    TimerTask task =
-        new TimerTask() {
+    Runnable task =
+        new Runnable() {
           private double nextRefreshThreshold = 0;
 
           @Override
@@ -91,7 +96,35 @@ public class Application extends javafx.application.Application {
           }
         };
 
-    new Timer().schedule(task, 100L, (long) (refreshPeriod * 1000));
+    Callable<Future> taskRunner =
+        new Callable() {
+          @Override
+          public Future call() {
+            return exec.submit(task);
+          }
+        };
+
+    exec.scheduleAtFixedRate(
+        new Runnable() {
+          private Future previousTask;
+
+          public void run() {
+            if (previousTask != null && !previousTask.isDone()) {
+              System.out.println(new ResourceExhaustedException());
+              previousTask.cancel(true);
+              exec.shutdownNow();
+            }
+            try {
+              previousTask = taskRunner.call();
+            } catch (Exception e) {
+              System.out.println(e);
+              exec.shutdownNow();
+            }
+          }
+        },
+        0,
+        (long) (refreshPeriod * 1000),
+        TimeUnit.MILLISECONDS);
   }
 
   public static void startSimulation() {

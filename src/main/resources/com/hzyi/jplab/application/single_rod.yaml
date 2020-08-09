@@ -34,7 +34,7 @@ fields:
   type: GRAVITY
 timeline:
   type: NUMERIC
-  time_step: 0.0005
+  time_step: 0.00000000000005
 canvas:
   width: 400
   height: 400
